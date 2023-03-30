@@ -110,3 +110,25 @@ class AircraftNames:
 
     def get_aircraftnames(self):
         return self.aircraftnames
+
+class Substitutes:
+    def __init__(self):
+        self.engines = {'CF34-8C6': 'CF34-8C5', #same family
+                        'CF34-8C7': 'CF34-8C5', #same family
+                        'CF34-8C8': 'CF34-8C5', #same family
+                        'CF34-8C9': 'CF34-8C5',#same family
+                        'RB211-535E4B': 'RB211-535E4',#same family
+                        'PW2043': 'PW2040', #same series
+                        'PW4098':'PW4090'} #same series
+    def engine_substitute(self):
+        return self.engines
+
+class B737_family:
+    def __init__(self):
+        self.b737 = ['737-200',
+                      '737-700/700LR/Max 7',
+                      '737-800',
+                      '737-900',
+                      '737-900ER']
+    def get_b737(self):
+        return self.b737

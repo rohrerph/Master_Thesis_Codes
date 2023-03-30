@@ -2,7 +2,7 @@
 from Python import dict
 import pandas as pd
 
-#Most common airlines by ASM over the Last 30 years. The idea is to look only at the airlines with the most ASM
+#Most common airlines by ASM over the Last 30 years. The idea is to look only at the airlines with the most ASM. At the end we look at the 19 biggest airlines
 T52 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\T_SCHEDULE_T2.csv")
 T52 = T52.dropna(subset = ['AVL_SEAT_MILES_320','REV_PAX_MILES_140','AIRCRAFT_FUELS_921'])
 
@@ -12,8 +12,8 @@ most_common_airlines = T52.groupby(['UNIQUE_CARRIER_NAME']).agg({'AVL_SEAT_MILES
 most_common_airlines = most_common_airlines.sort_values(by='AVL_SEAT_MILES_320', ascending=False)
 most_common_airlines = most_common_airlines.loc[most_common_airlines['AVL_SEAT_MILES_320']>= 100000000000]
 
-#What are the most common used aircraft types of these 15 airlines ?
-#At the end we look at the 45 Aircraft types from the 15 Airlines with the most AVL over the period of the last 30 years.
+#What are the most common used aircraft types of these 19 airlines ?
+#At the end we look at the 45 Aircraft types from the 19 Airlines with the most AVL over the period of the last 30 years.
 airlines = dict.USAirlines().get_airlines()
 T52 = T52.loc[T52['UNIQUE_CARRIER_NAME'].isin(airlines)]
 

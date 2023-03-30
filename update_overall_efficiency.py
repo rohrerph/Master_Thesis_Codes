@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from Python import dict
+import dict
 import matplotlib.pyplot as plt
 
 #load dictionaries
@@ -62,7 +62,7 @@ overall_large = overall_large.loc[~overall_large['Label'].isin(list(doubled['Lab
 airplanes_release_year = airplanes_release_year.loc[~airplanes_release_year['Description'].isin(list(doubled['Label']))]
 
 
-fig = plt.figure(dpi=120)
+fig = plt.figure(dpi=300)
 
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
@@ -74,18 +74,21 @@ ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'], label='US DOT T2')
 ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'], label='Babikian Fleet')
 
 for i, row in airplanes_release_year.iterrows():
-    plt.annotate(row['Description'], (row['YOI'], row['MJ/ASK']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
+    plt.annotate(row['Description'], (row['YOI'], row['MJ/ASK']),fontsize=6, xytext=(-10, 5), textcoords='offset points')
 # Add a legend to the plot
 ax.legend()
 
 #Arrange plot size
 plt.ylim(0, 4)
 plt.xlim(1955, 2025)
-plt.xticks(np.arange(1955, 2024, 5))
+plt.xticks(np.arange(1955, 2024, 10))
 
 # Set the x and y axis labels
 ax.set_xlabel('Year')
 ax.set_ylabel('EU (MJ/ASK)')
+
+ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
+ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
 
 # Set the plot title
 ax.set_title('Overall Efficiency')
