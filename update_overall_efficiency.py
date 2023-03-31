@@ -67,14 +67,17 @@ fig = plt.figure(dpi=300)
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
 
-ax.scatter(airplanes_release_year['YOI'], airplanes_release_year['MJ/ASK'], marker='^', label='US DOT T2')
-ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s', label='Large Aircraft Babikian')
-ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o', label='US DOT T2 & Babikian')
-ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'], label='US DOT T2')
-ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'], label='Babikian Fleet')
+ax.scatter(airplanes_release_year['YOI'], airplanes_release_year['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
+ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Babikian')
+ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o',color='purple', label='US DOT T2 & Babikian')
+ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
+ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Babikian Fleet')
 
-for i, row in airplanes_release_year.iterrows():
-    plt.annotate(row['Description'], (row['YOI'], row['MJ/ASK']),fontsize=6, xytext=(-10, 5), textcoords='offset points')
+#for i, row in airplanes_release_year.iterrows():
+    #plt.annotate(row['Description'], (row['YOI'], row['MJ/ASK']),
+                 #fontsize=6, xytext=(-10, 5),
+                 #textcoords='offset points')
+
 # Add a legend to the plot
 ax.legend()
 
@@ -89,10 +92,24 @@ ax.set_ylabel('EU (MJ/ASK)')
 
 ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
 ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-
+ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
-ax.set_title('Overall Efficiency')
+#ax.set_title('Overall Efficiency')
 
 plt.savefig('OverallEfficiency_1955_2020.png')
 
 plt.show()
+
+#SAVE RAW DATA
+doubled = doubled[['Description','Year', 'MJ/ASK mixed']]
+airplanes_release_year = airplanes_release_year[['Description','YOI','MJ/ASK']]
+
+writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\overallefficiency.xlsx")
+
+# Write each DataFrame to a different sheet
+doubled.to_excel(writer, sheet_name='USDOTandBABIKIAN', index=False)
+airplanes_release_year.to_excel(writer, sheet_name='USDOT', index=False)
+overall_large.to_excel(writer, sheet_name='BABIKIAN', index=False)
+
+# Save the Excel file
+writer.save()
