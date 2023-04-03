@@ -18,6 +18,7 @@ overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Data Extracti
 T2 = T2.dropna(subset = ['AVL_SEAT_MILES_320','REV_PAX_MILES_140','AIRCRAFT_FUELS_921'])
 T2 = T2.loc[T2['AIRCRAFT_FUELS_921']>0]
 T2 = T2.loc[T2['AVL_SEAT_MILES_320']>0]
+T2 = T2.loc[T2['REV_PAX_MILES_140']>0]
 #this subgroup 3 contains all "Major Carriers"
 T2 = T2.loc[T2['CARRIER_GROUP'] == 3]
 #subgroup 1 for aircraft passenger configuration
@@ -39,7 +40,10 @@ airplanes_release_year = pd.merge(AC_type, airplanes_release_year, on='Descripti
 mj = 142.2 # 142.2 MJ per Gallon of kerosene
 km = 1.609344 #miles
 airplanes_release_year['MJ/ASK'] = airplanes_release_year['GAL/ASM']*mj/km
+airplanes_release_year['MJ/RPM'] = airplanes_release_year['GAL/RPM']*mj/km
+rpm = airplanes_release_year
 fleet_avg_year['MJ/ASK'] = fleet_avg_year['GAL/ASM']*mj/km
+fleet_avg_year['MJ/RPK'] = fleet_avg_year['GAL/RPM']*mj/km
 n = airplanes_release_year['Description']
 
 #prepare Data from babikian
@@ -71,6 +75,7 @@ ax.scatter(airplanes_release_year['YOI'], airplanes_release_year['MJ/ASK'], mark
 ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Babikian')
 ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o',color='purple', label='US DOT T2 & Babikian')
 ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
+ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
 ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Babikian Fleet')
 
 #for i, row in airplanes_release_year.iterrows():
