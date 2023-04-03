@@ -5,13 +5,18 @@ import numpy as np
 
 # DATAFRAME PREPARATION
 emissions_df = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\edb-emissions-databank_v29 (web).xlsx", sheet_name='Gaseous Emissions and Smoke')
-emissions_df['TSFC T/O']= emissions_df['Fuel Flow T/O (kg/sec)']/emissions_df['Rated Thrust (kN)']
+emissions_df['TSFC T/O']= emissions_df['Fuel Flow T/O (kg/sec)']/emissions_df['Rated Thrust (kN)']*1000
 
 emissions_df['Final Test Date']= pd.to_datetime(emissions_df['Final Test Date'])
 emissions_df['Final Test Date']= emissions_df['Final Test Date'].dt.strftime('%Y')
 
-yearly_emissions = emissions_df[['Final Test Date', 'Fuel Flow T/O (kg/sec)', 'B/P Ratio', 'Pressure Ratio', 'Rated Thrust (kN)','TSFC T/O']]
+yearly_emissions = emissions_df[['Engine Identification','Final Test Date', 'Fuel Flow T/O (kg/sec)', 'B/P Ratio', 'Pressure Ratio', 'Rated Thrust (kN)','TSFC T/O']]
 yearly_emissions = yearly_emissions.dropna()
+
+#implement obtained polynom 0.84x + 8.49 to estimate Cruise SFC.
+poly = lambda x: 0.83*x + 8.65
+yearly_emissions['TSFC Cruise'] = yearly_emissions['TSFC T/O'].apply(poly)
+yearly_emissions.to_excel('icao_cruise_emissions.xlsx')
 
 #-------------------TSFC-------------------------
 x = yearly_emissions['Final Test Date']

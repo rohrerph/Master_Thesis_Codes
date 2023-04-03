@@ -61,14 +61,14 @@ aircraft_data['Engine'] = aircraft_data['Engine'].replace(substitutes)
 abc = aircraft_data.merge(all, on='Engine')
 abc = abc.groupby(['Name'], as_index=False).agg({'TSFC Cruise':'mean', 'YOI':'mean'})
 
-babikian = pd.read_excel(path2, sheet_name='Data Table')
-babikian = babikian.loc[babikian['Still in new Metric']=='Yes']
-babikian = babikian.loc[babikian['Babikian']=='Yes']
-babikian = babikian[['Name', 'YOI', 'TSFC (mg/Ns)' ]]
-babikian['TSFC Cruise'] = babikian['TSFC (mg/Ns)']
-babikian = babikian.drop(['TSFC (mg/Ns)'], axis = 1)
+engine = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Data Extraction 2.xlsx", sheet_name='Figure 3')
+engine_large = engine.iloc[:, 8:11]
+engine_large.columns = engine_large.iloc[0]
+engine_large = engine_large[1:]
+#babikian = babikian.loc[babikian['Still in new Metric']=='Yes']
 
-all = babikian.append(abc)
+all = engine_large.append(abc)
+all.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\engine_efficiency.xlsx')
 # Print the resulting dataframe
 #-------------------YEAR vs TSFC CRUISE-------------------------
 
@@ -89,33 +89,41 @@ for i, row in grouped.iterrows():
 
 ax.legend()
 
-plt.savefig('tsfc_per_engine.png')
+#plt.savefig('tsfc_per_engine.png')
 
 plt.show()
 
 # Print the resulting dataframe
 #-------------------YEAR vs TSFC CRUISE for AIRCRAFTS-------------------------
 
-fig = plt.figure(dpi=150)
+fig = plt.figure(dpi=300)
 
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
 
 x_all = all['YOI'].astype(np.int64)
-years = pd.Series(range(1965, 2024))
-z_all = np.polyfit(x_all,  all['TSFC Cruise'], 1)
+y_all = all['TSFC Cruise'].astype(np.float64)
+years = pd.Series(range(1955, 2024))
+z_all = np.polyfit(x_all,  y_all, 1)
 p_all = np.poly1d(z_all)
 
 # Plot the dataframes with different symbols
-ax.scatter(babikian['YOI'], babikian['TSFC Cruise'], marker='o', label='Babikian')
-ax.scatter(abc['YOI'], abc['TSFC Cruise'], marker='^', label='Added')
-ax.plot(years, p_all(years),'-r', label='Added Linear Fit')
+ax.scatter(engine_large['YOI'], engine_large['TSFC Cruise'],color='red', marker='s', label='Babikian')
+ax.scatter(abc['YOI'], abc['TSFC Cruise'], color='blue',marker='^', label='ICAO ')
+#ax.plot(years, p_all(years),color='purple')
 
-for i, row in babikian.iterrows():
-    plt.annotate(row['Name'], (row['YOI'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
-for i, row in abc.iterrows():
-    plt.annotate(row['Name'], (row['YOI'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
+#for i, row in babikian.iterrows():
+    #plt.annotate(row['Name'], (row['YOI'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
+#for i, row in abc.iterrows():
+    #plt.annotate(row['Name'], (row['YOI'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
 ax.legend()
+ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
+ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
+ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
+plt.xlim(1955, 2024)
+plt.xticks(np.arange(1955, 2024, 10))
+ax.set_xlabel('Year')
+ax.set_ylabel('Cruise TSFC (g/kNs)')
 plt.savefig('Cruise_TSFC.png')
 
 plt.show()

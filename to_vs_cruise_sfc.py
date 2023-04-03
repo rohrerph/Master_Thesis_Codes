@@ -34,15 +34,22 @@ p_janes = np.poly1d(z_janes)
 z_all = np.polyfit(x_all, y_all, 1)
 p_all = np.poly1d(z_all)
 
-ax.scatter(x_roux,y_roux)
-ax.scatter(x_janes,y_janes)
-ax.plot(x_roux, p_roux(x_roux), label='Turbofan and Turbojet Engines: Database')
-ax.plot(x_janes, p_janes(x_janes), label='Janes Aero-Engines')
-ax.plot(x_all, p_all(x_all), label='Combined')
+y_mean = np.mean(y_all)
+tss = np.sum((y_all - y_mean)**2)
+y_pred = p_all(x_all)
+rss = np.sum((y_all - y_pred)**2)
+r_squared = 1 - (rss / tss)
+r_squared = r_squared.round(2)
 
-equation_text = f'y = {z_all[0]:.2f}x + {z_all[1]:.2f}'
+ax.scatter(x_roux,y_roux, marker='^',color='blue')
+ax.scatter(x_janes,y_janes, marker='o',color='orange')
+ax.plot(x_roux, p_roux(x_roux),color='blue', label='Turbofan and Turbojet Engines: Database')
+ax.plot(x_janes, p_janes(x_janes),color='orange', label='Janes Aero-Engines')
+ax.plot(x_all, p_all(x_all),color='turquoise', label='Combined')
+
+equation_text = f'y = {z_all[0]:.2f}x + {z_all[1]:.2f} , R-squared = {r_squared}'
 #Polynom obtained by Lee et al. was 0.869x + 8.65 here we have 0.83x + 8.61 which is quite similar.
-ax.text(0.6,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
+ax.text(0.4,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
 ax.legend(loc='upper left')
 
 #Arrange plot size
@@ -59,7 +66,7 @@ ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
 ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 
 # Set the plot title
-ax.set_title('Take-Off vs. Cruise TSFC')
+ax.set_title('TSFC Calibration')
 
 plt.savefig('takeoff_vs_cruise_tsfc.png')
 
