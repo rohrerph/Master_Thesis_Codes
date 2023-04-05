@@ -1,5 +1,5 @@
 import pandas as pd
-import dict
+from tools import dict
 import numpy as np
 import matplotlib.pyplot as plt
 

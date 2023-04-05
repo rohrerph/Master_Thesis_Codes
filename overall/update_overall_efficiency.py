@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import dict
+from tools import dict
 import matplotlib.pyplot as plt
 
 #load dictionaries

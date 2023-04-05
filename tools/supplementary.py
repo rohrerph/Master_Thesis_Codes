@@ -1,5 +1,5 @@
 # here i will create the list used in the dictionary
-from Python import dict
+import dict
 import pandas as pd
 
 #Most common airlines by ASM over the Last 30 years. The idea is to look only at the airlines with the most ASM. At the end we look at the 19 biggest airlines
@@ -10,8 +10,7 @@ T52 = T52.loc[T52['CARRIER_GROUP'] == 3] #this subgroup 3 contains all "Major Ca
 T52 = T52.loc[T52['AIRCRAFT_CONFIG'] == 1] #subgroup 1 for aircraft passenger configuration
 most_common_airlines = T52.groupby(['UNIQUE_CARRIER_NAME']).agg({'AVL_SEAT_MILES_320':'sum'})
 most_common_airlines = most_common_airlines.sort_values(by='AVL_SEAT_MILES_320', ascending=False)
-most_common_airlines = most_common_airlines.loc[most_common_airlines['AVL_SEAT_MILES_320']>= 100000000000]
-
+most_common_airlines = most_common_airlines.loc[most_common_airlines['AVL_SEAT_MILES_320']>= 10**11]
 #What are the most common used aircraft types of these 19 airlines ?
 #At the end we look at the 45 Aircraft types from the 19 Airlines with the most AVL over the period of the last 30 years.
 airlines = dict.USAirlines().get_airlines()

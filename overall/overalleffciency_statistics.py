@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from Python import dict
+from tools import dict
 import matplotlib.pyplot as plt
 
 #load dictionaries
@@ -14,13 +14,14 @@ AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\L_AIRCRAFT_TYP
 T2 = T2.dropna(subset = ['AVL_SEAT_MILES_320','REV_PAX_MILES_140','AIRCRAFT_FUELS_921'])
 T2 = T2.loc[T2['AIRCRAFT_FUELS_921']>0]
 T2 = T2.loc[T2['AVL_SEAT_MILES_320']>0]
+T2 = T2.loc[T2['REV_PAX_MILES_140']>0]
 
 #this subgroup 3 contains all "Major Carriers"
 T2 = T2.loc[T2['CARRIER_GROUP'] == 3]
 #subgroup 1 for aircraft passenger configuration
 T2 = T2.loc[T2['AIRCRAFT_CONFIG'] == 1]
 
-#Use the 20 Airlines
+#Use the 19 Airlines
 T2 = T2.loc[T2['UNIQUE_CARRIER_NAME'].isin(airlines)]
 T2 = pd.merge(T2, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
 T2 = T2.loc[T2['Description'].isin(airplanes)]
@@ -35,6 +36,7 @@ plt.xlabel('Quarter')
 plt.ylabel('Values')
 
 fleet_avg_year= T2.groupby(['YEAR']).agg({'GAL/ASM':'median', 'GAL/RPM':'median'})
+
 fleet_avg_year.plot(y=['GAL/ASM', 'GAL/RPM'], use_index=True, label=['GAL/ASM', 'GAL/RPM'])
 plt.xlabel('Year')
 plt.ylabel('Values')
@@ -54,20 +56,56 @@ plt.ylabel('Airborne efficiency')
 plt.show()
 
 #AC_averages
+overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Data Extraction 2.xlsx", sheet_name='Figure 2')
+
+overall_large_fleet = overall.iloc[:, 9:11]
+overall_large_fleet.columns = overall_large_fleet.iloc[0]
+overall_large_fleet = overall_large_fleet[1:].dropna()
+
+overall_large = overall.iloc[:, 0:2]
+overall_large.columns = overall_large.iloc[0]
+overall_large = overall_large[1:].dropna()
 
 AC_type = T2.groupby(['Description']).agg({'GAL/ASM':'median', 'GAL/RPM':'median'})
-airplanes_release_year = pd.DataFrame({'Description': list(airplanes), 'Release_year': list(airplanes_dict.values())})
+airplanes_release_year = pd.DataFrame({'Description': list(airplanes), 'YOI': list(airplanes_dict.values())})
 airplanes_release_year = pd.merge(AC_type, airplanes_release_year, on='Description')
-x = airplanes_release_year['Release_year']
-y = airplanes_release_year['GAL/ASM']
+#change GAL/ASM to MJ/ASK
+mj = 142.2 # 142.2 MJ per Gallon of kerosene
+km = 1.609344 #miles
+airplanes_release_year['MJ/ASK'] = airplanes_release_year['GAL/ASM']*mj/km
+fleet_avg_year['MJ/ASK'] = fleet_avg_year['GAL/ASM']*mj/km
 n = airplanes_release_year['Description']
 
-plt.scatter(x,y)
-plt.xlabel('Year')
-plt.ylabel('GAL/ASM')
+fig = plt.figure(dpi=120)
 
-for i, txt in enumerate(n):
-    plt.annotate(txt, (x[i],y[i]))
+# Add a subplot
+ax = fig.add_subplot(1, 1, 1)
+
+ax.scatter(airplanes_release_year['YOI'], airplanes_release_year['MJ/ASK'], marker='^', label='Large Aircraft')
+ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s', label='Large Aircraft Babikian')
+ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'], label='Large Aircraft Fleet')
+ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'], label='Babikian Fleet')
+
+#for i, txt in enumerate(n):
+ #   plt.annotate(txt, (x[i],y[i]))
+
+# Add a legend to the plot
+ax.legend()
+
+#Arrange plot size
+plt.ylim(0, 4)
+plt.xlim(1955, 2020)
+plt.xticks(np.arange(1955, 2020, 5))
+
+# Set the x and y axis labels
+ax.set_xlabel('Year')
+ax.set_ylabel('EU (MJ/ASK)')
+
+# Set the plot title
+ax.set_title('Overall Efficiency')
+
+plt.savefig('OverallEfficiency_1955_2020.png')
+
 plt.show()
 
 #per Airline
