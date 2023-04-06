@@ -51,6 +51,59 @@ class AirplaneModels:
     def get_models(self):
         return self.models
 
+class AirplaneTypes:
+    #dates need to be validated, (are from ChatGPT :) )
+    def __init__(self):
+        self.types = {"Boeing 757-200": 'Narrow',
+                       "Boeing 767-300/300ER": 'Wide',
+                       "Boeing 777-200ER/200LR/233LR": 'Wide',
+                       "Airbus Industrie A320-100/200": 'Narrow',
+                       "Boeing 767-200/ER/EM": 'Wide',
+                       "Boeing 737-800": 'Narrow',
+                       "Airbus Industrie A319": 'Narrow',
+                       "Boeing 737-300": 'Narrow',
+                       "McDonnell Douglas DC9 Super 80/MD81/82/83/88": 'Narrow',
+                       "Boeing 747-400": 'Wide',
+                       "Boeing 737-700/700LR/Max 7": 'Narrow',
+                       "Boeing 727-200/231A": 'Narrow',
+                       "Airbus Industrie A330-200": 'Wide',
+                       "Boeing 767-400/ER": 'Wide',
+                       "McDonnell Douglas DC-10-30": 'Wide',
+                       "Airbus Industrie A321/Lr": 'Narrow',
+                       "Boeing 737-400": 'Narrow',
+                       "Boeing 737-100/200": 'Narrow',
+                       "Boeing 737-500": 'Narrow',
+                       "Boeing 747-200/300": 'Wide',
+                       "McDonnell Douglas MD-11": 'Wide',
+                       "Boeing 757-300": 'Narrow',
+                       "Boeing 737-900": 'Narrow',
+                       "Boeing 747-100": 'Wide',
+                       "Canadair RJ-700": 'Regional',
+                       "B787-800 Dreamliner": 'Wide',
+                       "McDonnell Douglas DC-9-30": 'Narrow',
+                       "Airbus Industrie A330-300/333": 'Wide',
+                       "Embraer-145": 'Regional',
+                       "Boeing 777-300/300ER/333ER": 'Wide',
+                       "Embraer 190": 'Narrow',
+                       "B787-900 Dreamliner": 'Wide',
+                       "McDonnell Douglas DC-10-10": 'Wide',
+                       "Lockheed L-1011-1/100/200": 'Wide',
+                       "Airbus Industrie A300-600/R/CF/RCF": 'Wide',
+                       "Boeing 737-900ER": 'Narrow',
+                       "Canadair RJ-200ER /RJ-440": 'Regional',
+                       "McDonnell Douglas MD-90": 'Narrow',
+                       "McDonnell Douglas DC-10-40": 'Wide',
+                       "Boeing 717-200": 'Narrow',
+                       "Embraer ERJ-175": 'Regional',
+                       "Boeing B737 Max 800": 'Narrow',
+                       "Boeing 787-10 Dreamliner": 'Wide',
+                       "Airbus Industrie A330-900": 'Wide',
+                       "Boeing B737 Max 900": 'Narrow'
+                       }
+
+    def get_types(self):
+        return self.types
+
 
 class USAirlines:
     def __init__(self):

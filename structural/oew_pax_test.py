@@ -1,33 +1,28 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from tools import aircraft_type
+from tools import plot
 
-savefig = True
-plotfig = False
-my_values = False
+savefig = False
+plotfig = True
 
-#Data retrieved by me from Janes all Aircrafts and Manufacturers website.
-new_aircrafts = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Aircraft Databank v2.xlsx", sheet_name='New Data Entry')
-babikian = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Aircraft Databank v2.xlsx", sheet_name='Data Table')
-babikian = babikian.loc[babikian['Babikian']=='Yes']
-
-if my_values:
-    babikian = babikian[['Name', 'YOI', 'Exit Limit', 'OEW','MTOW','Type']]
-    babikian['OEW/MTOW']= babikian['OEW']/babikian['MTOW']
-else:
-    babikian = babikian[['Name', 'YOI', 'Exit Limit', 'OEW/MTOW','OEW', 'Type']]
-babikian['OEW/Pax'] = babikian['OEW'] / babikian['Exit Limit']
-new_aircrafts = new_aircrafts.groupby(['Name','Type'], as_index=False).agg({'OEW':'mean', 'MTOW':'mean', 'Exit Limit':'mean', 'YOI':'mean', 'Range':'mean'})
-new_aircrafts['OEW/Pax'] = new_aircrafts['OEW']/new_aircrafts['Exit Limit']
-new_aircrafts['OEW/MTOW'] = new_aircrafts['OEW']/new_aircrafts['MTOW']
-new_aircrafts = new_aircrafts.append(babikian)
-new_aircrafts = new_aircrafts.dropna(subset='OEW/MTOW')
-
-new_aircrafts.loc[new_aircrafts['Exit Limit'] < 100, 'Type'] = 'Regional'
+new_aircrafts = aircraft_type.type()
 
 medium_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Narrow')]
 large_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Wide')]
 regional_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Regional')]
+
+writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\structuralefficiency.xlsx")
+
+# Write each DataFrame to a different sheet
+large_aircrafts.to_excel(writer, sheet_name='Widebody', index=False)
+medium_aircrafts.to_excel(writer, sheet_name='Narrowbody', index=False)
+regional_aircrafts.to_excel(writer, sheet_name='Regionaljet', index=False)
+
+# Save the Excel file
+writer.save()
+
 
 #large_aircrafts['OEW/m^2'] = large_aircrafts['OEW/Pax']/1.05
 #medium_aircrafts['OEW/m^2'] = medium_aircrafts['OEW/Pax']/1.48
@@ -50,6 +45,8 @@ p_all = np.poly1d(z_all)
 #_______PLOT OEW/MTOW VS OEW________
 
 fig = plt.figure(dpi=300)
+y_label = 'OEW/MTOW'
+x_label = 'OEW[kt]'
 
 oew = pd.Series(range(0, 200000))
 z = np.polyfit(new_aircrafts['OEW'],  new_aircrafts['OEW/MTOW'], 1)
@@ -66,22 +63,10 @@ ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
 
 equation_text = f'y = {z[0]:.1e}x + {z[1]:.1e}'
 ax.text(0.15,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
-ax.legend(loc='upper left')
-# Add a legend to the plot
-ax.legend()
 
-#Arrange plot size
-#plt.ylim(0, 600)
-#plt.xlim(0, 200)
-#plt.xticks(np.arange(1955, 2024, 10))
+plot.plot_layout(None, x_label, y_label, ax)
 
-# Set the x and y axis labels
-ax.set_ylabel('OEW/MTOW')
-ax.set_xlabel('OEW[kt]')
 
-ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:
@@ -90,6 +75,8 @@ if savefig:
 #_______PLOT OEW/EXITLIMIT WIDEBODY________
 
 fig = plt.figure(dpi=300)
+y_label = 'OEW[kg]/Pax Exit Limit'
+x_label = 'Year'
 
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
@@ -102,21 +89,12 @@ for i, row in large_aircrafts.iterrows():
                  fontsize=6, xytext=(-10, 5),
                  textcoords='offset points')
 
-# Add a legend to the plot
-#ax.legend()
-
-#Arrange plot size
 #plt.ylim(0, 4)
 plt.xlim(1955, 2025)
 plt.xticks(np.arange(1955, 2024, 10))
 
-# Set the x and y axis labels
-ax.set_xlabel('Year')
-ax.set_ylabel('OEW[kg]/Pax Exit Limit')
-
-ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
+plot.plot_layout(None, x_label, y_label, ax)
+ax.legend()
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:

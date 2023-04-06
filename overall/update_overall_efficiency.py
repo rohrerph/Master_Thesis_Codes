@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from tools import dict
+from tools import T2_preprocessing
 import matplotlib.pyplot as plt
 
 #load dictionaries
@@ -15,21 +16,8 @@ AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\L_AIRCRAFT_TYP
 overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Data Extraction 2.xlsx", sheet_name='Figure 2')
 
 #Prepare Data from schedule T2
-T2 = T2.dropna(subset = ['AVL_SEAT_MILES_320','REV_PAX_MILES_140','AIRCRAFT_FUELS_921'])
-T2 = T2.loc[T2['AIRCRAFT_FUELS_921']>0]
-T2 = T2.loc[T2['AVL_SEAT_MILES_320']>0]
-T2 = T2.loc[T2['REV_PAX_MILES_140']>0]
-#this subgroup 3 contains all "Major Carriers"
-T2 = T2.loc[T2['CARRIER_GROUP'] == 3]
-#subgroup 1 for aircraft passenger configuration
-T2 = T2.loc[T2['AIRCRAFT_CONFIG'] == 1]
-#Use the 19 Airlines
-T2 = T2.loc[T2['UNIQUE_CARRIER_NAME'].isin(airlines)]
-T2 = pd.merge(T2, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
-T2 = T2.loc[T2['Description'].isin(airplanes)]
-T2['GAL/ASM'] = T2['AIRCRAFT_FUELS_921']/T2['AVL_SEAT_MILES_320']
-T2['GAL/RPM'] = T2['AIRCRAFT_FUELS_921']/T2['REV_PAX_MILES_140']
-T2['Airborne Eff.'] = T2['HOURS_AIRBORNE_650']/T2['ACRFT_HRS_RAMPTORAMP_630']
+T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
+
 fleet_avg_year= T2.groupby(['YEAR']).agg({'GAL/ASM':'median', 'GAL/RPM':'median'})
 
 AC_type = T2.groupby(['Description']).agg({'GAL/ASM':'median', 'GAL/RPM':'median'})
