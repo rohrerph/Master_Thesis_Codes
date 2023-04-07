@@ -6,10 +6,10 @@ def type():
     # Data retrieved by me from Janes all Aircrafts and Manufacturers website.
     babikian = babikian.loc[babikian['Babikian'] == 'Yes']
     if my_value:
-        babikian = babikian[['Name', 'YOI', 'Exit Limit', 'OEW', 'MTOW', 'Type']]
+        babikian = babikian[['Name', 'YOI', 'Exit Limit', 'OEW', 'MTOW', 'Type', 'MZFW']]
         babikian['OEW/MTOW'] = babikian['OEW'] / babikian['MTOW']
     else:
-        babikian = babikian[['Name', 'YOI', 'Exit Limit', 'OEW/MTOW', 'OEW', 'Type']]
+        babikian = babikian[['Name', 'YOI', 'Exit Limit', 'OEW/MTOW', 'OEW', 'Type', 'MZFW']]
     babikian['OEW/Pax'] = babikian['OEW'] / babikian['Exit Limit']
     new_aircrafts = new_aircrafts.groupby(['Name', 'Type'], as_index=False).agg(
         {'OEW': 'mean', 'MTOW': 'mean', 'Exit Limit': 'mean', 'YOI': 'mean', 'Range': 'mean', 'MZFW':'mean'})
