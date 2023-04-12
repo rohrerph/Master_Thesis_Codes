@@ -2,7 +2,7 @@
 
 We need to fill the following table of 45 Aircraft regarding the Maximal Take Off Weight (MTOW), the Maximal Zero Fuel Weight (MZFW) and the Range for two points in the payload-range diagram. 
 The payload-range diagram can be found in the Aircraft Characteristics for Airport Planning Manuals. 
-To find and complete this datatable an estimated workload of 4-6 hours is considered. 
+To find and complete this datatable an estimated workload of 5-7 hours is considered. 
 
 Please use in all cases kg for all weights and km for all ranges!
 
