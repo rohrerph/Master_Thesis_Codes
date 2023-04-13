@@ -8,11 +8,19 @@ savefig = False
 plotfig = False
 
 new_aircrafts = aircraft_type.type()
-seats = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Data\usdot_seats.xlsx')
+new_aircrafts['Name'] = new_aircrafts['Name'].str.strip()
+seats = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Data\seats.xlsx')
+
+new_aircrafts = new_aircrafts.merge(seats, left_on='Name', right_on='Description')
+
 
 medium_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Narrow')]
 large_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Wide')]
 regional_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Regional')]
+
+errors_large = [large_aircrafts['mean'] - large_aircrafts['min'], large_aircrafts['max'] - large_aircrafts['mean']]
+errors_medium = [medium_aircrafts['mean'] - medium_aircrafts['min'], medium_aircrafts['max'] - medium_aircrafts['mean']]
+errors_regional = [regional_aircrafts['mean'] - regional_aircrafts['min'], regional_aircrafts['max'] - regional_aircrafts['mean']]
 
 #linear regression for all aircraft to see how overall structural efficiency has increased.
 x_all = new_aircrafts['YOI'].astype(np.int64)
@@ -270,4 +278,44 @@ ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 plt.savefig('exit_limit_vs_year.png')
+
+# Real seats
+fig = plt.figure(dpi=300)
+ax = fig.add_subplot(1, 1, 1)
+
+ax.errorbar(large_aircrafts['YOI'], large_aircrafts['mean'],yerr= errors_large,fmt='s',markersize=5,color='orange', label='Widebody')
+ax.errorbar(medium_aircrafts['YOI'], medium_aircrafts['mean'],yerr= errors_medium,fmt='^',markersize=5,color='blue', label='Narrowbody')
+ax.errorbar(regional_aircrafts['YOI'], regional_aircrafts['mean'],yerr= errors_regional,fmt='o',markersize=5,color='darkred', label='Regional Jets')
+
+#ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
+#for i, row in large_aircrafts.iterrows():
+    #plt.annotate(row['Name'], (row['YOI'], row['mean']),
+     #            fontsize=6, xytext=(-10, 5), textcoords='offset points')
+
+ax.legend(loc='upper left')
+# Add a legend to the plot
+ax.legend()
+
+#Arrange plot size
+plt.ylim(0, 500)
+plt.xlim(1955, 2020)
+#plt.xticks(np.arange(1955, 2024, 10))
+
+# Set the x and y axis labels
+ax.set_xlabel('Year')
+ax.set_ylabel('OEW[kg]/Pax Exit Limit')
+
+ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
+ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
+ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
+# Set the plot title
+#ax.set_title('Overall Efficiency')
+plt.savefig('oew_per_seat.png')
 plt.show()
+
+
+
+
+
+
+
