@@ -2,14 +2,14 @@ import pandas as pd
 from tools import dict
 import numpy as np
 import matplotlib.pyplot as plt
+from tools import plot
 
 #Dictionary containing engines substitutes, if one engine is not available
 substitutes = dict.Substitutes().engine_substitute()
-path = r'C:\Users\PRohr\Desktop\Masterarbeit\Python\icao_cruise_emissions.xlsx'
-path2 = r'C:\Users\PRohr\Desktop\Masterarbeit\Data\Aircraft Databank v2.xlsx'
+path = 'output/icao_cruise_emissions.xlsx'
+path2 = '../overall/data/Aircraft Databank v2.xlsx'
 icao_emissions = pd.read_excel(path)
 aircraft_data = pd.read_excel(path2, sheet_name='New Data Entry')
-
 
 aircraft_data = aircraft_data.loc[aircraft_data['Check']=='Yes']
 aircraft_data['Engine'] = aircraft_data['Engine'].replace(substitutes)
@@ -49,8 +49,8 @@ grouped_nan_2['TSFC Cruise']= grouped_nan_2['Engine TSFC cruise [g/kNs]']
 grouped_nan_2 = grouped_nan_2.drop('Engine TSFC cruise [g/kNs]', axis=1)
 
 grouped = grouped_notna.append(grouped_nan_2)
-all = grouped
 grouped = grouped.dropna(subset='Final Test Date').reset_index()
+all =grouped
 
 #__________MERGE DATAFRAME ALL BACK TO THE AIRCRAFTS________________
 
@@ -61,14 +61,15 @@ aircraft_data['Engine'] = aircraft_data['Engine'].replace(substitutes)
 abc = aircraft_data.merge(all, on='Engine')
 abc = abc.groupby(['Name'], as_index=False).agg({'TSFC Cruise':'mean', 'YOI':'mean'})
 
-engine = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Data Extraction 2.xlsx", sheet_name='Figure 3')
+engine = pd.read_excel("../overall/data/Data Extraction 2.xlsx", sheet_name='Figure 3')
 engine_large = engine.iloc[:, 8:11]
 engine_large.columns = engine_large.iloc[0]
 engine_large = engine_large[1:]
 #babikian = babikian.loc[babikian['Still in new Metric']=='Yes']
 
 all = engine_large.append(abc)
-all.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\engine_efficiency.xlsx')
+all.to_excel('output/engine_efficiency.xlsx')
+
 # Print the resulting dataframe
 #-------------------YEAR vs TSFC CRUISE-------------------------
 
@@ -76,29 +77,23 @@ y = grouped['TSFC Cruise']
 x = grouped['Final Test Date']
 
 fig = plt.figure(dpi=120)
-# Add a subplot
 ax = fig.add_subplot(1, 1, 1)
 
 ax.scatter(x,y, label='Cruise TSFC')
-
 for i, row in grouped.iterrows():
     plt.annotate(row['Engine'], (row['Final Test Date'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
 
-
-#ax.plot(years, p(years), label='Average')
-
 ax.legend()
+xlabel = 'Year'
+ylabel = 'Cruise TSFC (g/kNs)'
+plot.plot_layout(None, xlabel, ylabel,ax)
+plt.savefig('output/tsfc_per_engine.png')
 
-#plt.savefig('tsfc_per_engine.png')
-
-plt.show()
 
 # Print the resulting dataframe
 #-------------------YEAR vs TSFC CRUISE for AIRCRAFTS-------------------------
 
 fig = plt.figure(dpi=300)
-
-# Add a subplot
 ax = fig.add_subplot(1, 1, 1)
 
 x_all = all['YOI'].astype(np.int64)
@@ -111,19 +106,15 @@ p_all = np.poly1d(z_all)
 ax.scatter(engine_large['YOI'], engine_large['TSFC Cruise'],color='red', marker='s', label='Babikian')
 ax.scatter(abc['YOI'], abc['TSFC Cruise'], color='blue',marker='^', label='ICAO ')
 #ax.plot(years, p_all(years),color='purple')
-
 #for i, row in babikian.iterrows():
     #plt.annotate(row['Name'], (row['YOI'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
 #for i, row in abc.iterrows():
     #plt.annotate(row['Name'], (row['YOI'], row['TSFC Cruise']),fontsize=6, xytext=(-8, 5), textcoords='offset points')
 ax.legend()
-ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
+
+xlabel = 'Year'
+ylabel = 'Cruise TSFC (g/kNs)'
+plot.plot_layout(None, xlabel, ylabel,ax)
 plt.xlim(1955, 2024)
 plt.xticks(np.arange(1955, 2024, 10))
-ax.set_xlabel('Year')
-ax.set_ylabel('Cruise TSFC (g/kNs)')
-plt.savefig('Cruise_TSFC.png')
-
-plt.show()
+plt.savefig('output/Cruise_TSFC.png')
