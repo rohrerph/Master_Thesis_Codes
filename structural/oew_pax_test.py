@@ -4,27 +4,22 @@ import matplotlib.pyplot as plt
 from tools import aircraft_type
 from tools import plot
 
-savefig = False
+savefig = True
 plotfig = False
 
-new_aircrafts = aircraft_type.type()
-new_aircrafts['Name'] = new_aircrafts['Name'].str.strip()
-seats = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Data\seats.xlsx')
-
-new_aircrafts = new_aircrafts.merge(seats, left_on='Name', right_on='Description')
-
-
-medium_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Narrow')]
-large_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Wide')]
-regional_aircrafts = new_aircrafts.loc[(new_aircrafts['Type']=='Regional')]
-
-errors_large = [large_aircrafts['mean'] - large_aircrafts['min'], large_aircrafts['max'] - large_aircrafts['mean']]
-errors_medium = [medium_aircrafts['mean'] - medium_aircrafts['min'], medium_aircrafts['max'] - medium_aircrafts['mean']]
-errors_regional = [regional_aircrafts['mean'] - regional_aircrafts['min'], regional_aircrafts['max'] - regional_aircrafts['mean']]
+aircrafts = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx')
+aircrafts.loc[aircrafts['Exit Limit'] < 100, 'Type'] = 'Regional'
+aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
+aircrafts['OEW/MTOW_2'] = aircrafts['OEW'] / aircrafts['MTOW']
+aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx')
+aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])
+medium_aircrafts = aircrafts.loc[(aircrafts['Type']=='Narrow')]
+large_aircrafts = aircrafts.loc[(aircrafts['Type']=='Wide')]
+regional_aircrafts = aircrafts.loc[(aircrafts['Type']=='Regional')]
 
 #linear regression for all aircraft to see how overall structural efficiency has increased.
-x_all = new_aircrafts['YOI'].astype(np.int64)
-y_all = new_aircrafts['OEW/Pax'].astype(np.float64)
+x_all = aircrafts['YOI'].astype(np.int64)
+y_all = aircrafts['OEW/Exit Limit'].astype(np.float64)
 z_all = np.polyfit(x_all,  y_all, 1)
 intercept = z_all[1]
 slope = z_all[0]
@@ -50,11 +45,11 @@ writer.save()
 
 years = pd.Series(range(1955, 2024))
 x_large = large_aircrafts['YOI'].astype(np.int64)
-y_large = large_aircrafts['OEW/Pax'].astype(np.float64)
+y_large = large_aircrafts['OEW/Exit Limit'].astype(np.float64)
 z_large = np.polyfit(x_large,  y_large, 1)
 p_large = np.poly1d(z_large)
 x_medium = medium_aircrafts['YOI'].astype(np.int64)
-y_medium = medium_aircrafts['OEW/Pax'].astype(np.float64)
+y_medium = medium_aircrafts['OEW/Exit Limit'].astype(np.float64)
 z_medium = np.polyfit(x_medium,  y_medium, 1)
 p_medium = np.poly1d(z_medium)
 
@@ -67,13 +62,13 @@ y_label = 'OEW/MTOW'
 x_label = 'OEW[kt]'
 
 oew = pd.Series(range(0, 200000))
-z = np.polyfit(new_aircrafts['OEW'],  new_aircrafts['OEW/MTOW'], 1)
+z = np.polyfit(aircrafts['OEW'],  aircrafts['OEW/MTOW_2'], 1)
 p = np.poly1d(z)
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
-ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/MTOW'], marker='s',color='orange', label='Widebody')
-ax.scatter(medium_aircrafts['OEW']/1000, medium_aircrafts['OEW/MTOW'], marker='^',color='blue', label='Narrowbody')
-ax.scatter(regional_aircrafts['OEW']/1000, regional_aircrafts['OEW/MTOW'], marker='o',color='darkred', label='Regional Jets')
+ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/MTOW_2'], marker='s',color='orange', label='Widebody')
+ax.scatter(medium_aircrafts['OEW']/1000, medium_aircrafts['OEW/MTOW_2'], marker='^',color='blue', label='Narrowbody')
+ax.scatter(regional_aircrafts['OEW']/1000, regional_aircrafts['OEW/MTOW_2'], marker='o',color='darkred', label='Regional Jets')
 ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
 #for i, row in new_aircrafts.iterrows():
     #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
@@ -88,7 +83,7 @@ plot.plot_layout(None, x_label, y_label, ax)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:
-    plt.savefig('oewmtow_vs_oew.png')
+    plt.savefig('Graphs\oewmtow_vs_oew.png')
 
 #_______PLOT OEW/EXITLIMIT WIDEBODY________
 
@@ -99,11 +94,11 @@ x_label = 'Year'
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
 
-ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
+ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
 ax.plot(x_large, p_large(x_large), color='orange', label='Linear Regression Narrow')
 
 for i, row in large_aircrafts.iterrows():
-    plt.annotate(row['Name'], (row['YOI'], row['OEW/Pax']),
+    plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
                  fontsize=6, xytext=(-10, 5),
                  textcoords='offset points')
 
@@ -116,7 +111,7 @@ ax.legend()
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:
-    plt.savefig('widebody_aircrafts.png')
+    plt.savefig('Graphs\widebody_aircrafts.png')
 
 
 
@@ -128,15 +123,15 @@ fig = plt.figure(dpi=300)
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
 
-ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Pax'], marker='o',color='darkred', label='Regional Jets')
-ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Pax'], marker='^',color='blue', label='Narrowbody')
+ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
+ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Exit Limit'], marker='^',color='blue', label='Narrowbody')
 ax.plot(x_medium, p_medium(x_medium), color='blue', label='Linear Regression Narrow')
 for i, row in medium_aircrafts.iterrows():
-    plt.annotate(row['Name'], (row['YOI'], row['OEW/Pax']),
+    plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
                  fontsize=6, xytext=(-10, 5),
                  textcoords='offset points')
 for i, row in regional_aircrafts.iterrows():
-    plt.annotate(row['Name'], (row['YOI'], row['OEW/Pax']),
+    plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
                  fontsize=6, xytext=(-10, 5),
                  textcoords='offset points')
 
@@ -157,20 +152,20 @@ ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:
-    plt.savefig('mediumaircrafts.png')
+    plt.savefig('Graphs\mediumaircrafts.png')
 
 #_______PLOT EXITLIMIT VS OEW________
 
 fig = plt.figure(dpi=300)
 
 oew = pd.Series(range(0, 200000))
-z = np.polyfit(new_aircrafts['OEW'],  new_aircrafts['OEW/Pax'], 1)
+z = np.polyfit(aircrafts['OEW'],  aircrafts['OEW/Exit Limit'], 1)
 p = np.poly1d(z)
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
-ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
-ax.scatter(medium_aircrafts['OEW']/1000, medium_aircrafts['OEW/Pax'], marker='^',color='blue', label='Narrowbody')
-ax.scatter(regional_aircrafts['OEW']/1000, regional_aircrafts['OEW/Pax'], marker='o',color='darkred', label='Regional Jets')
+ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
+ax.scatter(medium_aircrafts['OEW']/1000, medium_aircrafts['OEW/Exit Limit'], marker='^',color='blue', label='Narrowbody')
+ax.scatter(regional_aircrafts['OEW']/1000, regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
 ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
 #for i, row in new_aircrafts.iterrows():
     #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
@@ -197,21 +192,21 @@ ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:
-    plt.savefig('exit_limit_vs_oew.png')
+    plt.savefig('Graphs\exit_limit_vs_oew.png')
 
 #_______PLOT EXITLIMIT VS OEW________
 
 fig = plt.figure(dpi=300)
 
 range = pd.Series(range(0, 16000))
-new_aircrafts = new_aircrafts.dropna(subset='Range')
-z = np.polyfit(new_aircrafts['Range'],  new_aircrafts['OEW/MTOW'], 1)
+aircrafts = aircrafts.dropna(subset='Range')
+z = np.polyfit(aircrafts['Range'],  aircrafts['OEW/MTOW_2'], 1)
 p = np.poly1d(z)
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
-ax.scatter(large_aircrafts['Range'], large_aircrafts['OEW/MTOW'], marker='s',color='orange', label='Widebody')
-ax.scatter(medium_aircrafts['Range'], medium_aircrafts['OEW/MTOW'], marker='^',color='blue', label='Narrowbody')
-ax.scatter(regional_aircrafts['Range'], regional_aircrafts['OEW/MTOW'], marker='o',color='darkred', label='Regional Jets')
+ax.scatter(large_aircrafts['Range'], large_aircrafts['OEW/MTOW_2'], marker='s',color='orange', label='Widebody')
+ax.scatter(medium_aircrafts['Range'], medium_aircrafts['OEW/MTOW_2'], marker='^',color='blue', label='Narrowbody')
+ax.scatter(regional_aircrafts['Range'], regional_aircrafts['OEW/MTOW_2'], marker='o',color='darkred', label='Regional Jets')
 ax.plot(range, p(range),color='turquoise', label='Linear Regression')
 #for i, row in new_aircrafts.iterrows():
     #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
@@ -238,7 +233,7 @@ ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 if savefig:
-    plt.savefig('range_vs_mtow.png')
+    plt.savefig('Graphs/range_vs_mtow.png')
 if plotfig:
     plt.show()
 
@@ -250,9 +245,9 @@ fig = plt.figure(dpi=300)
 
 # Add a subplot
 ax = fig.add_subplot(1, 1, 1)
-ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
-ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Pax'], marker='^',color='blue', label='Narrowbody')
-ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Pax'], marker='o',color='darkred', label='Regional Jets')
+ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
+ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Exit Limit'], marker='^',color='blue', label='Narrowbody')
+ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
 ax.plot(x_all, p_all(x_all), color='black', label='Linear Regression')
 #ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
 #for i, row in new_aircrafts.iterrows():
@@ -277,45 +272,4 @@ ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
 ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
-plt.savefig('exit_limit_vs_year.png')
-
-# Real seats
-fig = plt.figure(dpi=300)
-ax = fig.add_subplot(1, 1, 1)
-
-ax.errorbar(large_aircrafts['YOI'], large_aircrafts['mean'],yerr= errors_large,fmt='s',markersize=5,color='orange', label='Widebody')
-ax.errorbar(medium_aircrafts['YOI'], medium_aircrafts['mean'],yerr= errors_medium,fmt='^',markersize=5,color='blue', label='Narrowbody')
-ax.errorbar(regional_aircrafts['YOI'], regional_aircrafts['mean'],yerr= errors_regional,fmt='o',markersize=5,color='darkred', label='Regional Jets')
-
-#ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
-#for i, row in large_aircrafts.iterrows():
-    #plt.annotate(row['Name'], (row['YOI'], row['mean']),
-     #            fontsize=6, xytext=(-10, 5), textcoords='offset points')
-
-ax.legend(loc='upper left')
-# Add a legend to the plot
-ax.legend()
-
-#Arrange plot size
-plt.ylim(0, 500)
-plt.xlim(1955, 2020)
-#plt.xticks(np.arange(1955, 2024, 10))
-
-# Set the x and y axis labels
-ax.set_xlabel('Year')
-ax.set_ylabel('OEW[kg]/Pax Exit Limit')
-
-ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
-# Set the plot title
-#ax.set_title('Overall Efficiency')
-plt.savefig('oew_per_seat.png')
-plt.show()
-
-
-
-
-
-
-
+plt.savefig('Graphs/exit_limit_vs_year.png')
