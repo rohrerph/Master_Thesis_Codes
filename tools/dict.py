@@ -159,7 +159,8 @@ class AircraftNames:
                          'B747-400':'Boeing 747-400',
                          'MD11':'McDonnell Douglas MD-11',
                          'B737-500/600':'Boeing 737-500',
-                         'B777': 'Boeing 777-200ER/200LR/233LR'}
+                         'B777': 'Boeing 777-200ER/200LR/233LR',
+                              'B707-100B/300': 'B707-100B/300'}
 
     def get_aircraftnames(self):
         return self.aircraftnames

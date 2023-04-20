@@ -15,7 +15,7 @@ T100 = pd.DataFrame()
 
 # Get a list of all files in the folder
 file_list = os.listdir('data/T100_Annual')
-aircraft = pd.read_excel('data/Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+aircraft = pd.read_excel('data/Databank.xlsx')
 
 # Loop through each file and read it into a dataframe, and append to the combined dataframe
 for file_name in file_list:
@@ -48,4 +48,4 @@ aircraft['Name'] = aircraft['Name'].str.strip()
 aircraft = pd.merge(aircraft, average_seats, left_on='Name', right_on='Description', how='left')
 aircraft = aircraft.rename(columns={'Average Seats': 'Pax'})
 aircraft = aircraft.drop(columns=['Description'])
-aircraft.to_excel('../overall/data/Aircraft Databank v3.xlsx')
+aircraft.to_excel('data/Databank.xlsx')

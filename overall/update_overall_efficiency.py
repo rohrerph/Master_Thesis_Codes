@@ -9,11 +9,13 @@ airplanes_dict = dict.AirplaneModels().get_models()
 aircraftnames = dict.AircraftNames().get_aircraftnames()
 airplanes = airplanes_dict.keys()
 airlines = dict.USAirlines().get_airlines()
+fullnames = dict.fullname().get_aircraftfullnames()
 
 #Read Data
 T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\T_SCHEDULE_T2.csv")
-AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\L_AIRCRAFT_TYPE (1).csv")
-overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Data Extraction 2.xlsx", sheet_name='Figure 2')
+AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\L_AIRCRAFT_TYPE (1).csv")
+overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Data Extraction 2.xlsx", sheet_name='Figure 2')
+aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
 
 #Prepare Data from schedule T2
 T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
@@ -89,7 +91,7 @@ ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
 # Set the plot title
 #ax.set_title('Overall Efficiency')
 
-plt.savefig('OverallEfficiency_1955_2020.png')
+plt.savefig(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\output\ovr_efficiency.png")
 
 plt.show()
 
@@ -97,7 +99,7 @@ plt.show()
 doubled = doubled[['Description','Year', 'MJ/ASK mixed']]
 airplanes_release_year = airplanes_release_year[['Description','YOI','MJ/ASK']]
 
-writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\overallefficiency.xlsx")
+writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\output\ovr_efficiency.xlsx")
 
 # Write each DataFrame to a different sheet
 doubled.to_excel(writer, sheet_name='USDOTandBABIKIAN', index=False)
@@ -107,3 +109,15 @@ overall_large.to_excel(writer, sheet_name='BABIKIAN', index=False)
 # Save the Excel file
 writer.save()
 
+doubled = doubled.rename(columns={'Description':'Label', 'Year': 'Year', 'MJ/ASK mixed': 'EU (MJ/ASK)'})
+airplanes_release_year = airplanes_release_year.rename(columns={'Description':'Label', 'YOI': 'Year', 'MJ/ASK':'EU (MJ/ASK)'})
+
+ovr_eff = pd.concat([doubled, airplanes_release_year, overall_large])
+ovr_eff['Label'] = ovr_eff['Label'].replace(fullnames)
+
+ovr_eff['Label'] = ovr_eff['Label'].str.strip()
+aircraft_database['Name'] = aircraft_database['Name'].str.strip()
+
+aircraft_database = aircraft_database.merge(ovr_eff, left_on='Name', right_on='Label', how='left')
+aircraft_database = aircraft_database.drop(columns=['Label', 'Year'])
+aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx')
