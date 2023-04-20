@@ -185,3 +185,54 @@ class B737_family:
                       '737-900ER']
     def get_b737(self):
         return self.b737
+
+class fullname:
+    def __init__(self):
+        self.aircraftfullnames = {
+                                "Airbus Industrie A300-600/R/CF/RCF": "A300-600",
+                                "Airbus Industrie A319": "A319",
+                                "Airbus Industrie A320-100/200": "A320-100/200",
+                                "Airbus Industrie A321/Lr": "A321/Lr",
+                                "Airbus Industrie A330-200": "A330-200",
+                                "Airbus Industrie A330-300/333": "A330-300/333",
+                                "Airbus Industrie A330-900": "A330-900",
+                                "B787-800 Dreamliner": "B787-800 Dreamliner",
+                                "B787-900 Dreamliner": "B787-900 Dreamliner",
+                                "Boeing 717-200": "717-200",
+                                "Boeing 727-200/231A": "B727-200/231A",
+                                "Boeing 737-100/200": "B737-100/200",
+                                "Boeing 737-300": "B737-300",
+                                "Boeing 737-400": "B737-400",
+                                "Boeing 737-500": "B737-500/600",
+                                "Boeing 737-700/700LR/Max 7": "737-700/700LR/Max 7",
+                                "Boeing 737-800": "737-800",
+                                "Boeing 737-900": "737-900",
+                                "Boeing 737-900ER": "737-900ER",
+                                "Boeing 747-100": "747-100",
+                                "Boeing 747-200/300": "B747-200/300",
+                                "Boeing 747-400": "B747-400",
+                                "Boeing 757-200": "B757-200",
+                                "Boeing 757-300": "757-300",
+                                "Boeing 767-200/ER/EM": "B767-200/ER/EM",
+                                "Boeing 767-300/300ER": "B767-300/300ER",
+                                "Boeing 767-400/ER": "767-400/ER",
+                                "Boeing 777-200ER/200LR/233LR": "B777",
+                                "Boeing 777-300/300ER/333ER": "777-300/300ER/333ER",
+                                "Boeing 787-10 Dreamliner": "787-10 Dreamliner",
+                                "Boeing B737 Max 800": "B737 Max 800",
+                                "Boeing B737 Max 900": "B737 Max 900",
+                                "Canadair RJ-200ER /RJ-440": "RJ-200ER /RJ-440",
+                                "Canadair RJ-700": "RJ-700",
+                                "Embraer 190": "Embraer 190",
+                                "Embraer ERJ-175": "Embraer ERJ-175",
+                                "Embraer-145": "Embraer-145",
+                                "Lockheed L-1011-1/100/200": "L1011-1/100/200",
+                                "McDonnell Douglas DC-10-10": "DC10-10",
+                                "McDonnell Douglas DC-10-30": "DC10-30",
+                                "McDonnell Douglas DC-10-40": "DC10-40",
+                                "McDonnell Douglas DC-9-30": "DC9-30",
+                                "McDonnell Douglas DC9 Super 80/MD81/82/83/88": "MD80/DC9-80",
+                                "McDonnell Douglas MD-11": "MD-11",
+                                "McDonnell Douglas MD-90": "MD-90"}
+    def get_aircraftfullnames(self):
+        return self.aircraftfullnames
