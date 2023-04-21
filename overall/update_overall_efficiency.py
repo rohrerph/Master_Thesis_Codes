@@ -22,10 +22,13 @@ T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
 
 fleet_avg_year= T2.groupby(['YEAR']).agg({'GAL/ASM':'median', 'GAL/RPM':'median'})
 
-AC_type = T2.groupby(['Description']).agg({'GAL/ASM':'median', 'GAL/RPM':'median'})
+AC_type = T2.groupby(['Description']).agg({'GAL/ASM':'median', 'GAL/RPM':'median', 'Fuel Flow [kg/s]':'mean'})
+
 
 airplanes_release_year = pd.DataFrame({'Description': list(airplanes), 'YOI': list(airplanes_dict.values())})
 airplanes_release_year = pd.merge(AC_type, airplanes_release_year, on='Description')
+fuelflow = airplanes_release_year[['Description', 'Fuel Flow [kg/s]']]
+fuelflow.loc[:, 'Description'] = fuelflow['Description'].replace(fullnames)
 #change GAL/ASM to MJ/ASK
 mj = 142.2 # 142.2 MJ per Gallon of kerosene
 km = 1.609344 #miles
@@ -45,7 +48,6 @@ overall_large = overall.iloc[:, 0:3]
 overall_large.columns = overall_large.iloc[0]
 overall_large = overall_large[1:].dropna()
 overall_large['Label'] = overall_large['Label'].map(aircraftnames)
-
 
 #which data is in both dataframes?
 doubled = pd.merge(overall_large, airplanes_release_year, left_on=['Label','Year'], right_on=['Description', 'YOI'])
@@ -119,5 +121,6 @@ ovr_eff['Label'] = ovr_eff['Label'].str.strip()
 aircraft_database['Name'] = aircraft_database['Name'].str.strip()
 
 aircraft_database = aircraft_database.merge(ovr_eff, left_on='Name', right_on='Label', how='left')
-aircraft_database = aircraft_database.drop(columns=['Label', 'Year'])
+aircraft_database = aircraft_database.merge(fuelflow, left_on='Name', right_on='Description', how='left')
+aircraft_database = aircraft_database.drop(columns=['Label', 'Year', 'Description'])
 aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx', index=False)

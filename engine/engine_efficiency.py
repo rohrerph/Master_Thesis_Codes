@@ -9,16 +9,16 @@ from to_vs_cruise_sfc import cruise_calibration
 
 path = r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx'
 aircraft_database = pd.read_excel(path)
+substitutes = dict.Substitutes().engine_substitute()
+aircraft_database['Engine'] = aircraft_database['Engine'].replace(substitutes)
 
 def get_icao_params(aircraft_database):
-    substitutes = dict.Substitutes().engine_substitute()
     path = r'C:\Users\PRohr\Desktop\Masterarbeit\Python\engine\output\icao_cruise_emissions.xlsx'
     icao_emissions = pd.read_excel(path)
-    aircraft_data = aircraft_database.loc[aircraft_database['Check'] == 'Yes']
-    aircraft_data = aircraft_data.loc[aircraft_data['Babikian'] == 'No']
-    aircraft_data['Engine'] = aircraft_data['Engine'].replace(substitutes)
-    ind_engines = aircraft_data.drop_duplicates(subset='Engine')
-    engine_list = list(ind_engines['Engine'])
+    aircraft_data = aircraft_database.loc[aircraft_database['Babikian'] == 'No']
+    #aircraft_data = aircraft_database.loc[aircraft_database['Check'] == 'Yes']
+    ind_engines = aircraft_data['Engine'].drop_duplicates(keep='first').dropna()
+    engine_list = list(ind_engines)
     # Create an empty dataframe to store the results
     grouped = pd.DataFrame(columns=['Engine',  'Final Test Date', 'B/P Ratio', 'Pressure Ratio',
            'Rated Thrust (kN)', 'TSFC Cruise'])
