@@ -11,7 +11,7 @@ aircrafts = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\d
 aircrafts.loc[aircrafts['Exit Limit'] < 100, 'Type'] = 'Regional'
 aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
 aircrafts['OEW/MTOW_2'] = aircrafts['OEW'] / aircrafts['MTOW']
-aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx')
+aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx',  index=False)
 aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])
 medium_aircrafts = aircrafts.loc[(aircrafts['Type']=='Narrow')]
 large_aircrafts = aircrafts.loc[(aircrafts['Type']=='Wide')]

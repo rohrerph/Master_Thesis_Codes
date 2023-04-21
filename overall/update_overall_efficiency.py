@@ -120,4 +120,4 @@ aircraft_database['Name'] = aircraft_database['Name'].str.strip()
 
 aircraft_database = aircraft_database.merge(ovr_eff, left_on='Name', right_on='Label', how='left')
 aircraft_database = aircraft_database.drop(columns=['Label', 'Year'])
-aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx')
+aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Databank.xlsx', index=False)

@@ -1,6 +1,6 @@
 import pandas as pd
 def type():
-    my_value = True
+    my_value = False
     new_aircrafts = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Aircraft Databank v2.xlsx",sheet_name='New Data Entry')
     babikian = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Aircraft Databank v2.xlsx",sheet_name='Data Table')
     # Data retrieved by me from Janes all Aircrafts and Manufacturers website.
@@ -16,7 +16,7 @@ def type():
     new_aircrafts['OEW/Pax'] = new_aircrafts['OEW'] / new_aircrafts['Exit Limit']
     new_aircrafts['OEW/MTOW'] = new_aircrafts['OEW'] / new_aircrafts['MTOW']
     new_aircrafts = new_aircrafts.append(babikian)
-    new_aircrafts = new_aircrafts.dropna(subset='OEW/MTOW')
+    #new_aircrafts = new_aircrafts.dropna(subset='OEW/MTOW')
 
     new_aircrafts.loc[new_aircrafts['Exit Limit'] < 100, 'Type'] = 'Regional'
 

@@ -8,7 +8,6 @@ airplanes_dict = dict.AirplaneModels().get_models()
 airplanes = airplanes_dict.keys()
 airlines = dict.USAirlines().get_airlines()
 
-
 T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\T_SCHEDULE_T2.csv")
 AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\L_AIRCRAFT_TYPE (1).csv")
 T2 = T2.dropna(subset = ['AVL_SEAT_MILES_320','REV_PAX_MILES_140','AIRCRAFT_FUELS_921'])
