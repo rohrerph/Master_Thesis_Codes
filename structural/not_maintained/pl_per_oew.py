@@ -1,7 +1,5 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from tools import aircraft_type
+from structural.not_maintained import aircraft_type
 from tools import plot
 
 new_aircrafts = aircraft_type.type()
