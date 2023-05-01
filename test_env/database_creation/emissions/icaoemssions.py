@@ -6,7 +6,7 @@ import numpy as np
 
 def calculate(z):
     # DATAFRAME PREPARATION
-    emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\emissions\edb-emissions-databank_v29 (web).xlsx', sheet_name='Gaseous Emissions and Smoke')
+    emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\edb-emissions-databank_v29 (web).xlsx', sheet_name='Gaseous Emissions and Smoke')
     emissions_df['TSFC T/O']= emissions_df['Fuel Flow T/O (kg/sec)']/emissions_df['Rated Thrust (kN)']*1000
 
     emissions_df['Final Test Date']= pd.to_datetime(emissions_df['Final Test Date'])
@@ -18,7 +18,7 @@ def calculate(z):
     poly = lambda x: z[0]*x + z[1]
 
     yearly_emissions['TSFC Cruise'] = yearly_emissions['TSFC T/O'].apply(poly)
-    yearly_emissions.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\emissions\icao_cruise_emissions.xlsx')
+    yearly_emissions.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\icao_cruise_emissions.xlsx')
 
     #-------------------TSFC-------------------------
     x = yearly_emissions['Final Test Date']

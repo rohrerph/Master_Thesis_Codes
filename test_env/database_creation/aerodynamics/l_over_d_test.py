@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 def calculate(savefig):
     #Dictionary containing engines substitutes, if one engine is not available
     aircraft_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
-    lift_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\aerodynamics\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
+    lift_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
     aircraft_data = aircraft_data.merge(lift_data, on='Name', how='left')
 
     # factor Beta which accounts for the weight fraction burnt in non cruise phase

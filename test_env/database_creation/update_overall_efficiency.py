@@ -14,11 +14,11 @@ def calculate(savefig):
        fullnames = dict.fullname().get_aircraftfullnames()
 
        #Read Data
-       T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\T_SCHEDULE_T2.csv")
-       AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\L_AIRCRAFT_TYPE (1).csv")
-       overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\overall\data\Data Extraction 2.xlsx", sheet_name='Figure 2')
-       aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
-       historic_slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
+       T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T_SCHEDULE_T2.csv")
+       AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
+       overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 2')
+       aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+       historic_slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
 
        #Prepare Data from schedule T2
        T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
@@ -115,8 +115,7 @@ def calculate(savefig):
        aircraft_database = aircraft_database.merge(fuelflow, left_on='Name', right_on='Description', how='left')
        aircraft_database = aircraft_database.drop(columns=['Label', 'Year', 'Description'])
        aircraft_database = aircraft_database[['Company', 'Name', 'YOI', 'TSFC (mg/Ns)', 'L/Dmax',
-              'OEW/MTOW', 'Type', 'Exit Limit', 'OEW','MTOW','Engine TSFC cruise [g/kNs]', 'Source cruise TSFC',
-              'Engine TSFC take off [g/kNs]', 'Source TO TSFC',
+              'OEW/MTOW', 'Type', 'Exit Limit', 'OEW','MTOW',
               'Babikian', 'Composites', 'EU (MJ/ASK)', 'Fuel Flow [kg/s]']]
        aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 

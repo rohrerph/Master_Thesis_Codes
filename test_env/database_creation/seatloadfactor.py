@@ -15,9 +15,9 @@ def calculate():
     airplane_types = pd.DataFrame({'Description': list(airplane_types.keys()), 'Type': list(airplane_types.values())})
 
     #Read Data, T2 is data from the US back to 1990, historic_slf contains data from the ICAO worldwide back to 1950
-    T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\T_SCHEDULE_T2.csv")
-    AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\L_AIRCRAFT_TYPE (1).csv")
-    historic_slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Data\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
+    T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T_SCHEDULE_T2.csv")
+    AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
+    historic_slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
     historic_slf = historic_slf.dropna(subset='PLF').reset_index()
     historic_slf['PLF'] = historic_slf['PLF'].str.replace(',', '.').astype(float)
 
@@ -96,7 +96,7 @@ def calculate():
 
 
 
-    writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\operationalefficiency.xlsx")
+    writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\operationalefficiency.xlsx")
 
     # Write each DataFrame to a different sheet
     historic_slf.to_excel(writer, sheet_name='Worldwide', index=False)
