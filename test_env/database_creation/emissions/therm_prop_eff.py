@@ -11,9 +11,11 @@ def calculate(savefig):
     flight_speed = 240 #m/s
 
     #use metric from the book Aircraft Propulsion and Gas Turbine Engines per turbine
-    data['Air Mass Core'] = data['Air Mass Flow [kg/s]']/data['Bypass ratio,float,None']
+    data['Air Mass Core'] = data['Air Mass Flow [kg/s]']/data['B/P Ratio']
     data['Air Mass Fan'] = data['Air Mass Flow [kg/s]'] - data['Air Mass Core']
     data['f'] = data['Fuel Flow [kg/s]']/(data['Air Mass Core']*data['engineCount'])
+    # neglect the weight of the fuel mass flow when it is not given.
+    data['f'].fillna(0, inplace=True)
 
     data['Overcome Thrust'] = data['Engine Efficiency']*data['Fuel Flow [kg/s]']*43.6*10**6/flight_speed
     data['Velocity Fan'] = (0.75*data['Overcome Thrust'])/(data['engineCount']*data['Air Mass Fan']) + flight_speed
@@ -26,8 +28,8 @@ def calculate(savefig):
     #I think there must be some sort of a rule, as for small BPR this formula seems invalid , maybe a scaling factor for BPR < 4 ?
     data['thermal_eff'] = data['Engine Efficiency']/data['prop_eff']
     abc = data.loc[data['Bypass ratio,float,None']<=2]
-    data.loc[data['Bypass ratio,float,None']<=2, 'thermal_eff'] = np.nan
-    data.loc[data['Bypass ratio,float,None']<=2, 'prop_eff'] = np.nan
+    data.loc[data['B/P Ratio']<=2, 'thermal_eff'] = np.nan
+    data.loc[data['B/P Ratio']<=2, 'prop_eff'] = np.nan
     data = data.drop(columns=['nominator', 'denominator', 'Velocity Fan', 'Velocity Core', 'Air Mass Core', 'Air Mass Core', 'f', 'Overcome Thrust'])
     #method from Kurzke seems to be less accurate, simply calculating exhaust valocity
     data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)

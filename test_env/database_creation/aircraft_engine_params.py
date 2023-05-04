@@ -2,7 +2,7 @@ import pandas as pd
 import math
 from test_env.tools import dict
 
-def calculate():
+def calculate(air_density,flight_vel):
     #load dictionaries
     airplanes_dict = dict.aircraftdata().get_aircraftsfromdatabase()
     airplanes = airplanes_dict.keys()
@@ -30,17 +30,17 @@ def calculate():
     engines = engines.replace(properties_dict)
     engines2 = engines.pivot(columns='property',values='value')
     engines = engines.join(engines2)
-    engines = engines.loc[engines['engineFamily']=='turbofan']
+    engines = engines.loc[engines['engineFamily'].isin(['turbofan','turboprop'])]
     #sort for relevant entries:
     parameters= ['id',
                  'engineFamily',
                  'manufacturer',
                  'name',
+                 'Dry weight,integer,kilogram',
                  'Bypass ratio,float,None',
                  'Compression ratio,float,None',
                  'Compressor stages,integer,None',
                  'Cooling system,string,None',
-                 'Dry weight,integer,kilogram',
                  'Fan blades,integer,None',
                  'Fan diameter,float,metre',
                  'Max. continuous power,integer,kilowatt',
@@ -84,28 +84,27 @@ def calculate():
            'MZFW,integer,kilogram',
            'Maximum operating altitude,integer,foot',
            'Wing area,float,square-metre',
-           'Wingspan,float,metre', 'name_x_y','name_y_y',
+           'Wingspan,float,metre','Wingspan (winglets),float,metre', 'name_x_y','name_y_y',
             'engineFamily', 'Bypass ratio,float,None', 'Overall pressure ratio,float,None',
            'Dry weight,integer,kilogram',
            'Fan diameter,float,metre']
     models2 = models2[parameters]
-
-
     models3 = models2.loc[models2['name_x_x'].isin(airplanes)]
     models3['name_x_x'] = models3['name_x_x'].map(airplanes_dict)
+    models3['Wingspan (winglets),float,metre'].fillna(models3['Wingspan,float,metre'], inplace=True)
+    models3['Wingspan,float,metre'] = models3['Wingspan (winglets),float,metre']
+    models3 = models3.drop(columns='Wingspan (winglets),float,metre')
     icao = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\icao_cruise_emissions.xlsx')
-    icao = icao[['Engine Identification', 'TSFC Cruise', 'Final Test Date']]
-    icao = icao.groupby(['Engine Identification'], as_index=False).agg({'TSFC Cruise':'mean', 'Final Test Date':'min'})
+    icao = icao[['Engine Identification', 'TSFC Cruise', 'Final Test Date', 'B/P Ratio', 'Pressure Ratio', 'TSFC T/O']]
+    icao = icao.groupby(['Engine Identification'], as_index=False).agg({'TSFC T/O':'mean','TSFC Cruise':'mean', 'Final Test Date':'min', 'B/P Ratio':'mean', 'Pressure Ratio':'mean'})
     models4 = models3.merge(icao, left_on='name_x_y', right_on='Engine Identification')
     models4.to_excel(r'C:\Users\PRohr\Desktop\test.xlsx')
     matchingrate =((len(models4)/len(models3))*100)
     matchingrate = round(matchingrate, 2)
     print(' --> [MATCH ENGINES WITH ICAO EMISSION DATABANK]: Matching Rate: ' + str(matchingrate) + ' %')
-    air_density = 0.4135 #kg/m^3
-    speed = 240 #m/s
-    models4['Air Mass Flow [kg/s]'] = (air_density* speed* math.pi * models4['Fan diameter,float,metre']**2)/4
+    models4['Air Mass Flow [kg/s]'] = (air_density* flight_vel * math.pi * models4['Fan diameter,float,metre']**2)/4
     heatingvalue = 43.1  # MJ/kg
-    models4['Engine Efficiency'] = speed / (heatingvalue * models4['TSFC Cruise'])
+    models4['Engine Efficiency'] = flight_vel / (heatingvalue * models4['TSFC Cruise'])
     databank = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     #databank = databank.groupby(['Company','Name', 'YOI', 'Type'], as_index=False).agg({'OEW': 'mean', 'Exit Limit':'mean','MTOW':'max', 'EU (MJ/ASK)':'mean', 'Fuel Flow [kg/s]':'mean'})
     databank['Name'] = databank['Name'].str.strip()

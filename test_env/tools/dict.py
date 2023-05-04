@@ -47,8 +47,16 @@ class AirplaneModels:
                        "Airbus Industrie A330-900": 2018,
                        "Boeing B737 Max 900": 2018,
                        'Airbus Industrie A350-900': 2015,
-                       'Airbus Industrie A320-200n': 2016
-                       }
+                       'Airbus Industrie A320-200n': 2016,
+                       'Airbus Industrie A-318': 2003,
+                       'Airbus Industrie A300B/C/F-100/200': 1974,
+                       'Airbus Industrie A310-200C/F' : 1983,
+                       'Airbus Industrie A321-200n':2007,
+                       'Boeing 727-100':1964,
+                       'Boeing 737-200C':1968,
+                       'Boeing 747SP':1976,
+                       'Canadair CRJ 900':2001,
+                       'Embraer-135':1999}
 
     def get_models(self):
         return self.models
@@ -282,7 +290,16 @@ class fullname:
                                 "McDonnell Douglas MD-11": "MD-11",
                                 "McDonnell Douglas MD-90": "MD-90",
                                 'Airbus Industrie A350-900':'A350-900',
-                                'Airbus Industrie A320-200n': 'A320-200n'}
+                                'Airbus Industrie A320-200n': 'A320-200n',
+                                'Airbus Industrie A-318':'A-318',
+                                'Airbus Industrie A300B/C/F-100/200':'A300B/C/F-100/200',
+                                'Airbus Industrie A310-200C/F':'A310-200C/F',
+                                'Airbus Industrie A321-200n':'A321-200n',
+                                'Boeing 727-100':'727-100',
+                                'Boeing 737-200C':'737-200C',
+                                'Boeing 747SP':'747SP',
+                                'Canadair CRJ 900':'CRJ 900',
+                                'Embraer-135':'Embraer-135'}
     def get_aircraftfullnames(self):
         return self.aircraftfullnames
 

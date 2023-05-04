@@ -96,8 +96,8 @@ def calculate(savefig):
     ax.legend()
     # Set the plot title
     #ax.set_title('Overall Efficiency')
-    #if savefig:
-        #plt.savefig('Graphs\widebody_aircrafts.png')
+    if savefig:
+        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\widebody_aircrafts.png')
 
 
 
@@ -122,6 +122,7 @@ def calculate(savefig):
                      textcoords='offset points')
 
     # Add a legend to the plot
+    ax.legend()
 
     #Arrange plot size
     #plt.ylim(0, 4)
@@ -137,8 +138,8 @@ def calculate(savefig):
     ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
     # Set the plot title
     #ax.set_title('Overall Efficiency')
-    #if savefig:
-        #plt.savefig('Graphs\mediumaircrafts.png')
+    if savefig:
+        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\narrowbodyaircrafts.png')
 
     #_______PLOT EXITLIMIT VS OEW________
 

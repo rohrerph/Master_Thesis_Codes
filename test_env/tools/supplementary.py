@@ -1,5 +1,5 @@
 # here i will create the list used in the dictionary
-from tools import dict
+from test_env.tools import dict
 import pandas as pd
 
 #Most common airlines by ASM over the Last 30 years. The idea is to look only at the airlines with the most ASM. At the end we look at the 19 biggest airlines
@@ -23,7 +23,7 @@ most_common_aircrafts = most_common_aircrafts.drop(['Code', 'AIRCRAFT_TYPE'], ax
 most_common_aircrafts = most_common_aircrafts.groupby(['Description']).agg({'AVL_SEAT_MILES_320':'sum'})
 most_common_aircrafts = most_common_aircrafts.sort_values(by='AVL_SEAT_MILES_320', ascending=False)
 #take all aircraft with more than 10^11 ASM and manually add some Aircraft to the list, such that there are a bit more recent datapoint of AC which have not been in service for a long time.
-new_aircrafts = ['Boeing B737 Max 900','Airbus Industrie A330-900','Boeing 787-10 Dreamliner','Boeing B737 Max 800', 'Airbus Industrie A350-900', 'Airbus Industrie A320-200n']
+new_aircrafts = ['Boeing B737 Max 900','Airbus Industrie A330-900','Boeing 787-10 Dreamliner','Boeing B737 Max 800', 'Airbus Industrie A350-900', 'Airbus Industrie A320-200n', 'Airbus Industrie A321-200n','Airbus Industrie A-318', 'Airbus Industrie A310-200C/F']
 most_common_aircrafts = most_common_aircrafts.loc[(most_common_aircrafts['AVL_SEAT_MILES_320']>= 10**11) | (most_common_aircrafts.index.isin(new_aircrafts))]
 most_common_aircrafts.to_excel('used_aircrafts.xlsx')
 

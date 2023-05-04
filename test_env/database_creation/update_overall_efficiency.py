@@ -117,6 +117,9 @@ def calculate(savefig):
        aircraft_database = aircraft_database[['Company', 'Name', 'YOI', 'TSFC (mg/Ns)', 'L/Dmax',
               'OEW/MTOW', 'Type', 'Exit Limit', 'OEW','MTOW',
               'Babikian', 'Composites', 'EU (MJ/ASK)', 'Fuel Flow [kg/s]']]
+       boeing747 = aircraft_database.loc[aircraft_database['Name']=='B747-400', 'EU (MJ/ASK)'].iloc[0]
+       aircraft_database.loc[aircraft_database['Name'] == 'A310-200C/F', 'Fuel Flow [kg/s]'] = np.nan
+       aircraft_database.loc[aircraft_database['Name']=='A380', 'EU (MJ/ASK)'] = 0.88*boeing747
        aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 
        #create annual data and calculate Energy Intensity
