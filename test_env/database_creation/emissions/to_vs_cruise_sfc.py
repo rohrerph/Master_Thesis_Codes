@@ -1,11 +1,11 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from tools import plot
+from test_env.tools import plot
 import matplotlib.colors as mcolors
 
 def calibrate(savefig):
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E')
+    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
     emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\edb-emissions-databank_v29 (web).xlsx', sheet_name='Gaseous Emissions and Smoke')
     emissions_df['TSFC T/O'] = emissions_df['Fuel Flow T/O (kg/sec)'] / emissions_df['Rated Thrust (kN)'] * 1000
     emissions_df['Final Test Date'] = pd.to_datetime(emissions_df['Final Test Date'])
@@ -65,11 +65,11 @@ def calibrate(savefig):
     colors = cmap(norm_column_data1)
     colors2 = cmap(norm_column_data2)
 
-    for value, color in zip(yearly_emissions['TSFC T/O'], colors):
-        ax.axvline(x=value, color=color, alpha=0.5, linewidth=1)
-    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
-    sm.set_array([])
-    plt.colorbar(sm).set_label('Date')
+    #for value, color in zip(yearly_emissions['TSFC T/O'], colors):
+        #ax.axvline(x=value, color=color, alpha=0.5, linewidth=1)
+    #sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    #sm.set_array([])
+    #plt.colorbar(sm).set_label('Date')
 
     #ax.scatter(x_roux,y_roux, marker='^',color='black',label='Turbofan and Turbojet Engines: Database',zorder=2)
     #ax.scatter(x_openap,y_openap, marker='*',color='black', label='Janes Aero-Engines', zorder=2)

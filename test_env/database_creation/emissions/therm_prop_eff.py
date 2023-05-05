@@ -3,12 +3,11 @@ import numpy as np
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
-from tools import plot
+from not_maintained.tools import plot
 
-def calculate(savefig):
+
+def calculate(savefig, flight_speed):
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
-
-    flight_speed = 240 #m/s
 
     #use metric from the book Aircraft Propulsion and Gas Turbine Engines per turbine
     data['Air Mass Core'] = data['Air Mass Flow [kg/s]']/data['B/P Ratio']

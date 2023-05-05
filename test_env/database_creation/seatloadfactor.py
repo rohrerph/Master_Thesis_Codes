@@ -5,7 +5,7 @@ from test_env.tools import T2_preprocessing
 from test_env.tools import plot
 import matplotlib.pyplot as plt
 
-def calculate():
+def calculate(savefig):
     #load dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
@@ -61,8 +61,8 @@ def calculate():
     plt.xticks(np.arange(1950, 2024, 10))
 
     plot.plot_layout(None, x_label, y_label, ax)
-
-    #plt.savefig('Graphs\seatloadfactor_1990_2022.png')
+    if savefig:
+        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\seatloadfactor.png')
 
 
     #plot figures for slf
@@ -91,10 +91,8 @@ def calculate():
     plt.xticks(np.arange(1990, 2024, 5))
 
     plot.plot_layout(None, x_label, y_label, ax)
-
-    #plt.savefig('Graphs\efficiency_airborne_1990_2022.png')
-
-
+    if savefig:
+        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\airborneefficiency.png')
 
     writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\operationalefficiency.xlsx")
 
