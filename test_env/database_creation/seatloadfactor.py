@@ -5,7 +5,7 @@ from test_env.tools import T2_preprocessing
 from test_env.tools import plot
 import matplotlib.pyplot as plt
 
-def calculate(savefig):
+def calculate(savefig, folder_path):
     #load dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
@@ -62,7 +62,7 @@ def calculate(savefig):
 
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\seatloadfactor.png')
+        plt.savefig(folder_path+'/seatloadfactor.png')
 
 
     #plot figures for slf

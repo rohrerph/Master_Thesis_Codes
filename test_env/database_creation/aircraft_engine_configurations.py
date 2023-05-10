@@ -4,7 +4,7 @@ from test_env.tools import dict
 from test_env.tools import plot
 import matplotlib.pyplot as plt
 import numpy as np
-def calculate(heatingvalue, air_density, flight_vel, savefig):
+def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     #load dictionaries
     airplanes_dict = dict.aircraftdata().get_aircraftsfromdatabase()
     airplanes = airplanes_dict.keys()
@@ -152,35 +152,50 @@ def calculate(heatingvalue, air_density, flight_vel, savefig):
     models4['name_x_x'] = models4['name_x_x'].str.strip()
     databank = pd.merge(models4, databank, left_on='name_x_x', right_on='Name', how='left')
     databank = databank.drop(columns=['name_y_x', 'name_x_x', 'name_x_y','name_y_y'])
+    aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+    aircraft_database = aircraft_database.dropna(subset='TSFC (mg/Ns)')
+    aircraft_database = aircraft_database.groupby(['Name','YOI'], as_index=False).agg({'TSFC (mg/Ns)':'mean'})
+    aircraft_database['TSFC Cruise'] =aircraft_database['TSFC (mg/Ns)']
+    use_lee_et_al = True
+    if use_lee_et_al:
+        for index, row in aircraft_database.iterrows():
+            name = row['Name']
+            value = row['TSFC Cruise']
 
+            # update corresponding row in df2 with the value from df1
+            databank.loc[databank['Name'] == name, 'TSFC Cruise'] = value
     databank.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 
 
     fig = plt.figure(dpi=300)
-    aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
-    aircraft_database = aircraft_database.dropna(subset='TSFC (mg/Ns)')
-    aircraft_database = aircraft_database.groupby(['Name','YOI'], as_index=False).agg({'TSFC (mg/Ns)':'mean'})
-    # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
-    databank = databank.groupby(['Name','YOI'], as_index=False).agg({'TSFC Cruise': ['mean', 'min', 'max']})
-    databank.columns = pd.MultiIndex.from_tuples([
-        ('Name', ''),
-        ('YOI', ''),
-        ('mean', 'TSFC Cruise'),
-        ('min', 'TSFC Cruise'),
-        ('max', 'TSFC Cruise')])
-    y_err_pos = (databank['max'] - databank['mean']).values.flatten()
-    y_err_neg = (databank['mean'] - databank['min']).values.flatten()
-    y_err = np.array(list(zip(y_err_neg, y_err_pos)))
-    ax.scatter(databank['YOI'], databank['mean'], marker='s',color='blue', label='My Data')
-    for index, row in databank.iterrows():
-        ax.vlines(x=row['YOI'], ymin=row['min'], ymax=row['max'], colors='blue')
-    ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red', label='Lee et al.', zorder=2)
+
+    if use_lee_et_al:
+        lee = databank.loc[databank['Babikian']=='Yes']
+        lee = lee.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
+        new = databank.loc[databank['Babikian']!='Yes']
+        new = new.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
+        ax.scatter(lee['YOI'], lee['TSFC Cruise'], marker='^', color='red')
+        ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue')
+    # Add a subplot
+    else:
+        databank = databank.groupby(['Name','YOI'], as_index=False).agg({'TSFC Cruise': ['mean', 'min', 'max']})
+        databank.columns = pd.MultiIndex.from_tuples([
+            ('Name', ''),
+            ('YOI', ''),
+            ('mean', 'TSFC Cruise'),
+            ('min', 'TSFC Cruise'),
+            ('max', 'TSFC Cruise')])
+
+        ax.scatter(databank['YOI'], databank['mean'], marker='s',color='blue', label='My Data')
+        for index, row in databank.iterrows():
+            ax.vlines(x=row['YOI'], ymin=row['min'], ymax=row['max'], colors='blue')
+        ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red',label='Lee et al.', zorder=2)
 
     ax.legend()
     xlabel = 'Year'
     ylabel = 'TSFC [g/kNs]'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\engineefficiency.png')
+        plt.savefig(folder_path+'\engineefficiency.png')
 

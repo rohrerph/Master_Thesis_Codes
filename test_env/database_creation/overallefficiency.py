@@ -4,7 +4,7 @@ from test_env.tools import dict
 from test_env.tools import T2_preprocessing
 import matplotlib.pyplot as plt
 
-def calculate(savefig, km, mj):
+def calculate(savefig, km, mj, folder_path):
 
        #load dictionaries
        airplanes_dict = dict.AirplaneModels().get_models()
@@ -27,7 +27,6 @@ def calculate(savefig, km, mj):
 
        AC_type = T2.groupby(['Description']).agg({'GAL/ASM':'median', 'GAL/RPM':'median', 'Fuel Flow [kg/s]':'mean'})
 
-
        airplanes_release_year = pd.DataFrame({'Description': list(airplanes), 'YOI': list(airplanes_dict.values())})
        airplanes_release_year = pd.merge(AC_type, airplanes_release_year, on='Description')
        fuelflow = airplanes_release_year[['Description', 'Fuel Flow [kg/s]']]
@@ -35,10 +34,9 @@ def calculate(savefig, km, mj):
 
        airplanes_release_year['MJ/ASK'] = airplanes_release_year['GAL/ASM']*mj/km
        airplanes_release_year['MJ/RPM'] = airplanes_release_year['GAL/RPM']*mj/km
-       rpm = airplanes_release_year
+
        fleet_avg_year['MJ/ASK'] = fleet_avg_year['GAL/ASM']*mj/km
        fleet_avg_year['MJ/RPK'] = fleet_avg_year['GAL/RPM']*mj/km
-       n = airplanes_release_year['Description']
 
        #prepare Data from babikian
        overall_large_fleet = overall.iloc[:, 9:11]
@@ -53,21 +51,27 @@ def calculate(savefig, km, mj):
        #which data is in both dataframes?
 
        doubled = pd.merge(overall_large, airplanes_release_year, left_on=['Label','Year'], right_on=['Description', 'YOI'])
-       doubled['MJ/ASK mixed']=(doubled['EU (MJ/ASK)']+doubled['MJ/ASK'])/2
+       doubled['MJ/ASK mixed']=doubled['MJ/ASK']
 
        #Remove values which occur in both Dfs
        overall_large = overall_large.loc[~overall_large['Label'].isin(list(doubled['Label']))]
        airplanes_release_year = airplanes_release_year.loc[~airplanes_release_year['Description'].isin(list(doubled['Label']))]
 
+       airplanes_release_year = airplanes_release_year.loc[airplanes_release_year['Description'] != 'Embraer-135']
+       regionalcarriers = ['Canadair CRJ 900','Canadair RJ-200ER /RJ-440', 'Canadair RJ-700','Embraer 190'
+                           'Embraer ERJ-175', 'Embraer-135','Embraer-145']
 
+       regional = airplanes_release_year.loc[airplanes_release_year['Description'].isin(regionalcarriers)]
+       normal = airplanes_release_year.loc[~airplanes_release_year['Description'].isin(regionalcarriers)]
        fig = plt.figure(dpi=300)
 
        # Add a subplot
        ax = fig.add_subplot(1, 1, 1)
 
-       ax.scatter(airplanes_release_year['YOI'], airplanes_release_year['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
+       ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
+       ax.scatter(regional['YOI'], regional['MJ/ASK'], marker='^', color='cyan', label='Regional US DOT T2')
        ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Babikian')
-       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o',color='purple', label='US DOT T2 & Babikian')
+       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o',color='purple', label='Babikian & US DOT T2')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Babikian Fleet')
@@ -92,11 +96,8 @@ def calculate(savefig, km, mj):
        ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
        ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
        ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
-       # Set the plot title
-       #ax.set_title('Overall Efficiency')
-
        if savefig:
-              plt.savefig(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\ovr_efficiency.png")
+              plt.savefig(folder_path+ "\ovr_efficiency.png")
 
        doubled = doubled[['Description','Year', 'MJ/ASK mixed']]
        airplanes_release_year = airplanes_release_year[['Description','YOI','MJ/ASK']]

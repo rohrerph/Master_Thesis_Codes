@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from test_env.tools import plot
 
-def calculate(savefig):
+def calculate(savefig, folder_path):
     aircrafts = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     aircrafts.loc[aircrafts['Exit Limit'] < 100, 'Type'] = 'Regional'
     aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
@@ -91,7 +91,7 @@ def calculate(savefig):
     # Set the plot title
     #ax.set_title('Overall Efficiency')
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\widebody_aircrafts.png')
+        plt.savefig(folder_path+'\widebody_aircrafts.png')
 
     #_______PLOT OEW/EXITLIMIT NARROWBODY________
 
@@ -121,7 +121,7 @@ def calculate(savefig):
 
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\narrowbodyaircrafts.png')
+        plt.savefig(folder_path+'/narrowbodyaircrafts.png')
 
     #_______PLOT EXITLIMIT VS OEW________
 
@@ -225,4 +225,4 @@ def calculate(savefig):
     ylabel = 'OEW[kg]/Pax Exit Limit'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\exit_limit_vs_year.png')
+        plt.savefig(folder_path+'/exit_limit_vs_year.png')

@@ -4,7 +4,7 @@ import numpy as np
 from test_env.tools import plot
 import matplotlib.colors as mcolors
 
-def calibrate(savefig):
+def calibrate(savefig, folder_path):
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
     emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\edb-emissions-databank_v29 (web).xlsx', sheet_name='Gaseous Emissions and Smoke')
     emissions_df['TSFC T/O'] = emissions_df['Fuel Flow T/O (kg/sec)'] / emissions_df['Rated Thrust (kN)'] * 1000
@@ -96,7 +96,7 @@ def calibrate(savefig):
     ylabel = 'Cruise TSFC [g/kNs]'
     plot.plot_layout(title, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs/takeoff_vs_cruise_tsfc.png')
+        plt.savefig(folder_path+ '/takeoff_vs_cruise_tsfc_second_order.png')
     print(' --> [TSFC CALIBRATION]: Cruise TFSC = ' + str(round(z_all[0], 3))+'*Take-Off TFSC'+ ' + '+str(round(z_all[1], 3)))
     return(z_all)
 

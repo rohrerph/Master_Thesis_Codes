@@ -4,7 +4,7 @@ import numpy as np
 from test_env.tools import plot
 import matplotlib.colors as mcolors
 
-def calculate(savefig):
+def calculate(savefig, folder_path):
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
     emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     emissions_df = emissions_df[['Dry weight,integer,kilogram',
@@ -62,7 +62,7 @@ def calculate(savefig):
     ax.legend()
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\weight_vs_diameter.png')
+        plt.savefig(folder_path+'\weight_vs_diameter.png')
 
 
     #plt.savefig('output/icao_takeoff_tsfc.png')
@@ -105,7 +105,7 @@ def calculate(savefig):
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\icao_to_tsfc_vs_years.png')
+        plt.savefig(folder_path+'\icao_to_tsfc_vs_years.png')
 
     # BYPASS RATIO vs Pressure Ratio
     fig = plt.figure(dpi=120)
@@ -130,7 +130,7 @@ def calculate(savefig):
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\bypass_vs_pressure_ratio.png')
+        plt.savefig(folder_path+'/bypass_vs_pressure_ratio.png')
 
     # BYPASS RATIO vs Weight
     y = yearly_emissions['Dry weight,integer,kilogram']
@@ -159,4 +159,4 @@ def calculate(savefig):
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\bypass_vs_weight.png')
+        plt.savefig(folder_path+'/bypass_vs_weight.png')
