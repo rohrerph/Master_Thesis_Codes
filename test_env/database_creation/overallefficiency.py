@@ -70,7 +70,7 @@ def calculate(savefig, km, mj, folder_path):
 
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
        ax.scatter(regional['YOI'], regional['MJ/ASK'], marker='^', color='cyan', label='Regional US DOT T2')
-       ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Babikian')
+       ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Lee')
        ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o',color='purple', label='Babikian & US DOT T2')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
@@ -119,8 +119,8 @@ def calculate(savefig, km, mj, folder_path):
        boeing747 = aircraft_database.loc[aircraft_database['Name']=='B747-400', 'EU (MJ/ASK)'].iloc[0]
        aircraft_database.loc[aircraft_database['Name'] == 'A310-200C/F', 'Fuel Flow [kg/s]'] = np.nan
        aircraft_database.loc[aircraft_database['Name']=='A380', 'EU (MJ/ASK)'] = 0.88*boeing747
-       aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 
+       aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
        #create annual data and calculate Energy Intensity
 
        fleet_avg_year = fleet_avg_year.reset_index(drop=False)
@@ -131,4 +131,3 @@ def calculate(savefig, km, mj, folder_path):
        historic_slf['PLF'] = historic_slf['PLF'].str.replace(',', '.').astype(float)
        fleet_avg_year = fleet_avg_year.merge(historic_slf[['Year', 'PLF']], on='Year')
        fleet_avg_year['EI (MJ/RPK)'] = fleet_avg_year['EU (MJ/ASK)']/fleet_avg_year['PLF']
-       fleet_avg_year.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\annualdata.xlsx')

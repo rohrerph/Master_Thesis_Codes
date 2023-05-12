@@ -11,6 +11,8 @@ import database_creation.aerodynamics.aerodynamicefficiency
 import database_creation.emissions.therm_prop_eff
 import database_creation.aggregate_per_aircraft
 import database_creation.index_decomposition
+import database_creation.index_decomposition_operational
+import database_creation.index_decomposition_testing_playground
 import datetime
 import os
 current_date = datetime.datetime.now()
@@ -43,7 +45,6 @@ print(' --> [CREATE AIRCRAFT DATABASE]: Add all Aircraft-Engine combinations and
 database_creation.aircraft_engine_configurations.calculate(heatingvalue_kg, air_density, flight_vel, savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Create Graphs for Engine Statistics ...')
 database_creation.emissions.engine_statistics.calculate(savefig, folder_path)
-print(' --> [CREATE AIRCRAFT DATABASE]: Calculate OEW per Exit Limit ...')
 database_creation.structuralefficiency.calculate(savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Add Seats per Aircraft from US DOT ...')
 database_creation.seats.calculate()
@@ -54,9 +55,12 @@ database_creation.aerodynamics.aerodynamicefficiency.calculate(savefig, air_dens
 print(' --> [CREATE AIRCRAFT DATABASE]: Split Engine Efficiency into Thermal and Propulsive Efficiency...')
 database_creation.emissions.therm_prop_eff.calculate(savefig, flight_vel, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Summarize Data per Aircraft Type')
-database_creation.aggregate_per_aircraft.calculate()
-print(' --> [INDEX DECOMPOSITION ANALYSIS]: Using LMDI for Technology IDA')
+database_creation.aggregate_per_aircraft.calculate(savefig, folder_path)
+print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical Sub-Efficiencies')
 database_creation.index_decomposition.calculate(savefig, folder_path)
-print(' --> [INDEX DECOMPOSITION ANALYSIS]: Consider SLF for IDA using LMDI')
-#database_creation.index_decomposition_operational.calculate(savefig, folder_path)
+print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational Sub-Efficiencies')
+database_creation.index_decomposition_operational.calculate(savefig, folder_path)
+
+database_creation.index_decomposition_testing_playground.calculate(savefig, folder_path)
+
 print(' --> [FINISH]')

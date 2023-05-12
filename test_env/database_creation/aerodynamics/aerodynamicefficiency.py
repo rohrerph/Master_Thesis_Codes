@@ -20,7 +20,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     # Martinez et al. used a factor of 0.9 to 0.93 but probably it is better to subtract a certain weight.
     #optimize factor for minimal R-squared between K1 and K2 ?
 
-    beta = lambda x: 0.96 if x == 'Wide' else(0.92 if x =='Narrow' else 0.88)
+    beta = lambda x: 0.96 if x == 'Wide' else(0.94 if x =='Narrow' else 0.88)
 
     aircraft_data['Factor'] = aircraft_data['Type'].apply(beta)
     aircraft_data['Ratio 1']= aircraft_data['Factor']*aircraft_data["MTOW\n(Kg)"]/aircraft_data['MZFW_POINT_1\n(Kg)']
@@ -45,9 +45,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     breguet['A'] = breguet['K']*g*0.001*breguet['TSFC Cruise']
     breguet['L/D estimate'] = breguet['A']/flight_vel
     aircraft_data = breguet
-    aircraft_data = aircraft_data.drop(columns=['#', 'Aircraft Model Chart',
-           'RANGE_POINT_1\n(Km)', 'RANGE_POINT_2\n(Km)', 'MZFW_POINT_1\n(Kg)',
-           'MZFW_POINT_2\n(Kg)','Link', 'Factor', 'Ratio 1',
+    aircraft_data = aircraft_data.drop(columns=['#', 'Aircraft Model Chart', 'Link', 'Factor', 'Ratio 1',
            'Ratio 2', 'K_1', 'K_2', 'K', 'A'])
     aircraft_data['Dmax'] = (g * aircraft_data['MTOW\n(Kg)']) / aircraft_data['L/D estimate']
     aircraft_data['Aspect Ratio'] = aircraft_data['Wingspan,float,metre']**2/aircraft_data['Wing area,float,square-metre']
@@ -72,6 +70,11 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
             # update corresponding row in df2 with the value from df1
             aircraft_data.loc[aircraft_data['Name'] == name, 'L/D estimate'] = value
 
+    aircraft_data['EU_estimate1'] = (43.1 * (aircraft_data['MTOW\n(Kg)'] - aircraft_data['MZFW_POINT_1\n(Kg)']))/(aircraft_data['Pax']*aircraft_data['RANGE_POINT_1\n(Km)'])
+    aircraft_data['EU_estimate2'] = (43.1 * (aircraft_data['MTOW\n(Kg)'] - aircraft_data['MZFW_POINT_2\n(Kg)'])) / (aircraft_data['Pax'] * aircraft_data['RANGE_POINT_2\n(Km)'])
+    aircraft_data['EU_estimate'] = (aircraft_data['EU_estimate1']+aircraft_data['EU_estimate2'])/2
+
+    aircraft_data = aircraft_data.drop(columns=['MTOW\n(Kg)', 'MZFW_POINT_1\n(Kg)', 'RANGE_POINT_1\n(Km)', 'MZFW_POINT_2\n(Kg)', 'RANGE_POINT_2\n(Km)', 'EU_estimate1', 'EU_estimate2'])
     aircraft_data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 
     breguet = aircraft_data.dropna(subset='L/D estimate')
@@ -81,11 +84,16 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     fig = plt.figure(dpi=150)
 
     # Add a subplot
+    years = np.arange(1955, 2023)
     ax = fig.add_subplot(1, 1, 1)
-
+    x_all = breguet['YOI'].astype(np.int64)
+    y_all = breguet['L/D estimate'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 2)
+    p_all = np.poly1d(z_all)
 
     # Plot the dataframes with different symbols
     ax.scatter(breguet['YOI'], breguet['L/D estimate'], marker='o', label='Breguet Range Equation')
+    ax.plot(years, p_all(years), color='black', label='Linear Regression')
     for i, row in breguet.iterrows():
         plt.annotate(row['Name'], (row['YOI'], row['L/D estimate']), fontsize=6, xytext=(-8, 5),
                      textcoords='offset points')
@@ -97,6 +105,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     ax.legend()
     xlabel = 'Year'
     ylabel ='L/D'
+    plt.ylim(0,25)
 
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:

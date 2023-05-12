@@ -169,7 +169,11 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
 
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
-
+    years = np.arange(1955, 2023)
+    x_all = databank['YOI'].astype(np.int64)
+    y_all = databank['TSFC Cruise'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 3)
+    p_all = np.poly1d(z_all)
     if use_lee_et_al:
         lee = databank.loc[databank['Babikian']=='Yes']
         lee = lee.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
@@ -177,6 +181,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         new = new.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
         ax.scatter(lee['YOI'], lee['TSFC Cruise'], marker='^', color='red')
         ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue')
+        ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
     # Add a subplot
     else:
         databank = databank.groupby(['Name','YOI'], as_index=False).agg({'TSFC Cruise': ['mean', 'min', 'max']})
@@ -191,6 +196,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         for index, row in databank.iterrows():
             ax.vlines(x=row['YOI'], ymin=row['min'], ymax=row['max'], colors='blue')
         ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red',label='Lee et al.', zorder=2)
+        ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
 
     ax.legend()
     xlabel = 'Year'
@@ -198,4 +204,5 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'\engineefficiency.png')
+
 

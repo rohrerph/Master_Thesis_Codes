@@ -35,6 +35,34 @@ def calculate(savefig, folder_path):
     years = [1959,1980, 2000, 2018]
     data = data.loc[data['YOI'].isin(years)]
 
+    years = np.arange(1955, 2023)
+    x_all = ld['YOI'].astype(np.int64)
+    y_all = ld['L/D estimate'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_ld = np.poly1d(z_all)
+    p_all_ld = p_all_ld / p_all_ld(1959)
+
+    years = np.arange(1955, 2023)
+    x_all = oew['YOI'].astype(np.int64)
+    y_all = ld['OEW/Exit Limit'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_oew = np.poly1d(z_all)
+    p_all_oew = p_all_oew / p_all_oew(1959)
+
+    years = np.arange(1955, 2023)
+    x_all = tsfc['YOI'].astype(np.int64)
+    y_all = tsfc['TSFC Cruise'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_tsfc = np.poly1d(z_all)
+    p_all_tsfc = p_all_tsfc / p_all_tsfc(1959)
+
+    years = np.arange(1955, 2023)
+    x_all = eu['YOI'].astype(np.int64)
+    y_all = eu['EU (MJ/ASK)'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_eu = np.poly1d(z_all)
+    p_all_eu = p_all_eu / p_all_eu(1959)
+
     # Plot all Data as Scatterpoints and the data for the years above as a line
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
@@ -51,17 +79,43 @@ def calculate(savefig, folder_path):
     #ax.plot(data['YOI'], data['OEW/Exit Limit'],color='orange', label='Structural')
     #ax.plot(data['YOI'], data['L/D estimate'],color='blue', label='Aerodynamic')
 
+    ax.plot(years, p_all_tsfc(years),color='black', label='Engine')
+    ax.plot(years, p_all_eu(years),color='turquoise', label='Overall')
+    ax.plot(years, p_all_oew(years),color='orange', label='Structural')
+    ax.plot(years, p_all_ld(years), color='blue', label='Aerodyn')
+
+
     # Add a legend to the plot
     ax.legend()
-    plt.xlim(1955, 2025)
+    plt.xlim(1958, 2020)
     plt.ylim(0, 1.2)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
-        plt.savefig(folder_path+'/normalized data.png')
+        plt.savefig(folder_path+'/normalizeddata_2.png')
+
+    # Evaluate the polynomials for the x values
+    p_all_tsfc_values = p_all_tsfc(years)
+    p_all_oew_values = p_all_oew(years)
+    p_all_ld_values = p_all_ld(years)
+    p_all_eu_values = p_all_eu(years)
+
+    # Create a dictionary with the polynomial values
+    data = {
+        'YOI': years,
+        'TSFC Cruise': p_all_tsfc_values,
+        'OEW/Exit Limit': p_all_oew_values,
+        'L/D estimate': p_all_ld_values,
+        'EU (MJ/ASK)': p_all_eu_values
+    }
+
+    # Create the DataFrame
+    df = pd.DataFrame(data)
+
+
+    data = df
+
 
     # Use LMDI Method
-    data = data.groupby(['YOI'], as_index=False).agg({'TSFC Cruise':'mean',
-       'EU (MJ/ASK)':'mean', 'OEW/Exit Limit':'mean', 'L/D estimate':'mean', 'Multiplied':'mean'})
 
     data['LMDI'] = (data['EU (MJ/ASK)'].shift(1) - data['EU (MJ/ASK)']) / (np.log(data['EU (MJ/ASK)'].shift(1)) - np.log(data['EU (MJ/ASK)']))
     data['Engine_LMDI'] = np.log(data['TSFC Cruise'].shift(1) / data['TSFC Cruise'])
@@ -85,40 +139,40 @@ def calculate(savefig, folder_path):
     data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\LMDI.xlsx')
 
 
-    # Plotting the grouped bar plots
-    fig = plt.figure(dpi=300)
-    ax = fig.add_subplot(1, 1, 1)
-
     # Set the width of each group and create new indexes just the set the space right
+    data = data[['deltaC_Tot', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Res']]
     columns = data.columns
     group_width = 1.3
     num_columns = len(data.columns)
     total_width = group_width * num_columns
-    new_index = [ 1980, 2000, 2020]
-    data.index = new_index
 
     # Create new Labels
-    labels = ['Structural','Engine', 'Aerodynamic', 'Residual','Overall']
+    labels = ['Overall','Engine', 'Aerodyn','Structural', 'Residual' ]
+
+    # Create subplots for each column
+    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(15, 5), dpi=300)
 
     # Create a Barplot for each Column
+    # Iterate over each column
     for i, column in enumerate(columns):
+        ax = axes[i]
+
+        # Plot bar plot for each column
         x = data.index + i * group_width
         ax.bar(x, data[column], width=group_width, label=labels[i])
 
-    # Set Labels
-    xlabel='YOI'
-    ylabel='Efficiency Improvements [%]'
-    ax.legend()
-    plot.plot_layout(None, xlabel, ylabel, ax)
+        xlabel = 'YOI'
+        ylabel = 'Efficiency Improvements [%]'
+        title = column
+        plot.plot_layout(title, xlabel, ylabel, ax)
+        ax.set_xlim(1959,2021)
+        ax.set_ylim(-3,8)
 
-    #Create new x-Axis Labels
-    new_tick_labels = ['1960-1980', '1981-2000', '2001-2018']
-    offset = 0.05  # Adjust the offset value as needed
-    ax.set_xticks(data.index + (num_columns - 1) * group_width / 2)
-    ax.set_xticklabels([f'{label}\n' for label in new_tick_labels], ha='center', va='top', rotation=0)
-    for tick in ax.xaxis.get_ticklabels():
-        tick.set_y(tick.get_position()[1] - offset)  # Apply the offset to each tick label
+        # Add legend
+        ax.legend()
+
+    # Adjust spacing between subplots
+    plt.tight_layout()
 
     if savefig:
-        plt.savefig(folder_path+'/indexdecomposition.png')
-
+        plt.savefig(folder_path+'/indexdecomposition_2.png')

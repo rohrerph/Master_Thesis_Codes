@@ -3,6 +3,7 @@ from test_env.tools import plot
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
+
 def calculate(savefig, folder_path):
     # Read SLF data
     slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
@@ -35,6 +36,7 @@ def calculate(savefig, folder_path):
     years = [1959,1970, 1980, 1990, 2000, 2007, 2018]
     data = data.loc[data['YOI'].isin(years)]
 
+
     fig = plt.figure(dpi=300)
 
     # Add a subplot
@@ -51,15 +53,15 @@ def calculate(savefig, folder_path):
     ax.plot(data['YOI'], data['OEW/Exit Limit'],color='orange', label='Structural')
     ax.plot(data['YOI'], data['L/D estimate'],color='blue', label='Aerodynamic')
     ax.plot(data['YOI'], data['PLF'], color='green', label='Seat Load Factor')
+    #ax.plot(x_fit, y_fit, color='blue', label='Fitted Curve')
 
     # Add a legend to the plot
     ax.legend()
     plt.xlim(1955, 2025)
     plt.ylim(0, 1.2)
     plot.plot_layout(None, x_label, y_label, ax)
-    plt.show()
     if savefig:
-        plt.savefig(folder_path+'/normalized data.png')
+        plt.savefig(folder_path+'/normalizeddata_ops.png')
 
     # Select relevant columns for index and factors
     trendline_df=data
@@ -95,7 +97,6 @@ def calculate(savefig, folder_path):
     group_width = 1.3
     num_columns = len(trendline_df.columns)
     total_width = group_width * num_columns
-    offset = np.linspace(-total_width / 2, total_width / 2, num_columns)
     new_index = [1970, 1980, 1990, 2000, 2010, 2020]
     trendline_df.index = new_index
 
@@ -117,7 +118,6 @@ def calculate(savefig, folder_path):
     ax.set_xticklabels([f'{label}\n' for label in new_tick_labels], ha='center', va='top', rotation=0)
     for tick in ax.xaxis.get_ticklabels():
         tick.set_y(tick.get_position()[1] - offset)  # Apply the offset to each tick label
-    plt.show()
 
     if savefig:
         plt.savefig(folder_path+'/indexdecomposition_ops.png')
