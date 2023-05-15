@@ -42,16 +42,13 @@ def calculate(savefig, folder_path):
     x = yearly_emissions['Fan diameter,float,metre']
     y = yearly_emissions['Dry weight,integer,kilogram']/1000
 
-    fig = plt.figure(dpi=120)
-    # Add a subplot
-    ax = fig.add_subplot(1, 1, 1)
     z = np.polyfit(x, y, 1)
     p = np.poly1d(z)
 
     ax.scatter(x, y, c=colors)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Date')
+    plt.colorbar(sm).set_label('Aircraft Release Year')
     xlabel = 'Fan Diameter [m]'
     ylabel = 'Engine Dry Weight [t]'
     plt.ylim(0, 10)
@@ -64,16 +61,12 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+'\weight_vs_diameter.png')
 
-
-    #plt.savefig('output/icao_takeoff_tsfc.png')
-
     #-------------------TSFC-------------------------
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     x = data['Engine TSFC take off [g/kNs]']
     y = data['Engine TSFC cruise [g/kNs]']
-
 
     z = np.polyfit(x, y, 1)
     p = np.poly1d(z)
@@ -92,7 +85,7 @@ def calculate(savefig, folder_path):
         ax.axvline(x=value, color=color, linewidth=1, ymin=0, ymax=1, alpha=0.5)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Date')
+    plt.colorbar(sm).set_label('Aircraft Year of Introduction')
     ax.scatter(x, y, c=colors2, zorder=2)
     ax.plot(span, p(span),color='black', linewidth=2)
     equation_text = f'y = {z[0]:.2f}x + {z[1]:.2f} , R-squared = {r_squared}'
@@ -116,12 +109,10 @@ def calculate(savefig, folder_path):
     # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.scatter(x,y,c=colors, label='B/P Ratio')
+    ax.scatter(x,y,c=colors)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Date')
-    #ax.plot(years, p(years), '-r')
-    ax.legend()
+    plt.colorbar(sm).set_label('Aircraft Year of Introduction')
 
     ylabel = 'Pressure Ratio'
     xlabel = 'Bypass Ratio'
@@ -133,24 +124,20 @@ def calculate(savefig, folder_path):
         plt.savefig(folder_path+'/bypass_vs_pressure_ratio.png')
 
     # BYPASS RATIO vs Weight
+    fig = plt.figure(dpi=120)
+    ax = fig.add_subplot(1, 1, 1)
+
     y = yearly_emissions['Dry weight,integer,kilogram']
     x = yearly_emissions['B/P Ratio']
 
-    fig = plt.figure(dpi=120)
-
-    # Add a subplot
-    ax = fig.add_subplot(1, 1, 1)
-
     x_int = x.astype(np.int64)
-    years = pd.Series(range(1955, 2024))
     z = np.polyfit(x_int, y, 1)
     p = np.poly1d(z)
 
     ax.scatter(x, y, c=colors, marker='o')
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Date')
-    #ax.plot(years, p(years), '-r')
+    plt.colorbar(sm).set_label('Aircraft Year of Introduction')
 
     ylabel = 'Dry Weight [kg]'
     xlabel = 'Bypass Ratio'

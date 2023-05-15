@@ -20,10 +20,10 @@ def calculate(savefig, flight_speed, folder_path):
     data = data.dropna(subset='thermal_eff')
     data['Company'] = data['Company'].str.strip()
     data = data.loc[data['Company'].isin(['Airbus Industrie','Boeing', 'McDonnell Douglas'])]
-    data2 = data.groupby(['Engine Identification', 'Final Test Date'], as_index=False).agg({'thermal_eff':'mean', 'prop_eff':'mean', 'Engine Efficiency':'mean'})
+    data2 = data.groupby(['Engine Identification', 'YOI'], as_index=False).agg({'thermal_eff':'mean', 'prop_eff':'mean', 'Engine Efficiency':'mean'})
 
     #colormap for years
-    column_data = pd.to_numeric(data2['Final Test Date'])
+    column_data = pd.to_numeric(data2['YOI'])
     # normalize data to range between 0 and 1
     norm = mcolors.Normalize(vmin=column_data.min(), vmax=column_data.max())
     norm_column_data = norm(column_data)
@@ -54,7 +54,7 @@ def calculate(savefig, flight_speed, folder_path):
 
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Final Test Date')
+    plt.colorbar(sm).set_label('Aircraft Year of Introduction')
     ax.legend()
     xlabel = 'Propulsive Efficiency'
     ylabel = 'Thermal Efficiency'

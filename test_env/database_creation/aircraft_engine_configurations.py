@@ -150,7 +150,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     #databank = databank.groupby(['Company','Name', 'YOI', 'Type'], as_index=False).agg({'OEW': 'mean', 'Exit Limit':'mean','MTOW':'max', 'EU (MJ/ASK)':'mean', 'Fuel Flow [kg/s]':'mean'})
     databank['Name'] = databank['Name'].str.strip()
     models4['name_x_x'] = models4['name_x_x'].str.strip()
-    databank = pd.merge(models4, databank, left_on='name_x_x', right_on='Name', how='left')
+    databank = pd.merge(models4, databank, left_on='name_x_x', right_on='Name', how='outer')
     databank = databank.drop(columns=['name_y_x', 'name_x_x', 'name_x_y','name_y_y'])
     aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
     aircraft_database = aircraft_database.dropna(subset='TSFC (mg/Ns)')
@@ -164,6 +164,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
 
             # update corresponding row in df2 with the value from df1
             databank.loc[databank['Name'] == name, 'TSFC Cruise'] = value
+            databank['Engine Efficiency'] = flight_vel / (heatingvalue * databank['TSFC Cruise'])
     databank.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 
 
@@ -172,16 +173,16 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     years = np.arange(1955, 2023)
     x_all = databank['YOI'].astype(np.int64)
     y_all = databank['TSFC Cruise'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 3)
+    z_all = np.polyfit(x_all,  y_all, 4)
     p_all = np.poly1d(z_all)
     if use_lee_et_al:
         lee = databank.loc[databank['Babikian']=='Yes']
         lee = lee.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
         new = databank.loc[databank['Babikian']!='Yes']
         new = new.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
-        ax.scatter(lee['YOI'], lee['TSFC Cruise'], marker='^', color='red')
-        ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue')
-        ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
+        ax.scatter(lee['YOI'], lee['TSFC Cruise'], marker='^', color='red', label='Lee et al.')
+        ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue', label='New Data')
+        #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
     # Add a subplot
     else:
         databank = databank.groupby(['Name','YOI'], as_index=False).agg({'TSFC Cruise': ['mean', 'min', 'max']})
@@ -196,11 +197,11 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         for index, row in databank.iterrows():
             ax.vlines(x=row['YOI'], ymin=row['min'], ymax=row['max'], colors='blue')
         ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red',label='Lee et al.', zorder=2)
-        ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
+        #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
 
     ax.legend()
-    xlabel = 'Year'
-    ylabel = 'TSFC [g/kNs]'
+    xlabel = 'Aircraft Year of Introduction'
+    ylabel = 'Cruise TSFC [g/kNs]'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'\engineefficiency.png')

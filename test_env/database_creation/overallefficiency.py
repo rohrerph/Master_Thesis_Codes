@@ -71,7 +71,7 @@ def calculate(savefig, km, mj, folder_path):
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
        ax.scatter(regional['YOI'], regional['MJ/ASK'], marker='^', color='cyan', label='Regional US DOT T2')
        ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Lee')
-       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o',color='purple', label='Babikian & US DOT T2')
+       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o', color='purple', label='Babikian & US DOT T2')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Babikian Fleet')
@@ -90,7 +90,7 @@ def calculate(savefig, km, mj, folder_path):
        plt.xticks(np.arange(1955, 2024, 10))
 
        # Set the x and y axis labels
-       ax.set_xlabel('Year')
+       ax.set_xlabel('Aircraft Year of Introduction')
        ax.set_ylabel('EU (MJ/ASK)')
 
        ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)

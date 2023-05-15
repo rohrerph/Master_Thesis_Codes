@@ -93,7 +93,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
 
     # Plot the dataframes with different symbols
     ax.scatter(breguet['YOI'], breguet['L/D estimate'], marker='o', label='Breguet Range Equation')
-    ax.plot(years, p_all(years), color='black', label='Linear Regression')
+    #ax.plot(years, p_all(years), color='black', label='Linear Regression')
     for i, row in breguet.iterrows():
         plt.annotate(row['Name'], (row['YOI'], row['L/D estimate']), fontsize=6, xytext=(-8, 5),
                      textcoords='offset points')
@@ -103,9 +103,9 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
             plt.annotate(row['Label'], (row['Year'], row['L/Dmax']), fontsize=6, xytext=(-8, 5), textcoords='offset points')
 
     ax.legend()
-    xlabel = 'Year'
+    xlabel = 'Aircraft Year of Introduction'
     ylabel ='L/D'
-    plt.ylim(0,25)
+    plt.ylim(10,25)
 
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:

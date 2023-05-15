@@ -2,122 +2,169 @@ import pandas as pd
 from test_env.tools import plot
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import curve_fit
 
 def calculate(savefig, folder_path):
     # Read SLF data
     slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
     slf = slf[['Year', 'PLF']]
     slf['PLF'] = slf['PLF'].str.replace(',', '.').astype(float)
+    slf = slf[slf['Year'] >= 1959]
+
     #prepare data and normalize
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
     data = data.merge(slf, left_on='YOI', right_on='Year', how='left')
     data['EI (MJ/RPK)'] = data['EU (MJ/ASK)']/data['PLF']
+
+    # Normalize Data for TSFC, L/D, OEW/Exit Limit and EU using 1959 as a Basis, for OEW normalize regarding heaviest value of each Type
     data['OEW/Exit Limit'] = data.groupby('Type')['OEW/Exit Limit'].transform(lambda x: x / x.max())
-    max_tsfc = data.loc[data['YOI']==1959, 'TSFC Cruise'].iloc[0]
-    data['TSFC Cruise'] = data['TSFC Cruise'] / max_tsfc
-    tsfc = data.dropna(subset='TSFC Cruise')
-    max_eu = data.loc[data['YOI']==1959, 'EI (MJ/RPK)'].iloc[0]
-    data['EI (MJ/RPK)'] = data['EI (MJ/RPK)'] / max_eu
-    eu = data.dropna(subset='EI (MJ/RPK)')
-    min_ld = data.loc[data['YOI']==1959, 'L/D estimate'].iloc[0]
-    data['L/D estimate'] = min_ld / data['L/D estimate']
-    ld = data.dropna(subset='L/D estimate')
-    min_slf = data.loc[data['YOI']== 1959, 'PLF'].iloc[0]
-    data['PLF'] = min_slf / data['PLF']
-    oew = data.dropna(subset='OEW/Exit Limit')
-    data = data[['Name','YOI', 'TSFC Cruise',
-       'EI (MJ/RPK)', 'OEW/Exit Limit', 'L/D estimate', 'PLF']]
-    data['Multiplied'] = data['L/D estimate']*data['OEW/Exit Limit']*data['TSFC Cruise']
+    data['OEW/Exit Limit'] = 100 / data['OEW/Exit Limit']
+    data = data[['Name','YOI', 'TSFC Cruise','EI (MJ/RPK)', 'OEW/Exit Limit', 'L/D estimate']]
     data = data.dropna()
-    data = data.groupby(['YOI'], as_index=False).agg({'TSFC Cruise':'mean',
-       'EI (MJ/RPK)':'mean', 'OEW/Exit Limit':'mean', 'L/D estimate':'mean', 'PLF':'mean'})
-    years = [1959,1970, 1980, 1990, 2000, 2007, 2018]
-    data = data.loc[data['YOI'].isin(years)]
+    oew = data.dropna(subset='OEW/Exit Limit')
+    oew['OEW/Exit Limit'] = oew['OEW/Exit Limit'] - 100
 
+    max_tsfc = data.loc[data['YOI']==1959, 'TSFC Cruise'].iloc[0]
+    data['TSFC Cruise'] = 100 / (data['TSFC Cruise'] / max_tsfc)
+    tsfc = data.dropna(subset='TSFC Cruise')
+    tsfc['TSFC Cruise'] = tsfc['TSFC Cruise']-100
 
+    max_eu = data.loc[data['YOI']==1959, 'EI (MJ/RPK)'].iloc[0]
+    data['EI (MJ/RPK)'] = 100/ (data['EI (MJ/RPK)'] / max_eu)
+    eu = data.dropna(subset='EI (MJ/RPK)')
+    eu['EI (MJ/RPK)'] = eu['EI (MJ/RPK)'] - 100
+
+    min_ld = data.loc[data['YOI']==1959, 'L/D estimate'].iloc[0]
+    data['L/D estimate'] = 100 / (min_ld / data['L/D estimate'])
+    ld = data.dropna(subset='L/D estimate')
+    ld['L/D estimate'] = ld['L/D estimate'] - 100
+
+    # Groupby Aircraft by the release Year and take the following years for the IDA
+    data = data[['Name','YOI', 'TSFC Cruise','EI (MJ/RPK)', 'OEW/Exit Limit', 'L/D estimate']]
+    #data['Multiplied'] = data['TSFC Cruise']*data['OEW/Exit Limit']*data['L/D estimate']
+    data = data.dropna()
+
+    years = np.arange(1959, 2022)
+    x_all = ld['YOI'].astype(np.int64)
+    y_all = ld['L/D estimate'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_ld = np.poly1d(z_all)
+
+    x_all = oew['YOI'].astype(np.int64)
+    y_all = oew['OEW/Exit Limit'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_oew = np.poly1d(z_all)
+
+    x_all = tsfc['YOI'].astype(np.int64)
+    y_all = tsfc['TSFC Cruise'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_tsfc = np.poly1d(z_all)
+
+    x_all = eu['YOI'].astype(np.int64)
+    y_all = eu['EI (MJ/RPK)'].astype(np.float64)
+    z_all = np.polyfit(x_all,  y_all, 4)
+    p_all_eu = np.poly1d(z_all)
+
+    slf['PLF'] = (100*slf['PLF'] / slf['PLF'].iloc[0]) -100
+
+    # Plot all Data as Scatterpoints and the data for the years above as a line
     fig = plt.figure(dpi=300)
-
-    # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
-    x_label = 'Year'
-    y_label = 'Efficiency'
+    x_label = 'Aircraft Year of Introduction'
+    y_label = 'Efficiency Increase [%]'
 
-    ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='black', label='Engine')
-    ax.scatter(eu['YOI'], eu['EI (MJ/RPK)'],color='turquoise', label='Overall')
-    ax.scatter(oew['YOI'], oew['OEW/Exit Limit'],color='orange', label='Structural')
-    ax.scatter(ld['YOI'], ld['L/D estimate'],color='blue', label='Aerodynamic')
-    ax.plot(data['YOI'], data['TSFC Cruise'],color='black', label='Engine')
-    ax.plot(data['YOI'], data['EI (MJ/RPK)'],color='turquoise', label='Overall')
-    ax.plot(data['YOI'], data['OEW/Exit Limit'],color='orange', label='Structural')
-    ax.plot(data['YOI'], data['L/D estimate'],color='blue', label='Aerodynamic')
-    ax.plot(data['YOI'], data['PLF'], color='green', label='Seat Load Factor')
-    #ax.plot(x_fit, y_fit, color='blue', label='Fitted Curve')
+    ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='black', label='Engine (TSFC)')
+    ax.scatter(eu['YOI'], eu['EI (MJ/RPK)'],color='turquoise', label='Overall (MJ/RPK)')
+    ax.scatter(oew['YOI'], oew['OEW/Exit Limit'],color='orange', label='Structural (OEW/Exit)')
+    ax.scatter(ld['YOI'], ld['L/D estimate'],color='blue', label='Aerodynamic (L/D)')
+    ax.scatter(slf['Year'], slf['PLF'], color='green', label='Operational (SLF (1959 normalized))')
+
+    ax.plot(years, p_all_tsfc(years),color='black')
+    ax.plot(years, p_all_eu(years),color='turquoise')
+    ax.plot(years, p_all_oew(years),color='orange')
+    ax.plot(years, p_all_ld(years), color='blue')
+    ax.plot(slf['Year'], slf['PLF'], color='green')
 
     # Add a legend to the plot
     ax.legend()
     plt.xlim(1955, 2025)
-    plt.ylim(0, 1.2)
+    plt.ylim(-30, 400)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
-        plt.savefig(folder_path+'/normalizeddata_ops.png')
+        plt.savefig(folder_path+'/normalized data3.png')
 
-    # Select relevant columns for index and factors
-    trendline_df=data
-    trendline_df['LMDI'] = (trendline_df['EI (MJ/RPK)'].shift(1) - trendline_df['EI (MJ/RPK)']) / ( np.log(trendline_df['EI (MJ/RPK)'].shift(1)) - np.log(trendline_df['EI (MJ/RPK)']))
-    trendline_df['Engine_LMDI'] = np.log(trendline_df['TSFC Cruise'].shift(1)/trendline_df['TSFC Cruise'])
-    trendline_df['Aerodyn_LMDI'] = np.log(trendline_df['L/D estimate'].shift(1) / trendline_df['L/D estimate'])
-    trendline_df['Structural_LMDI'] = np.log(trendline_df['OEW/Exit Limit'].shift(1) / trendline_df['OEW/Exit Limit'])
-    trendline_df['Operational_LMDI'] = np.log(trendline_df['PLF'].shift(1) / trendline_df['PLF'])
-    trendline_df['deltaC_Aerodyn'] = trendline_df['LMDI']*trendline_df['Aerodyn_LMDI']
-    trendline_df['deltaC_Engine'] = trendline_df['LMDI'] * trendline_df['Engine_LMDI']
-    trendline_df['deltaC_Structural'] = trendline_df['LMDI'] * trendline_df['Structural_LMDI']
-    trendline_df['deltaC_Operational'] = trendline_df['LMDI'] * trendline_df['Operational_LMDI']
-    trendline_df['deltaC_Tot'] = trendline_df['EI (MJ/RPK)'].shift(1) - trendline_df['EI (MJ/RPK)']
-    trendline_df['deltaC_Res'] = trendline_df['deltaC_Tot']-trendline_df['deltaC_Aerodyn']- trendline_df['deltaC_Engine']-trendline_df['deltaC_Structural']-trendline_df['deltaC_Operational']
+    # Evaluate the polynomials for the x values
+    p_all_tsfc_values = p_all_tsfc(years) + 100
+    p_all_oew_values = p_all_oew(years) + 100
+    p_all_ld_values = p_all_ld(years) + 100
+    p_all_eu_values = p_all_eu(years) + 100
+    p_all_slf = slf['PLF'] + 100
 
-    trendline_df = trendline_df[['YOI','deltaC_Structural', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Operational', 'deltaC_Res','deltaC_Tot']]
-    trendline_df['deltaC_Tot'] = trendline_df['deltaC_Tot']*100
-    trendline_df['deltaC_Engine'] = trendline_df['deltaC_Engine'] * 100
-    trendline_df['deltaC_Aerodyn'] = trendline_df['deltaC_Aerodyn'] * 100
-    trendline_df['deltaC_Structural'] = trendline_df['deltaC_Structural'] * 100
-    trendline_df['deltaC_Operational'] = trendline_df['deltaC_Operational'] * 100
-    trendline_df['deltaC_Res'] = trendline_df['deltaC_Res'] * 100
-    trendline_df = trendline_df.drop(0)
-    trendline_df = trendline_df.set_index('YOI')
-    trendline_df.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\LMDI_ops.xlsx')
-    columns = trendline_df.columns
+    # Create a dictionary with the polynomial values
+    data = {
+        'YOI': years,
+        'TSFC Cruise': p_all_tsfc_values,
+        'OEW/Exit Limit': p_all_oew_values,
+        'L/D estimate': p_all_ld_values,
+        'EU (MJ/ASK)': p_all_eu_values,
+        'SLF': p_all_slf
+    }
 
-    # Plotting the grouped bar plots
-    fig = plt.figure(dpi=300)
-    ax = fig.add_subplot(1, 1, 1)
+    # Create the DataFrame
+    df = pd.DataFrame(data)
+    data = df
+    # Use LMDI Method
 
-    # Set the width of each group
+    data['LMDI'] = (data['EU (MJ/ASK)'] - data['EU (MJ/ASK)'].iloc[0]) / (np.log(data['EU (MJ/ASK)']) - np.log(data['EU (MJ/ASK)'].iloc[0]))
+    data['Engine_LMDI'] = np.log(data['TSFC Cruise'] / data['TSFC Cruise'].iloc[0])
+    data['Aerodyn_LMDI'] = np.log(data['L/D estimate'] / data['L/D estimate'].iloc[0])
+    data['Structural_LMDI'] = np.log(data['OEW/Exit Limit'] / data['OEW/Exit Limit'].iloc[0])
+    data['SLF_LMDI'] = np.log(data['SLF'] / data['SLF'].iloc[0])
+    data['deltaC_Aerodyn'] = data['LMDI'] * data['Aerodyn_LMDI']
+    data['deltaC_Engine'] = data['LMDI'] * data['Engine_LMDI']
+    data['deltaC_Structural'] = data['LMDI'] * data['Structural_LMDI']
+    data['deltaC_SLF'] = data['LMDI'] * data['SLF_LMDI']
+    data['deltaC_Tot'] = data['EU (MJ/ASK)'] - data['EU (MJ/ASK)'].iloc[0]
+    data['deltaC_Res'] = data['deltaC_Tot'] - data['deltaC_Aerodyn'] - data['deltaC_Engine'] - data['deltaC_Structural']- data['deltaC_SLF']
+
+    # Get percentage increase of each efficiency and drop first row which only contains NaN
+    data = data[['YOI', 'deltaC_Structural', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_SLF','deltaC_Res', 'deltaC_Tot']]
+    data = data.drop(data.index[0])
+    data = data.set_index('YOI')
+
+    # Set the width of each group and create new indexes just the set the space right
+    data = data[['deltaC_Tot', 'deltaC_SLF','deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Res']]
+    columns = data.columns
     group_width = 1.3
-    num_columns = len(trendline_df.columns)
-    total_width = group_width * num_columns
-    new_index = [1970, 1980, 1990, 2000, 2010, 2020]
-    trendline_df.index = new_index
+    num_columns = len(data.columns)
 
-    # Iterate over each column and plot the grouped bar plot
-    labels = [ 'Structural','Engine', 'Aerodynamic','Operational', 'Residual','Overall']
+    # Create new Labels
+    labels = ['Overall (MJ/RPK)','Operational (SLF(1959 Normalized))','Engine (TSFC)', 'Aerodynamic (L/D)','Structural (OEW/Exit)', 'Residual' ]
 
+    # Create subplots for each column
+    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(15, 5), dpi=300)
+
+    # Create a Barplot for each Column
+    # Iterate over each column
     for i, column in enumerate(columns):
-        x = trendline_df.index + i * group_width
-        ax.bar(x, trendline_df[column], width=group_width, label=labels[i])
+        ax = axes[i]
 
-    xlabel='YOI'
-    ylabel='Efficiency Improvements [%]'
+        # Plot bar plot for each column
+        x = data.index + i * group_width
+        ax.bar(x, data[column], width=group_width)
 
-    ax.legend()
-    plot.plot_layout(None, xlabel, ylabel, ax)
-    new_tick_labels = ['1959-1970', '1970-1980', '1981-1990', '1991-2000', '2001-2007', '2008-2018']
-    offset = 0.05  # Adjust the offset value as needed
-    ax.set_xticks(trendline_df.index + (num_columns - 1) * group_width / 2)
-    ax.set_xticklabels([f'{label}\n' for label in new_tick_labels], ha='center', va='top', rotation=0)
-    for tick in ax.xaxis.get_ticklabels():
-        tick.set_y(tick.get_position()[1] - offset)  # Apply the offset to each tick label
+        xlabel = 'Year'
+        ylabel = 'Efficiency Improvements [%]'
+        title = labels[i]
+        plot.plot_layout(title, xlabel, ylabel, ax)
+        ax.set_xlim(1959,2021)
+        ax.set_ylim(-30,430)
+
+    # Adjust spacing between subplots
+    plt.tight_layout()
 
     if savefig:
-        plt.savefig(folder_path+'/indexdecomposition_ops.png')
+        plt.savefig(folder_path+'/indexdecomposition_3.png')
+
+
+
