@@ -5,7 +5,6 @@ from test_env.tools import plot
 
 def calculate(savefig, folder_path):
     aircrafts = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
-    aircrafts.loc[aircrafts['Exit Limit'] < 100, 'Type'] = 'Regional'
     aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
     aircrafts['OEW/MTOW_2'] = aircrafts['OEW'] / aircrafts['MTOW']
     aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx',  index=False)

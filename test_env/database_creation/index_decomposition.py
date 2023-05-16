@@ -79,7 +79,7 @@ def calculate(savefig, folder_path):
     plt.ylim(-30, 300)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
-        plt.savefig(folder_path+'/normalized data2.png')
+        plt.savefig(folder_path+'/ida_technological_normalized.png')
 
     # Evaluate the polynomials for the x values
     p_all_tsfc_values = p_all_tsfc(years) + 100
@@ -117,12 +117,8 @@ def calculate(savefig, folder_path):
 
     # Get percentage increase of each efficiency and drop first row which only contains NaN
     data = data[['YOI', 'deltaC_Structural', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Res', 'deltaC_Tot']]
-    data['deltaC_Tot'] = data['deltaC_Tot']
-    data['deltaC_Engine'] = data['deltaC_Engine']
-    data['deltaC_Aerodyn'] = data['deltaC_Aerodyn']
-    data['deltaC_Structural'] = data['deltaC_Structural']
-    data['deltaC_Res'] = data['deltaC_Res']
     data = data.drop(0)
+    data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx', index=False)
     data = data.set_index('YOI')
 
     # Set the width of each group and create new indexes just the set the space right
@@ -157,6 +153,7 @@ def calculate(savefig, folder_path):
     # Adjust spacing between subplots
     plt.tight_layout()
 
+
     if savefig:
-        plt.savefig(folder_path+'/indexdecomposition_2.png')
+        plt.savefig(folder_path+'/ida_technological.png')
 

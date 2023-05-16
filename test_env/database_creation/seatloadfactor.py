@@ -49,10 +49,6 @@ def calculate(savefig, folder_path):
     ax.plot(wide['YEAR'][0], wide['SLF'][0],color='orange', marker='s', label='US Widebody')
     ax.plot(narrow['YEAR'], narrow['SLF'],color='blue')
     ax.plot(narrow['YEAR'][0], narrow['SLF'][0],color='blue',marker='^', label='US Narrowbody')
-    #ax.plot(regional['YEAR'], regional['SLF'],color='darkred')
-    #ax.plot(regional['YEAR'][0], regional['SLF'][0],color='darkred',marker='o', label='Regional Jets')
-
-    # Add a legend to the plot
     ax.legend()
 
     #Arrange plot size
@@ -64,12 +60,10 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+'/seatloadfactor.png')
 
-
-    #plot figures for slf
+    # Plot Figure for Airborne Efficiency
     fig = plt.figure(dpi=300)
-
-    # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
+
     x_label = 'Year'
     y_label = 'Ratio'
 
@@ -79,10 +73,6 @@ def calculate(savefig, folder_path):
     ax.plot(wide['YEAR'][0], wide['Airborne Eff.'][0],color='orange', marker='s', label='Widebody')
     ax.plot(narrow['YEAR'], narrow['Airborne Eff.'],color='blue')
     ax.plot(narrow['YEAR'][0], narrow['Airborne Eff.'][0],color='blue',marker='^', label='Narrowbody')
-    #ax.plot(regional['YEAR'], regional['Airborne Eff.'],color='darkred')
-    #ax.plot(regional['YEAR'][0], regional['Airborne Eff.'][0],color='darkred',marker='o', label='Regional Jets')
-
-    # Add a legend to the plot
     ax.legend()
 
     #Arrange plot size
@@ -92,16 +82,4 @@ def calculate(savefig, folder_path):
 
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
-        plt.savefig(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\graphs\airborneefficiency.png')
-
-    writer = pd.ExcelWriter(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\operationalefficiency.xlsx")
-
-    # Write each DataFrame to a different sheet
-    historic_slf.to_excel(writer, sheet_name='Worldwide', index=False)
-    overall.to_excel(writer, sheet_name='US', index=False)
-    wide.to_excel(writer, sheet_name='US Widebody', index=False)
-    narrow.to_excel(writer, sheet_name='US Narrowbody', index=False)
-    regional.to_excel(writer, sheet_name='US Regional', index=False)
-
-    # Save the Excel file
-    writer.save()
+        plt.savefig(folder_path+'/airborneefficiency.png')

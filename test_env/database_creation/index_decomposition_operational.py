@@ -91,7 +91,7 @@ def calculate(savefig, folder_path):
     plt.ylim(-30, 400)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
-        plt.savefig(folder_path+'/normalized data3.png')
+        plt.savefig(folder_path+'/ida_operational_normalized.png')
 
     # Evaluate the polynomials for the x values
     p_all_tsfc_values = p_all_tsfc(years) + 100
@@ -120,20 +120,23 @@ def calculate(savefig, folder_path):
     data['Aerodyn_LMDI'] = np.log(data['L/D estimate'] / data['L/D estimate'].iloc[0])
     data['Structural_LMDI'] = np.log(data['OEW/Exit Limit'] / data['OEW/Exit Limit'].iloc[0])
     data['SLF_LMDI'] = np.log(data['SLF'] / data['SLF'].iloc[0])
-    data['deltaC_Aerodyn'] = data['LMDI'] * data['Aerodyn_LMDI']
-    data['deltaC_Engine'] = data['LMDI'] * data['Engine_LMDI']
-    data['deltaC_Structural'] = data['LMDI'] * data['Structural_LMDI']
-    data['deltaC_SLF'] = data['LMDI'] * data['SLF_LMDI']
-    data['deltaC_Tot'] = data['EU (MJ/ASK)'] - data['EU (MJ/ASK)'].iloc[0]
-    data['deltaC_Res'] = data['deltaC_Tot'] - data['deltaC_Aerodyn'] - data['deltaC_Engine'] - data['deltaC_Structural']- data['deltaC_SLF']
+    data['deltaC_Aerodyn_Ops'] = data['LMDI'] * data['Aerodyn_LMDI']
+    data['deltaC_Engine_Ops'] = data['LMDI'] * data['Engine_LMDI']
+    data['deltaC_Structural_Ops'] = data['LMDI'] * data['Structural_LMDI']
+    data['deltaC_SLF_Ops'] = data['LMDI'] * data['SLF_LMDI']
+    data['deltaC_Tot_Ops'] = data['EU (MJ/ASK)'] - data['EU (MJ/ASK)'].iloc[0]
+    data['deltaC_Res_Ops'] = data['deltaC_Tot_Ops'] - data['deltaC_Aerodyn_Ops'] - data['deltaC_Engine_Ops'] - data['deltaC_Structural_Ops']- data['deltaC_SLF_Ops']
 
     # Get percentage increase of each efficiency and drop first row which only contains NaN
-    data = data[['YOI', 'deltaC_Structural', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_SLF','deltaC_Res', 'deltaC_Tot']]
+    data = data[['YOI', 'deltaC_Structural_Ops', 'deltaC_Engine_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_SLF_Ops','deltaC_Res_Ops', 'deltaC_Tot_Ops']]
     data = data.drop(data.index[0])
+    dashboard = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx')
+    dashboard = dashboard.merge(data, on='YOI')
+    dashboard.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx', index=False)
     data = data.set_index('YOI')
 
     # Set the width of each group and create new indexes just the set the space right
-    data = data[['deltaC_Tot', 'deltaC_SLF','deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Res']]
+    data = data[['deltaC_Tot_Ops', 'deltaC_SLF_Ops','deltaC_Engine_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_Structural_Ops', 'deltaC_Res_Ops']]
     columns = data.columns
     group_width = 1.3
     num_columns = len(data.columns)
@@ -164,7 +167,7 @@ def calculate(savefig, folder_path):
     plt.tight_layout()
 
     if savefig:
-        plt.savefig(folder_path+'/indexdecomposition_3.png')
+        plt.savefig(folder_path+'/ida_operational.png')
 
 
 

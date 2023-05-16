@@ -18,8 +18,7 @@ def calculate(savefig, flight_speed, folder_path):
     data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
     #best method probably nu therm via nu prop as other values seem far to small . and there has to be a lot of calibration done, how much thrust is produced by the core and the fan
     data = data.dropna(subset='thermal_eff')
-    data['Company'] = data['Company'].str.strip()
-    data = data.loc[data['Company'].isin(['Airbus Industrie','Boeing', 'McDonnell Douglas'])]
+    data = data.loc[data['Type']!='Regional']
     data2 = data.groupby(['Engine Identification', 'YOI'], as_index=False).agg({'thermal_eff':'mean', 'prop_eff':'mean', 'Engine Efficiency':'mean'})
 
     #colormap for years

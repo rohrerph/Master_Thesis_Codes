@@ -12,6 +12,7 @@ import database_creation.emissions.therm_prop_eff
 import database_creation.aggregate_per_aircraft
 import database_creation.index_decomposition
 import database_creation.index_decomposition_operational
+import database_creation.index_decomposition_engine
 import datetime
 import os
 current_date = datetime.datetime.now()
@@ -60,5 +61,7 @@ print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical Sub-Efficiencies'
 database_creation.index_decomposition.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational Sub-Efficiencies')
 database_creation.index_decomposition_operational.calculate(savefig, folder_path)
+print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Engine Sub-Efficiencies')
+database_creation.index_decomposition_engine.calculate(savefig, folder_path)
 
 print(' --> [FINISH]')
