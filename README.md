@@ -18,6 +18,7 @@ As an output the Excel File Databank.xlsx will be produced.
 * database_creation.aggregate_per_aircraft : The Databank contains now multiple entries for each aircraft, accounting for different engines, different OEW and MTOW series. This file groups all the data on Aircraft Level. 
 * database_creation.index_decomposition : Decomposes the technical Efficiency improvements MJ/ASK into Structural, Aerodynamic, Engine and Residual Efficiency.  
 * database_creation.index_decomposition_operational : Integrates the SLF to calculate MJ/RPK and decomposes the efficiency gains into Structural, Aerodynamic, Engine, Operational and Residual.
+* database_creation.index_decomposition_operational : Decomposes Engine Efficiency into Thermal- and Propulsive- Efficiency
 
 ### Database Creation
 The folder database_creation contains all the files executed by the master.py. Further, the folder rawdata contains all Input Data and in the 

@@ -19,7 +19,7 @@ def calculate(savefig, folder_path):
                            'L/D estimate',
                            'Aspect Ratio',
                            'k',
-                           'Oswald Efficiency',
+                           'Wingspan,float,metre',
                            'prop_eff',
                            'thermal_eff',
                            'c_L',
@@ -27,7 +27,8 @@ def calculate(savefig, folder_path):
                            'c_Di',
                            'c_D0',
                            'EU_estimate',
-                           'Pax']]
+                           'Pax',
+                           'Height,float,metre']]
     aircrafts['EU_estimate_Limit'] = aircrafts['EU_estimate']*aircrafts['Pax']/aircrafts['Exit Limit']
     aircrafts = aircrafts.groupby(['Company','Name','Type','YOI'], as_index=False).agg('mean')
     print(' --> [CREATE AIRCRAFT DATABASE]: Compare Energy Usage from US DOT with Breguet Range Equation')

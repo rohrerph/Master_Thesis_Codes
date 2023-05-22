@@ -49,14 +49,11 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
            'Ratio 2', 'K_1', 'K_2', 'K', 'A'])
     aircraft_data['Dmax'] = (g * aircraft_data['MTOW\n(Kg)']) / aircraft_data['L/D estimate']
     aircraft_data['Aspect Ratio'] = aircraft_data['Wingspan,float,metre']**2/aircraft_data['Wing area,float,square-metre']
-    aircraft_data['Oswald Efficiency'] = 0.85 #4.61*(1-0.045*aircraft_data['Aspect Ratio']**0.68)*(math.cos(math.radians(30)))**0.15-3.1 #definition for straight wing
-    aircraft_data['c_L'] = (g * aircraft_data['MTOW\n(Kg)']) / (0.5*air_density*flight_vel**2*aircraft_data['Wing area,float,square-metre'])
+    aircraft_data['c_L'] = (2* g * aircraft_data['MTOW\n(Kg)']) / (air_density*(flight_vel**2)*aircraft_data['Wing area,float,square-metre'])
     aircraft_data['c_D'] = aircraft_data['c_L'] / aircraft_data['L/D estimate']
-    aircraft_data['k'] = 1 / (math.pi * aircraft_data['Aspect Ratio'] * aircraft_data['Oswald Efficiency'])
+    aircraft_data['k'] = 1 / (math.pi * aircraft_data['Aspect Ratio'] * 0.8)
     aircraft_data['c_Di'] = aircraft_data['k']*(aircraft_data['c_L']**2)
     aircraft_data['c_D0'] = aircraft_data['c_D']-aircraft_data['c_Di']
-    # second method based on a fixed Oswald Efficiency and CrudFactor
-    # not sure if this method works though
     aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
     aircraft_database = aircraft_database.dropna(subset='L/Dmax')
     aircraft_database = aircraft_database.groupby(['Name','YOI'], as_index=False).agg({'L/Dmax':'mean'})
@@ -81,7 +78,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     breguet = breguet.groupby(['Name', 'YOI'], as_index=False).agg({'L/D estimate':'mean'})
 
 
-    fig = plt.figure(dpi=150)
+    fig = plt.figure(dpi=300)
 
     # Add a subplot
     years = np.arange(1955, 2023)

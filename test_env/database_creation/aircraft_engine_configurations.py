@@ -75,7 +75,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
                   'Wing area,float,square-metre',
                   'Wingspan (canard),float,metre',
                   'Wingspan (winglets),float,metre',
-                  'Wingspan,float,metre']
+                  'Wingspan,float,metre','Height,float,metre']
     models = models[parameters]
     models_grouped = models.groupby(['id_x','name_x', 'engineModels','name_y', 'engineCount'], as_index=False).mean()
 
@@ -89,7 +89,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
            'Wingspan,float,metre','Wingspan (winglets),float,metre', 'name_x_y','name_y_y',
             'engineFamily', 'Bypass ratio,float,None', 'Overall pressure ratio,float,None',
            'Dry weight,integer,kilogram',
-           'Fan diameter,float,metre']
+           'Fan diameter,float,metre', 'Height,float,metre']
     models2 = models2[parameters]
     models3 = models2.loc[models2['name_x_x'].isin(airplanes)]
     models3['name_x_x'] = models3['name_x_x'].map(airplanes_dict)
@@ -173,8 +173,12 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     years = np.arange(1955, 2023)
     x_all = databank['YOI'].astype(np.int64)
     y_all = databank['TSFC Cruise'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 4)
+    z_all = np.polyfit(x_all,  y_all, 2)
     p_all = np.poly1d(z_all)
+
+    #limits from Kurzke: Advanced HBR 0.44 , Open Rotor = 0.51,
+    hbr = (0.44 * heatingvalue / flight_vel)**-1
+    openrotor = (0.51 * heatingvalue / flight_vel)**-1
     if use_lee_et_al:
         lee = databank.loc[databank['Babikian']=='Yes']
         lee = lee.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
@@ -182,6 +186,8 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         new = new.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
         ax.scatter(lee['YOI'], lee['TSFC Cruise'], marker='^', color='red', label='Lee et al.')
         ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue', label='New Data')
+        ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
+        ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
         #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
     # Add a subplot
     else:
@@ -197,6 +203,8 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         for index, row in databank.iterrows():
             ax.vlines(x=row['YOI'], ymin=row['min'], ymax=row['max'], colors='blue')
         ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red',label='Lee et al.', zorder=2)
+        ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
+        ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
         #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
 
     ax.legend()

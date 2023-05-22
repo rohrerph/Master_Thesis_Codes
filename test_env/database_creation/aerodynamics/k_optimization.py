@@ -4,33 +4,29 @@ import math
 import matplotlib.pyplot as plt
 
 # Create the range of AR values
-ARs = np.arange(6, 20, 0.1)
+aircraft_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+aircraft_data = aircraft_data.dropna(subset='Aspect Ratio')
+aircraft_data = aircraft_data.groupby(['Name'], as_index=False).agg({'Aspect Ratio':'mean', 'MTOW':'mean','OEW':'mean', })
 
-# Create empty lists to store e and k values
-e_values = []
-k_values = []
+aircraft_data = aircraft_data.dropna()
+aircraft_data['Wing Weight Estimation'] = aircraft_data['OEW']/4
+aircraft_data['Wing Weight Estimation per AR'] = aircraft_data['Wing Weight Estimation']/aircraft_data['Aspect Ratio']
+aircraft_data = aircraft_data.loc[aircraft_data['Name']=='737-900']
+values = np.arange(6, 30, 0.1)
 
-# Calculate e and k values for each AR value and store them in the lists
-for AR in ARs:
-    #e = 1.78*(1-0.045*AR**0.68)-0.64
-    #e = 4.61*(1-0.045*AR**0.68)*(math.cos(math.radians(30))**0.15)-3.1
-    e = 0.9
-    k = 1 / (math.pi * AR * e)
-    e_values.append(e)
-    k_values.append(k)
-print(e_values)
+ar_values = []
+bestar_values = []
+for value in values:
+    aircraft_data['Wing Weight'] = aircraft_data['Wing Weight Estimation per AR']*value
+    aircraft_data['MTOW new'] = aircraft_data['MTOW']- aircraft_data['Wing Weight Estimation']+ aircraft_data['Wing Weight']
+    aircraft_data['Best AR'] = aircraft_data['MTOW new']**2/value
+    ar_values.append(aircraft_data['Best AR'])
 # Create a pandas DataFrame to store the e and k values
-df = pd.DataFrame({'AR': ARs, 'e': e_values, 'k': k_values})
+df = pd.DataFrame({'AR': values, 'Best AR': ar_values})
 
-smallest_k = df['k'].min()
-print('The smallest value of k is:', smallest_k)
 
 # Plot k vs AR using matplotlib
-plt.plot(df['AR'], df['k'])
-plt.xlabel('AR')
-plt.ylabel('k')
-plt.title('k vs AR')
-plt.show()
+
 
 #smallest k appears to be at an aspect ratio of around 22-23 which is not possible due to structural limitations so what is the closest to it?
 

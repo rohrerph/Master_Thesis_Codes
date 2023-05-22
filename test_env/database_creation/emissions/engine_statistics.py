@@ -12,6 +12,7 @@ def calculate(savefig, folder_path):
                                  'Engine Identification',
                                  'TSFC Cruise',
                                  'TSFC T/O',
+                                 'Overall pressure ratio,float,None',
                                  'B/P Ratio',
                                  'Pressure Ratio',
                                  'Engine Efficiency',
@@ -20,7 +21,7 @@ def calculate(savefig, folder_path):
     emissions_df = emissions_df.groupby(['YOI','Name', 'Engine Identification' ], as_index=False).mean()
     yearly_emissions = emissions_df.groupby(['Engine Identification', 'Dry weight,integer,kilogram',
        'Fan diameter,float,metre', 'TSFC Cruise','TSFC T/O', 'B/P Ratio',
-       'Pressure Ratio', 'Engine Efficiency'], as_index=False).agg({'YOI':'min'})
+       'Pressure Ratio', 'Engine Efficiency', 'Overall pressure ratio,float,None'], as_index=False).agg({'YOI':'min'})
 
     # Get color spectrum for years
     years = yearly_emissions['YOI']
@@ -103,7 +104,7 @@ def calculate(savefig, folder_path):
     # BYPASS RATIO vs Pressure Ratio
     fig = plt.figure(dpi=120)
 
-    y = yearly_emissions['Pressure Ratio']
+    y = yearly_emissions['Overall pressure ratio,float,None']
     x = yearly_emissions['B/P Ratio']
 
     # Add a subplot
