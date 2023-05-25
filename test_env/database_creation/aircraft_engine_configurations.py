@@ -188,6 +188,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue', label='New Data')
         ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
         ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
+
         #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
     # Add a subplot
     else:
@@ -205,6 +206,25 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red',label='Lee et al.', zorder=2)
         ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
         ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
+
+    # Fuse in Data for Future projections
+    ax.scatter(2020, 13.736, color='green')
+    plt.annotate('Advanced Turbofan', (2020, 13.736),
+                    fontsize=6, xytext=(-10, 5),
+                    textcoords='offset points')
+    ax.scatter(2020, 14.94, color='green')
+    plt.annotate('GE9X', (2020, 14.94),
+                    fontsize=6, xytext=(-10, 5),
+                    textcoords='offset points')
+    ax.scatter(2025, 12.88, color='green')
+    plt.annotate('Ultrafan', (2025, 12.88),
+                    fontsize=6, xytext=(-10, 5),
+                    textcoords='offset points')
+    ax.scatter(2030, 12.152, color='green')
+    plt.annotate('Open Rotor', (2030, 12.152),
+                    fontsize=6, xytext=(-10, 5),
+                    textcoords='offset points')
+
         #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
 
     ax.legend()

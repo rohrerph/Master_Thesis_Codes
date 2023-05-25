@@ -2,11 +2,12 @@ import pandas as pd
 from test_env.tools import plot
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import curve_fit
+from sklearn.metrics import r2_score
 def calculate(savefig, folder_path):
     # Prepare data and normalize
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
+    data = data.loc[data['Type']!='Regional']
 
     # Normalize Data for TSFC, L/D, OEW/Exit Limit and EU using 1959 as a Basis, for OEW normalize regarding heaviest value of each Type
     data['OEW/Exit Limit'] = data.groupby('Type')['OEW/Exit Limit'].transform(lambda x: x / x.max())
@@ -36,26 +37,57 @@ def calculate(savefig, folder_path):
     #data['Multiplied'] = data['TSFC Cruise']*data['OEW/Exit Limit']*data['L/D estimate']
     data = data.dropna()
 
+    # Define a function to calculate R^2
+    def calculate_r_squared(y_true, y_pred):
+        y_mean = np.mean(y_true)
+        ss_total = np.sum((y_true - y_mean) ** 2)
+        ss_residual = np.sum((y_true - y_pred) ** 2)
+        r_squared = 1 - (ss_residual / ss_total)
+        return r_squared
+
+    # Polynomial for YOI vs. L/D estimate
     years = np.arange(1959, 2021)
     x_all = ld['YOI'].astype(np.int64)
     y_all = ld['L/D estimate'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 4)
+    z_all = np.polyfit(x_all, y_all, 4)
     p_all_ld = np.poly1d(z_all)
 
+    y_pred_ld = p_all_ld(x_all)
+    r2_ld = calculate_r_squared(y_all, y_pred_ld)
+    #print("R^2 for YOI vs. L/D estimate:", r2_ld)
+
+    # Polynomial for YOI vs. OEW/Exit Limit
     x_all = oew['YOI'].astype(np.int64)
     y_all = oew['OEW/Exit Limit'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 4)
+    z_all = np.polyfit(x_all, y_all, 4)
     p_all_oew = np.poly1d(z_all)
 
+    # Calculate R^2 for YOI vs. OEW/Exit Limit
+    y_pred_oew = p_all_oew(x_all)
+    r2_oew = calculate_r_squared(y_all, y_pred_oew)
+    #print("R^2 for YOI vs. OEW/Exit Limit:", r2_oew)
+
+    # Polynomial for YOI vs. TSFC Cruise
     x_all = tsfc['YOI'].astype(np.int64)
     y_all = tsfc['TSFC Cruise'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 4)
+    z_all = np.polyfit(x_all, y_all, 4)
     p_all_tsfc = np.poly1d(z_all)
 
+    # Calculate R^2 for YOI vs. TSFC Cruise
+    y_pred_tsfc = p_all_tsfc(x_all)
+    r2_tsfc = calculate_r_squared(y_all, y_pred_tsfc)
+    #print("R^2 for YOI vs. TSFC Cruise:", r2_tsfc)
+
+    # Polynomial for YOI vs. EU (MJ/ASK)
     x_all = eu['YOI'].astype(np.int64)
     y_all = eu['EU (MJ/ASK)'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 4)
+    z_all = np.polyfit(x_all, y_all, 4)
     p_all_eu = np.poly1d(z_all)
+
+    # Calculate R^2 for YOI vs. EU (MJ/ASK)
+    y_pred_eu = p_all_eu(x_all)
+    r2_eu = calculate_r_squared(y_all, y_pred_eu)
+    #print("R^2 for YOI vs. EU (MJ/ASK):", r2_eu)
 
     # Plot all Data as Scatterpoints and the data for the years above as a line
     fig = plt.figure(dpi=300)
@@ -123,37 +155,44 @@ def calculate(savefig, folder_path):
 
     # Set the width of each group and create new indexes just the set the space right
     data = data[['deltaC_Tot', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Res']]
-    columns = data.columns
-    group_width = 1.3
-    num_columns = len(data.columns)
-    total_width = group_width * num_columns
+    # Define the desired order of columns
+    column_order = ['deltaC_Tot', 'deltaC_Res','deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Engine']
 
+    # Reorder the columns
+    data = data[column_order]
     # Create new Labels
-    labels = ['Overall (MJ/ASK)','Engine (TSFC)', 'Aerodynamic (L/D)','Structural (OEW/Exit)', 'Residual' ]
+    labels = ['Overall (MJ/ASK)', 'Residual', 'Aerodynamic (L/D)','Structural (OEW/Exit)','Engine (TSFC)' ]
 
     # Create subplots for each column
-    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(15, 5), dpi=300)
+    fig, ax = plt.subplots(dpi=300)
 
-    # Create a Barplot for each Column
-    # Iterate over each column
-    for i, column in enumerate(columns):
-        ax = axes[i]
+    # Plot stacked areas for other columns
+    data_positive = data.drop('deltaC_Tot', axis=1).clip(lower=0)
+    data_negative = data.drop('deltaC_Tot', axis=1).clip(upper=0)
+    data_negative = data_negative.loc[:, (data_negative != 0).any(axis=0)]
+    # Create arrays for stacking the areas
+    positive_stack = np.zeros(len(data))
+    negative_stack = np.zeros(len(data))
 
-        # Plot bar plot for each column
-        x = data.index + i * group_width
-        ax.bar(x, data[column], width=group_width)
+    colors = ['blue', 'royalblue', 'steelblue', 'lightblue']
+    for i, column in enumerate(data_positive.columns):
+        ax.fill_between(data.index, positive_stack, positive_stack + data_positive.iloc[:, i], color=colors[i],
+                        label=labels[i + 1])
+        positive_stack += data_positive.iloc[:, i]
+    for i, column in enumerate(data_negative.columns):
+        ax.fill_between(data.index, negative_stack, negative_stack + data_negative.iloc[:, i], color=colors[i], linewidth=0)
+        negative_stack += data_negative.iloc[:, i]
 
-        xlabel = 'Year'
-        ylabel = 'Efficiency Improvements [%]'
-        title = labels[i]
-        plot.plot_layout(title, xlabel, ylabel, ax)
-        ax.set_xlim(1959,2021)
-        ax.set_ylim(-30,280)
+    # Plot overall efficiency as a line
+    overall_efficiency = data['deltaC_Tot']
+    ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
 
-    # Adjust spacing between subplots
-    plt.tight_layout()
-
-
+    xlabel = 'Year'
+    ylabel = 'Efficiency Improvements [%]'
+    ax.set_xlim(1960, 2020)
+    ax.set_ylim(-30, 280)
+    ax.legend(loc='upper left')
+    plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'/ida_technological.png')
 

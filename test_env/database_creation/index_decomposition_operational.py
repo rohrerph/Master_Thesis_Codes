@@ -137,34 +137,45 @@ def calculate(savefig, folder_path):
 
     # Set the width of each group and create new indexes just the set the space right
     data = data[['deltaC_Tot_Ops', 'deltaC_SLF_Ops','deltaC_Engine_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_Structural_Ops', 'deltaC_Res_Ops']]
-    columns = data.columns
-    group_width = 1.3
-    num_columns = len(data.columns)
+
+    column_order = ['deltaC_Tot_Ops', 'deltaC_Res_Ops','deltaC_SLF_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_Structural_Ops', 'deltaC_Engine_Ops']
+
+    # Reorder the columns
+    data = data[column_order]
 
     # Create new Labels
-    labels = ['Overall (MJ/RPK)','Operational (SLF(1959 Normalized))','Engine (TSFC)', 'Aerodynamic (L/D)','Structural (OEW/Exit)', 'Residual' ]
+    labels = ['Overall (MJ/RPK)', 'Residual' ,'Operational (SLF(1959 Normalized))', 'Aerodynamic (L/D)','Structural (OEW/Exit)','Engine (TSFC)']
 
     # Create subplots for each column
-    fig, axes = plt.subplots(nrows=1, ncols=num_columns, figsize=(15, 5), dpi=300)
+    fig, ax = plt.subplots(dpi=300)
 
-    # Create a Barplot for each Column
-    # Iterate over each column
-    for i, column in enumerate(columns):
-        ax = axes[i]
+    # Plot stacked areas for other columns
+    data_positive = data.drop('deltaC_Tot_Ops', axis=1).clip(lower=0)
+    data_negative = data.drop('deltaC_Tot_Ops', axis=1).clip(upper=0)
+    data_negative = data_negative.loc[:, (data_negative != 0).any(axis=0)]
+    # Create arrays for stacking the areas
+    positive_stack = np.zeros(len(data))
+    negative_stack = np.zeros(len(data))
 
-        # Plot bar plot for each column
-        x = data.index + i * group_width
-        ax.bar(x, data[column], width=group_width)
+    colors = ['navy','blue', 'royalblue', 'steelblue', 'lightblue']
+    for i, column in enumerate(data_positive.columns):
+        ax.fill_between(data.index, positive_stack, positive_stack + data_positive.iloc[:, i], color=colors[i],
+                        label=labels[i + 1])
+        positive_stack += data_positive.iloc[:, i]
+    for i, column in enumerate(data_negative.columns):
+        ax.fill_between(data.index, negative_stack, negative_stack + data_negative.iloc[:, i], color=colors[i], linewidth=0)
+        negative_stack += data_negative.iloc[:, i]
 
-        xlabel = 'Year'
-        ylabel = 'Efficiency Improvements [%]'
-        title = labels[i]
-        plot.plot_layout(title, xlabel, ylabel, ax)
-        ax.set_xlim(1959,2021)
-        ax.set_ylim(-30,430)
+    # Plot overall efficiency as a line
+    overall_efficiency = data['deltaC_Tot_Ops']
+    ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
 
-    # Adjust spacing between subplots
-    plt.tight_layout()
+    xlabel = 'Year'
+    ylabel = 'Efficiency Improvements [%]'
+    ax.set_xlim(1960, 2020)
+    ax.set_ylim(-50, 400)
+    ax.legend(loc='upper left')
+    plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
         plt.savefig(folder_path+'/ida_operational.png')

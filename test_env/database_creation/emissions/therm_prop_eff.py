@@ -10,6 +10,7 @@ def calculate(savefig, flight_speed, folder_path):
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     data['Overcome Thrust'] = data['Engine Efficiency']*data['Fuel Flow [kg/s]']*43.6*10**6/flight_speed
     data['prop_eff'] = 2 * flight_speed / (data['Overcome Thrust'] / (data['Air Mass Flow [kg/s]'] * data['engineCount']) + 2 * flight_speed)
+    data['f'] = data['Fuel Flow [kg/s]']/data['Air Mass Flow [kg/s]']
     data['thermal_eff'] = data['Engine Efficiency']/data['prop_eff']
     data.loc[data['B/P Ratio']<=2, 'thermal_eff'] = np.nan
     data.loc[data['B/P Ratio']<=2, 'prop_eff'] = np.nan

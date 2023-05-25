@@ -30,7 +30,9 @@ if not os.path.exists(folder_path):
 # Parameters
 savefig = True
 mach = 0.82
-altitude = 10500 # m
+altitude = 10500  # m
+
+# Constants
 km = 1.609344  # miles
 heatingvalue_gallon = 142.2  # 142.2 MJ per Gallon of kerosene
 heatingvalue_kg = 43.1  # MJ/kg
@@ -57,17 +59,16 @@ print(' --> [CREATE ANNUAL VALUES]: Calculate Seat Load Factor and Airborne Effi
 database_creation.seatloadfactor.calculate(savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Calculate L/D Ratio from Breguet Range Equation...')
 database_creation.aerodynamics.aerodynamicefficiency.calculate(savefig, air_density, flight_vel, gravity, folder_path)
-print(' --> [CREATE AIRCRAFT DATABASE]: Create Graphs for Aerodynamic Statistics...')
-database_creation.aerodynamics.aerodynamic_statistics.calculate(savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Split Engine Efficiency into Thermal and Propulsive Efficiency...')
 database_creation.emissions.therm_prop_eff.calculate(savefig, flight_vel, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Summarize Data per Aircraft Type')
 database_creation.aggregate_per_aircraft.calculate(savefig, folder_path)
+print(' --> [CREATE AIRCRAFT DATABASE]: Create Graphs for Aerodynamic Statistics...')
+database_creation.aerodynamics.aerodynamic_statistics.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical Sub-Efficiencies')
 database_creation.index_decomposition.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational Sub-Efficiencies')
 database_creation.index_decomposition_operational.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Engine Sub-Efficiencies')
 database_creation.index_decomposition_engine.calculate(savefig, folder_path)
-
 print(' --> [FINISH]')
