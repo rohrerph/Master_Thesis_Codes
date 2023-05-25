@@ -5,6 +5,8 @@ import database_creation.emissions.icaoemssions
 import database_creation.emissions.to_vs_cruise_sfc
 import database_creation.aircraft_engine_configurations
 import database_creation.emissions.engine_statistics
+import database_creation.emissions.thermal_efficiency
+import database_creation.emissions.propulsive_efficiency
 import database_creation.structuralefficiency
 import database_creation.seats
 import database_creation.seatloadfactor
@@ -40,7 +42,7 @@ gravity = 9.81  # m/s^2
 
 print(' --> [START]')
 print(' --> [CREATE AIRCRAFT DATABASE]:Calculate Atmospheric Conditions...')
-air_density, flight_vel = database_creation.atmospheric_conditions.calculate(altitude, mach)
+air_density, flight_vel, temp = database_creation.atmospheric_conditions.calculate(altitude, mach)
 print(' --> [CREATE AIRCRAFT DATABASE]: Load Demand Data from the US DOT...')
 database_creation.overallefficiency.calculate(savefig, km, heatingvalue_gallon, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Calibrate Linear Fit for Take-Off vs Cruise TSFC...')
@@ -61,6 +63,10 @@ print(' --> [CREATE AIRCRAFT DATABASE]: Calculate L/D Ratio from Breguet Range E
 database_creation.aerodynamics.aerodynamicefficiency.calculate(savefig, air_density, flight_vel, gravity, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Split Engine Efficiency into Thermal and Propulsive Efficiency...')
 database_creation.emissions.therm_prop_eff.calculate(savefig, flight_vel, folder_path)
+print(' --> [CREATE AIRCRAFT DATABASE]: Calculating maximal Thermal Efficiency for a Turbofan Brayton-Cycle')
+database_creation.emissions.thermal_efficiency.calculate(savefig, folder_path, temp)
+print(' --> [CREATE AIRCRAFT DATABASE]: Calculating maximal Propulsive Efficiency fregarding Thrust Level and Fan Diameter')
+database_creation.emissions.propulsive_efficiency.calculate(savefig, folder_path, flight_vel, air_density)
 print(' --> [CREATE AIRCRAFT DATABASE]: Summarize Data per Aircraft Type')
 database_creation.aggregate_per_aircraft.calculate(savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Create Graphs for Aerodynamic Statistics...')

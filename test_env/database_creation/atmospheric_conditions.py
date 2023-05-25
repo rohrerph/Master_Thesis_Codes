@@ -8,4 +8,4 @@ def calculate(altitude, mach):
     dhstrat = np.maximum(0.0, altitude - 11000.0)
     rho = rhotrop * np.exp(-dhstrat / 6341.552161)
     flight_vel = mach * np.sqrt(gamma*R*T)
-    return rho, flight_vel
+    return rho, flight_vel, T

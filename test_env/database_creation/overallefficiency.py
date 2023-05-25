@@ -71,10 +71,10 @@ def calculate(savefig, km, mj, folder_path):
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
        ax.scatter(regional['YOI'], regional['MJ/ASK'], marker='^', color='cyan', label='Regional US DOT T2')
        ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Lee')
-       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o', color='purple', label='Babikian & US DOT T2')
+       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o', color='purple', label='Lee & US DOT T2')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
-       ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Babikian Fleet')
+       ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
 
        #for i, row in airplanes_release_year.iterrows():
            #plt.annotate(row['Description'], (row['YOI'], row['MJ/ASK']),
