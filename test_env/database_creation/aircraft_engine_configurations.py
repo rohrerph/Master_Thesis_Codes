@@ -180,30 +180,29 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     hbr = (0.44 * heatingvalue / flight_vel)**-1
     openrotor = (0.51 * heatingvalue / flight_vel)**-1
     if use_lee_et_al:
-        lee = databank.loc[databank['Babikian']=='Yes']
-        lee = lee.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
-        new = databank.loc[databank['Babikian']!='Yes']
-        new = new.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean'})
-        ax.scatter(lee['YOI'], lee['TSFC Cruise'], marker='^', color='red', label='Lee et al.')
-        ax.scatter(new['YOI'], new['TSFC Cruise'], marker='s', color='blue', label='New Data')
+        bpr = databank.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean',  'B/P Ratio': 'mean'})
+        low = bpr.loc[bpr['B/P Ratio'] <= 2]
+        medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
+        high = bpr.loc[bpr['B/P Ratio'] >= 8]
+
+        ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR <2')
+        ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
+        ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
+
         ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
         ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
 
-        #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
     # Add a subplot
     else:
-        databank = databank.groupby(['Name','YOI'], as_index=False).agg({'TSFC Cruise': ['mean', 'min', 'max']})
-        databank.columns = pd.MultiIndex.from_tuples([
-            ('Name', ''),
-            ('YOI', ''),
-            ('mean', 'TSFC Cruise'),
-            ('min', 'TSFC Cruise'),
-            ('max', 'TSFC Cruise')])
+        bpr = databank.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean',  'B/P Ratio': 'mean'})
+        low = bpr.loc[bpr['B/P Ratio'] <= 2]
+        medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
+        high = bpr.loc[bpr['B/P Ratio'] >= 8]
 
-        ax.scatter(databank['YOI'], databank['mean'], marker='s',color='blue', label='My Data')
-        for index, row in databank.iterrows():
-            ax.vlines(x=row['YOI'], ymin=row['min'], ymax=row['max'], colors='blue')
-        ax.scatter(aircraft_database['YOI'], aircraft_database['TSFC (mg/Ns)'], marker='^', color='red',label='Lee et al.', zorder=2)
+        ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR <2')
+        ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
+        ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
+
         ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
         ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
 

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from test_env.tools import dict
 from test_env.tools import T2_preprocessing
+from test_env.tools import plot
 import matplotlib.pyplot as plt
 
 def calculate(savefig, km, mj, folder_path):
@@ -76,28 +77,42 @@ def calculate(savefig, km, mj, folder_path):
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
 
-       #for i, row in airplanes_release_year.iterrows():
-           #plt.annotate(row['Description'], (row['YOI'], row['MJ/ASK']),
-                        #fontsize=6, xytext=(-10, 5),
-                        #textcoords='offset points')
+       historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
+       historic_legend._legend_box.align = "left"
 
-       # Add a legend to the plot
-       ax.legend()
+       #add projections from Lee et al.
+       ax.scatter([1997, 2007, 2022], [1.443, 1.238, 0.9578], marker='^', color='black', label='NASA 100 PAX')
+       ax.scatter([1997, 2007, 2022], [1.2787, 1.0386, 0.741], marker='*', color='black', label='NASA 150 PAX')
+       ax.scatter([1997, 2007, 2022], [1.2267, 0.9867, 0.681], marker='s', color='black', label='NASA 225 PAX')
+       ax.scatter([1997, 2007, 2022], [1.1704, 0.9259, 0.637], marker='o', color='black', label='NASA 300 PAX')
+       ax.scatter([1997, 2007, 2022], [0.91, 0.76, 0.559], marker='P', color='black', label='NASA 600 PAX')
+       ax.scatter(2010, 0.6587 , marker='^', color='grey', label='NRC')
+       ax.scatter(2015, 0.5866, marker='o', color='grey', label='Greene')
+       ax.scatter([2025, 2025, 2025], [0.55449, 0.6, 0.68], marker='s', color='grey', label='Lee')
+
+       # Projection legend
+       projection_handles = ax.get_legend_handles_labels()[0][7:]  # Exclude the first 8 handles (historic data)
+       projection_labels = ax.get_legend_handles_labels()[1][7:]  # Exclude the first 8 labels (historic data)
+       projection_legend = ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
+                                     title="Historic Projections", frameon=False)
+
+       ax.add_artist(historic_legend)
+
+
+       # Set the title for the lower legend
+       #plt.gca().add_artist(projection_legend)
 
        #Arrange plot size
        plt.ylim(0, 4)
-       plt.xlim(1955, 2025)
-       plt.xticks(np.arange(1955, 2024, 10))
+       plt.xlim(1955, 2030)
+       plt.xticks(np.arange(1955, 2031, 10))
 
        # Set the x and y axis labels
-       ax.set_xlabel('Aircraft Year of Introduction')
-       ax.set_ylabel('EU (MJ/ASK)')
-
-       ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-       ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-       ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
+       xlabel = 'Aircraft Year of Introduction'
+       ylabel = 'EU (MJ/ASK)'
+       plot.plot_layout(None, xlabel, ylabel, ax)
        if savefig:
-              plt.savefig(folder_path+ "\ovr_efficiency.png")
+              plt.savefig(folder_path+ "\ovr_efficiency.png", bbox_inches='tight')
 
        doubled = doubled[['Description','Year', 'MJ/ASK mixed']]
        airplanes_release_year = airplanes_release_year[['Description','YOI','MJ/ASK']]
