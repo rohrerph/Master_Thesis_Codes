@@ -64,7 +64,7 @@ def calculate(savefig, folder_path, temp):
     new_ylabels = ['100', '90', '80','70','60','50', '40', '30', '20', '10']
     plt.yticks(new_yticks, new_ylabels)
     ax.vlines(1000,0,90, color='black', label='Temp NOx Limit', linewidth=3)
-    ax.vlines(1600,0,90, color='black', label='Stochiometric Limit', linewidth=3)
+    ax.vlines(1600,0,90, color='black', label='Stoichiometric Limit', linewidth=3)
     ax.text(1000, -3, 'Temp NOx Limit', horizontalalignment='center', verticalalignment='center',  weight='bold')
     ax.text(1600, -3, 'Stochiometric Limit', horizontalalignment='center', verticalalignment='center',  weight='bold')
     ax.set_title(r'With $\eta_{Compressor}$ and $\eta_{Turbine}$ = 0.9', loc='left')

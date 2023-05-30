@@ -6,6 +6,8 @@ import matplotlib.colors as mcolors
 
 def calculate(savefig, folder_path):
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
+    data = data.groupby(['Engine'], as_index=False).agg(
+        {'Engine TSFC cruise [g/kNs]': 'mean', 'Engine TSFC take off [g/kNs]': 'mean', 'Release year': 'mean', 'Application Date':'mean'})
     emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     emissions_df = emissions_df[['Dry weight,integer,kilogram',
                                  'Fan diameter,float,metre',
@@ -86,7 +88,7 @@ def calculate(savefig, folder_path):
         ax.axvline(x=value, color=color, linewidth=1, ymin=0, ymax=1, alpha=0.5)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Aircraft Year of Introduction')
+    plt.colorbar(sm).set_label('Engine/Aircraft Year of Certification')
     ax.scatter(x, y, c=colors2, zorder=2)
     ax.plot(span, p(span),color='black', linewidth=2)
     equation_text = f'y = {z[0]:.2f}x + {z[1]:.2f} , R-squared = {r_squared}'
@@ -102,7 +104,7 @@ def calculate(savefig, folder_path):
         plt.savefig(folder_path+'\icao_to_tsfc_vs_years.png')
 
     # BYPASS RATIO vs Pressure Ratio
-    fig = plt.figure(dpi=120)
+    fig = plt.figure(dpi=300)
 
     y = yearly_emissions['Overall pressure ratio,float,None']
     x = yearly_emissions['B/P Ratio']
@@ -117,7 +119,7 @@ def calculate(savefig, folder_path):
 
     ylabel = 'Pressure Ratio'
     xlabel = 'Bypass Ratio'
-    plt.ylim(10, 50)
+    plt.ylim(10, 55)
     plt.xlim(0, 13)
     plot.plot_layout(None, xlabel, ylabel, ax)
 

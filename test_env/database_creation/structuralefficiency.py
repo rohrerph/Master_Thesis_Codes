@@ -10,7 +10,7 @@ def calculate(savefig, folder_path):
     aircrafts['Composites'] = aircrafts['Composites'].fillna(0)
     CFR = 1.55  # g/cm^2
     alu2024t3 = 2.78  # g/cm^2
-    aircrafts['Composite OEW'] = aircrafts['OEW']/2 + aircrafts['OEW']/2*(CFR/(aircrafts['Composites']*CFR+(1-aircrafts['Composites'])*alu2024t3))
+    aircrafts['Composite OEW'] = aircrafts['OEW']*(CFR/(aircrafts['Composites']*CFR+(1-aircrafts['Composites'])*alu2024t3))
     aircrafts['Composites Exit Limit'] = aircrafts['Composite OEW'] / aircrafts['Exit Limit']
     aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx',  index=False)
     aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])

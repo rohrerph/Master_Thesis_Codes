@@ -115,7 +115,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     models4b = pd.merge(unmatched, icao, left_on='name_x_y', how='inner', right_on='Engine Identification')
     models4 = models4.append(models4b)
 
-    #MERGE ON ENGINE FAMILIES WITHOUT SUBVERSIONS Specially for JT8D and RB211
+    #MERGE ON ENGINE FAMILIES WITHOUT SUBVERSIONS Specially for JT8D and RB211 and JT3D
     unmatched = pd.merge(unmatched, icao, left_on='name_x_y', how='left', right_on='Engine Identification')
     unmatched = unmatched[unmatched['Engine Identification'].isna()]
     unmatched = unmatched.drop(columns=['Engine Identification', 'TSFC Cruise', 'Final Test Date', 'B/P Ratio', 'Pressure Ratio', 'TSFC T/O'])
@@ -123,6 +123,8 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     unmatched.loc[mask, 'name_x_y'] = unmatched.loc[mask, 'name_x_y'].str.split('-', n=2).str[:2].str.join('-').str.replace(r'\d+$', '')
     mask = unmatched['name_x_y'].str.contains('LEAP-1', case=False)
     unmatched.loc[mask, 'name_x_y'] = unmatched.loc[mask, 'name_x_y'].str[:-1]
+    mask = unmatched['name_x_y'].str.contains('JT3D', case=False)
+    unmatched.loc[mask, 'name_x_y'] = 'JT3D-3'
     mask = unmatched['name_x_y'].str.contains('GEnx-1B70', case=False)
     unmatched.loc[mask, 'name_x_y'] = unmatched.loc[mask, 'name_x_y'].str[:-1]
     mask = unmatched['name_x_y'].str.contains('CFM56-3', case=False)
@@ -133,6 +135,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     icao.loc[mask, 'Engine Identification'] = substring_matches[0]
     icao = icao.groupby(['Engine Identification'], as_index=False).agg({'TSFC T/O':'mean','TSFC Cruise':'mean', 'Final Test Date':'min', 'B/P Ratio':'mean', 'Pressure Ratio':'mean'})
     models4c = pd.merge(unmatched, icao, left_on='name_x_y', how='inner', right_on='Engine Identification')
+
     models4 = models4.append(models4c)
 
     # Further methods can be integrated to achieve a higher matching rate.
@@ -176,9 +179,10 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     z_all = np.polyfit(x_all,  y_all, 2)
     p_all = np.poly1d(z_all)
 
-    #limits from Kurzke: Advanced HBR 0.44 , Open Rotor = 0.51,
-    hbr = (0.44 * heatingvalue / flight_vel)**-1
-    openrotor = (0.51 * heatingvalue / flight_vel)**-1
+    #  Limits from Kurzke
+    limit = (0.555 * heatingvalue / flight_vel)**-1
+    limit_nox = (0.50875 * heatingvalue / flight_vel) ** -1
+
     if use_lee_et_al:
         bpr = databank.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean',  'B/P Ratio': 'mean'})
         low = bpr.loc[bpr['B/P Ratio'] <= 2]
@@ -189,8 +193,8 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
         ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
 
-        ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
-        ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
+        ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
+        ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
 
     # Add a subplot
     else:
@@ -203,15 +207,15 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
         ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
         ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
 
-        ax.axhline(y=hbr, color='black', linestyle='--', linewidth=2, label = 'HBR: Practical Limit w.r.t. NOx Emissions')
-        ax.axhline(y=openrotor, color='black', linestyle='-', linewidth=2, label = 'Open Rotor: Practical Limit w.r.t. NOx Emissions')
+        ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
+        ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
 
     # Fuse in Data for Future projections
-    ax.scatter(2020, 13.736, color='green')
-    plt.annotate('Advanced Turbofan', (2020, 13.736),
-                    fontsize=6, xytext=(-10, 5),
-                    textcoords='offset points')
-    ax.scatter(2020, 14.94, color='green')
+    #ax.scatter(2020, 13.736, color='green')
+    #plt.annotate('Advanced Turbofan', (2020, 13.736),
+                    #fontsize=6, xytext=(-10, 5),
+                    #textcoords='offset points')
+    ax.scatter(2020, 14.94, color='green', label='Future Projections')
     plt.annotate('GE9X', (2020, 14.94),
                     fontsize=6, xytext=(-10, 5),
                     textcoords='offset points')
@@ -223,7 +227,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     plt.annotate('Open Rotor', (2030, 12.152),
                     fontsize=6, xytext=(-10, 5),
                     textcoords='offset points')
-
+    plt.xlim(1955,2050)
         #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
 
     ax.legend()
