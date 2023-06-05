@@ -15,10 +15,10 @@ def calculate(vel, savefig, folder_path):
 
     # Air time efficiency in 2022
     AC_types = pd.read_csv(
-        r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
-    T100 = pd.read_csv(r"C:\Users\PRohr\Downloads\T100_Annual\T_T100_SEGMENT_ALL_CARRIER_2022.csv")
-    airport_coordinates = pd.read_csv(r"C:\Users\PRohr\Downloads\airports.csv")
-    #airport_coordinates = airport_coordinates.loc[airport_coordinates['type']=='large_airport']
+        r"database_creation/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
+    T100 = pd.read_csv(r"database_creation/rawdata/USDOT/T_T100_SEGMENT_ALL_CARRIER_2022.csv")
+    airport_coordinates = pd.read_csv(r"database_creation/rawdata/USDOT/airports.csv")
+    airport_coordinates = airport_coordinates.loc[airport_coordinates['type']=='large_airport']
 
     # Use the 19 Airlines
     T100 = T100.loc[T100['UNIQUE_CARRIER_NAME'].isin(airlines)]

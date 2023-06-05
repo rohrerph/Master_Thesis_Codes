@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/sustainable_aviation_dashboard" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/voici-demo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/website_aviation_dashboard" vcs="Git" />
   </component>

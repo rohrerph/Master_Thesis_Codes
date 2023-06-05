@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def calculate(savefig, air_density,flight_vel, g, folder_path):
-    aircraft_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
-    lift_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
+    aircraft_data = pd.read_excel(r'Databank.xlsx')
+    lift_data = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
     # Remove these Regional jets, it seems, that their data is not accurate, possibly because overall all values are much smaller.
     lift_data = lift_data[~lift_data['Name'].isin(['RJ-200ER /RJ-440', 'RJ-700', 'Embraer ERJ-175', 'Embraer-145', 'Embraer-135', 'Embraer 190'])]
     aircraft_data = aircraft_data.merge(lift_data, on='Name', how='left')
@@ -42,7 +42,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     aircraft_data['k'] = 1 / (math.pi * aircraft_data['Aspect Ratio'] * 0.8)
     aircraft_data['c_Di'] = aircraft_data['k']*(aircraft_data['c_L']**2)
     aircraft_data['c_D0'] = aircraft_data['c_D']-aircraft_data['c_Di']
-    aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+    aircraft_database = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
     aircraft_database = aircraft_database.dropna(subset='L/Dmax')
     aircraft_database = aircraft_database.groupby(['Name','YOI'], as_index=False).agg({'L/Dmax':'mean'})
     aircraft_database['L/D estimate'] =aircraft_database['L/Dmax']
@@ -60,7 +60,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     aircraft_data['EU_estimate'] = (aircraft_data['EU_estimate1']+aircraft_data['EU_estimate2'])/2
 
     aircraft_data = aircraft_data.drop(columns=['MTOW\n(Kg)', 'MZFW_POINT_1\n(Kg)', 'RANGE_POINT_1\n(Km)', 'MZFW_POINT_2\n(Kg)', 'RANGE_POINT_2\n(Km)', 'EU_estimate1', 'EU_estimate2'])
-    aircraft_data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+    aircraft_data.to_excel(r'Databank.xlsx', index=False)
 
     breguet = aircraft_data.dropna(subset='L/D estimate')
     breguet = breguet.groupby(['Name', 'YOI', 'Type'], as_index=False).agg({'L/D estimate':'mean'})

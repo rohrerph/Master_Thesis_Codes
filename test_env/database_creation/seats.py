@@ -13,17 +13,17 @@ def calculate():
     T100 = pd.DataFrame()
 
     # Get a list of all files in the folder
-    file_list = os.listdir(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T100_Annual')
-    aircraft = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    file_list = os.listdir(r'database_creation\rawdata\USDOT\T100_Annual')
+    aircraft = pd.read_excel(r'Databank.xlsx')
 
     # Loop through each file and read it into a dataframe, and append to the combined dataframe
     for file_name in file_list:
-        file_path = os.path.join(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T100_Annual', file_name)
+        file_path = os.path.join(r'database_creation\rawdata\USDOT\T100_Annual', file_name)
         df = pd.read_csv(file_path)
         T100 = T100.append(df, ignore_index=True)
 
     #Data from December 2022, is also monthly available back to 1990.
-    AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
+    AC_types = pd.read_csv(r"database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
 
     T100 = T100.loc[T100['CARRIER_GROUP'] == 3]
     # subgroup 1 for aircraft passenger configuration
@@ -47,4 +47,4 @@ def calculate():
     aircraft = pd.merge(aircraft, average_seats, left_on='Name', right_on='Description', how='left')
     aircraft = aircraft.rename(columns={'Average Seats': 'Pax'})
     aircraft = aircraft.drop(columns=['Description'])
-    aircraft.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+    aircraft.to_excel(r'Databank.xlsx', index=False)

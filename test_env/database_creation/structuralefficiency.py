@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from test_env.tools import plot
 
 def calculate(savefig, folder_path):
-    aircrafts = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    aircrafts = pd.read_excel(r'Databank.xlsx')
     aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
     aircrafts['OEW/MTOW_2'] = aircrafts['OEW'] / aircrafts['MTOW']
     aircrafts['Composites'] = aircrafts['Composites'].fillna(0)
-    aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+    aircrafts.to_excel(r'Databank.xlsx', index=False)
 
     # Calculate the min weight which could be obtained using 100% composite materials for a Boeing 787-10 Dreamliner
     CFR = 1.55  # g/cm^2

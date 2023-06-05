@@ -5,7 +5,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 def calculate(savefig, folder_path):
     # Prepare data and normalize
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    data = pd.read_excel(r'Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
     data = data.loc[data['Type']!='Regional']
     data = data[['Name','YOI','Engine Efficiency', 'prop_eff', 'thermal_eff']]

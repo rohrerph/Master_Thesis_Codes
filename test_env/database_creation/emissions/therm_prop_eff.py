@@ -7,7 +7,7 @@ from not_maintained.tools import plot
 
 
 def calculate(savefig, flight_speed, folder_path):
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    data = pd.read_excel(r'Databank.xlsx')
     data['Overcome Thrust'] = data['Engine Efficiency']*data['Fuel Flow [kg/s]']*43.6*10**6/flight_speed
     data['prop_eff'] = 2 * flight_speed / (data['Overcome Thrust'] / (data['Air Mass Flow [kg/s]'] * data['engineCount']) + 2 * flight_speed)
     data['f'] = data['Fuel Flow [kg/s]']/data['Air Mass Flow [kg/s]']
@@ -16,7 +16,7 @@ def calculate(savefig, flight_speed, folder_path):
     data.loc[data['B/P Ratio']<=2, 'prop_eff'] = np.nan
     #\data = data.drop(columns=['Overcome Thrust'])
 
-    data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+    data.to_excel(r'Databank.xlsx', index=False)
     #best method probably nu therm via nu prop as other values seem far to small . and there has to be a lot of calibration done, how much thrust is produced by the core and the fan
     data = data.dropna(subset='thermal_eff')
     data = data.loc[data['Type']!='Regional']

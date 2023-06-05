@@ -5,10 +5,10 @@ from test_env.tools import plot
 import matplotlib.colors as mcolors
 
 def calculate(savefig, folder_path):
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
+    data = pd.read_excel(r'database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
     data = data.groupby(['Engine'], as_index=False).agg(
         {'Engine TSFC cruise [g/kNs]': 'mean', 'Engine TSFC take off [g/kNs]': 'mean', 'Release year': 'mean', 'Application Date':'mean'})
-    emissions_df = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    emissions_df = pd.read_excel(r'Databank.xlsx')
     emissions_df = emissions_df[['Dry weight,integer,kilogram',
                                  'Fan diameter,float,metre',
                                  'Engine Identification',

@@ -7,7 +7,7 @@ from test_env.tools import plot
 
 def calculate(savefig, folder_path):
 
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    data = pd.read_excel(r'Databank.xlsx')
     data = data.loc[data['Aspect Ratio']<=15] # Filter out 767-400 where a wrong value is set in the database
     #data = data.loc[data['YOI'] >= 2000]
     data = data.loc[data['Type']!='Regional']

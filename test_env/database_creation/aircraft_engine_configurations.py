@@ -11,14 +11,14 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
 
     #test file to create a dataset using the aircraft-database website. Useful to get aircraft-engine pairs, but e.g. OEW is pretty much never given.
 
-    models = pd.read_json(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraft-database\aircraft-types.json")
+    models = pd.read_json(r"database_creation\rawdata\aircraft-database\aircraft-types.json")
     models = models.explode('engineModels').reset_index(drop=True)
     models = models.explode('propertyValues').reset_index(drop=True)
-    manufacturers = pd.read_json(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraft-database\manufacturers.json')
+    manufacturers = pd.read_json(r'database_creation\rawdata\aircraft-database\manufacturers.json')
     manufacturers = manufacturers[['id', 'name']]
-    engines = pd.read_json(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraft-database\engine-models.json")
+    engines = pd.read_json(r"database_creation\rawdata\aircraft-database\engine-models.json")
     engines = engines.explode('propertyValues').reset_index(drop=True)
-    properties = pd.read_json(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraft-database\properties.json")
+    properties = pd.read_json(r"database_creation\rawdata\aircraft-database\properties.json")
     properties['Value']= properties['name'].astype(str)+','+properties['type'].astype(str)+','+properties['unit'].astype(str)
     properties = properties[['id', 'Value']]
     properties_dict = properties.set_index('id')['Value'].to_dict()
@@ -96,7 +96,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     models3['Wingspan (winglets),float,metre'].fillna(models3['Wingspan,float,metre'], inplace=True)
     models3['Wingspan,float,metre'] = models3['Wingspan (winglets),float,metre']
     models3 = models3.drop(columns='Wingspan (winglets),float,metre')
-    icao = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\icao_cruise_emissions.xlsx')
+    icao = pd.read_excel(r'database_creation\rawdata\emissions\icao_cruise_emissions.xlsx')
     icao = icao[['Engine Identification', 'TSFC Cruise', 'Final Test Date', 'B/P Ratio', 'Pressure Ratio', 'TSFC T/O']]
     icao = icao.groupby(['Engine Identification'], as_index=False).agg({'TSFC T/O':'mean','TSFC Cruise':'mean', 'Final Test Date':'min', 'B/P Ratio':'mean', 'Pressure Ratio':'mean'})
 
@@ -149,13 +149,13 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     print(' --> [MATCH ENGINES WITH ICAO EMISSION DATABANK]: Matching Rate: ' + str(matchingrate) + ' %')
     models4['Air Mass Flow [kg/s]'] = (air_density* flight_vel * math.pi * models4['Fan diameter,float,metre']**2)/4
     models4['Engine Efficiency'] = flight_vel / (heatingvalue * models4['TSFC Cruise'])
-    databank = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    databank = pd.read_excel(r'Databank.xlsx')
     #databank = databank.groupby(['Company','Name', 'YOI', 'Type'], as_index=False).agg({'OEW': 'mean', 'Exit Limit':'mean','MTOW':'max', 'EU (MJ/ASK)':'mean', 'Fuel Flow [kg/s]':'mean'})
     databank['Name'] = databank['Name'].str.strip()
     models4['name_x_x'] = models4['name_x_x'].str.strip()
     databank = pd.merge(models4, databank, left_on='name_x_x', right_on='Name', how='outer')
     databank = databank.drop(columns=['name_y_x', 'name_x_x', 'name_x_y','name_y_y'])
-    aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+    aircraft_database = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
     aircraft_database = aircraft_database.dropna(subset='TSFC (mg/Ns)')
     aircraft_database = aircraft_database.groupby(['Name','YOI'], as_index=False).agg({'TSFC (mg/Ns)':'mean'})
     aircraft_database['TSFC Cruise'] =aircraft_database['TSFC (mg/Ns)']
@@ -168,7 +168,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
             # update corresponding row in df2 with the value from df1
             databank.loc[databank['Name'] == name, 'TSFC Cruise'] = value
             databank['Engine Efficiency'] = flight_vel / (heatingvalue * databank['TSFC Cruise'])
-    databank.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+    databank.to_excel(r'Databank.xlsx', index=False)
 
 
     fig = plt.figure(dpi=300)

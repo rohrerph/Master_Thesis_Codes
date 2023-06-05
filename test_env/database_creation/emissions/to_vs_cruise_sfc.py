@@ -5,7 +5,7 @@ from test_env.tools import plot
 import matplotlib.colors as mcolors
 
 def calibrate(savefig, folder_path):
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
+    data = pd.read_excel(r'database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
     all = data
     all = all.groupby(['Engine'], as_index=False).agg({'Engine TSFC cruise [g/kNs]':'mean','Engine TSFC take off [g/kNs]':'mean', 'Release year':'mean'})
 

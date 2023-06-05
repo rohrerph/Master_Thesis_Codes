@@ -5,13 +5,13 @@ import numpy as np
 
 def calculate(savefig, folder_path):
     # Read SLF data
-    slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
+    slf = pd.read_excel(r"database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
     slf = slf[['Year', 'PLF']]
     slf['PLF'] = slf['PLF'].str.replace(',', '.').astype(float)
     slf = slf[slf['Year'] >= 1959]
 
     #prepare data and normalize
-    data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
+    data = pd.read_excel(r'Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
     data = data.merge(slf, left_on='YOI', right_on='Year', how='left')
     data['EI (MJ/RPK)'] = data['EU (MJ/ASK)']/data['PLF']
@@ -130,9 +130,9 @@ def calculate(savefig, folder_path):
     # Get percentage increase of each efficiency and drop first row which only contains NaN
     data = data[['YOI', 'deltaC_Structural_Ops', 'deltaC_Engine_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_SLF_Ops','deltaC_Res_Ops', 'deltaC_Tot_Ops']]
     data = data.drop(data.index[0])
-    dashboard = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx')
+    dashboard = pd.read_excel(r'Dashboard.xlsx')
     dashboard = dashboard.merge(data, on='YOI')
-    dashboard.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx', index=False)
+    dashboard.to_excel(r'Dashboard.xlsx', index=False)
     data = data.set_index('YOI')
 
     # Set the width of each group and create new indexes just the set the space right

@@ -15,11 +15,10 @@ def calculate(savefig, km, mj, folder_path):
        fullnames = dict.fullname().get_aircraftfullnames()
 
        #Read Data
-       T2 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T_SCHEDULE_T2.csv")
-       AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
-       overall = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 2')
-       aircraft_database = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
-       historic_slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
+       T2 = pd.read_csv(r"database_creation\rawdata\USDOT\T_SCHEDULE_T2.csv")
+       AC_types = pd.read_csv(r"database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
+       overall = pd.read_excel(r"database_creation\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 2')
+       aircraft_database = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
 
        #Prepare Data from schedule T2
        T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
@@ -131,4 +130,4 @@ def calculate(savefig, km, mj, folder_path):
        aircraft_database.loc[aircraft_database['Name'] == 'A310-200C/F', 'Fuel Flow [kg/s]'] = np.nan
        aircraft_database.loc[aircraft_database['Name']=='A380', 'EU (MJ/ASK)'] = 0.88*boeing747
 
-       aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+       aircraft_database.to_excel(r'Databank.xlsx', index=False)
