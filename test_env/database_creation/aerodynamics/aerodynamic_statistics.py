@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import matplotlib.colors as mcolors
@@ -8,7 +9,7 @@ def calculate(savefig, folder_path):
 
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     data = data.loc[data['Aspect Ratio']<=15] # Filter out 767-400 where a wrong value is set in the database
-    data = data.loc[data['YOI'] >= 2000]
+    #data = data.loc[data['YOI'] >= 2000]
     data = data.loc[data['Type']!='Regional']
     data = data.dropna(subset=['Wingspan,float,metre', 'MTOW,integer,kilogram'])
     data.loc[data['Name'] == 'B787-800 Dreamliner', 'Height,float,metre'] = 16.92
@@ -31,7 +32,10 @@ def calculate(savefig, folder_path):
     norm = mcolors.Normalize(vmin=1959, vmax=2020)
     norm_column_data1 = norm(column_data1)
     # create a colormap and map normalized values to colors
-    cmap = plt.colormaps.get_cmap('Reds')
+    colors = ['white', 'lightcoral', 'red']
+    cmap = mcolors.ListedColormap(colors)
+
+    #cmap = plt.colormaps.get_cmap('Reds')
     colors = cmap(norm_column_data1)
 
     colormap = plt.cm.get_cmap('Blues', len(df))
@@ -43,22 +47,18 @@ def calculate(savefig, folder_path):
         ax.add_patch(square)
         ax.legend(loc='lower right')
 
-    ax.scatter(data['Wingspan,float,metre'], data['Height,float,metre'], color=colors, s=20)
-    ax.scatter(64.85 , 19.5, color='orange', s=20, label='777X Folded Wings')
-    ax.scatter(71.75, 19.5, color='yellow', s=20, label='777X')
+    ax.scatter(data['Wingspan,float,metre'], data['Height,float,metre'], color=colors, s=30)
+    ax.scatter(64.85 , 19.5, color='yellow', s=30, label='777X Folded Wings')
+    ax.scatter(71.75, 19.5, color='yellow', s=30, label='777X')
     plt.annotate('777X Folded Wings', (64.85 , 19.5),
-                     fontsize=6, xytext=(-10, 5),
+                     fontsize=8, xytext=(-10, -10),
                      textcoords='offset points')
     plt.annotate('777X', (71.75, 19.5),
-                     fontsize=6, xytext=(-10, 5),
-                     textcoords='offset points')
-    for i, row in data.iterrows():
-        plt.annotate(row['Name'], (row['Wingspan,float,metre'], row['Height,float,metre']),
-                     fontsize=6, xytext=(-10, 5),
+                     fontsize=8, xytext=(-10, 5),
                      textcoords='offset points')
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Aircraft Release Year')
+    plt.colorbar(sm).set_label('Aircraft Year of Introduction')
 
     plt.xlabel('Wingspan (m)')
     plt.ylabel('Height (m)')
@@ -73,18 +73,18 @@ def calculate(savefig, folder_path):
     # Plot Aspect Ratio vs the Year of Release
 
     fig, ax = plt.subplots(dpi=300)
-    ax.scatter(data['YOI'], data['Aspect Ratio'], color='red', s=20)
-    ax.scatter(2025, 9.96, color='blue', s=20)
+    ax.scatter(data['YOI'], data['Aspect Ratio'], color='black', s=30)
+    ax.scatter(2025, 9.96, color='blue', s=30)
     plt.annotate('777X', (2025, 9.96),
-                     fontsize=6, xytext=(-10, 5),
+                     fontsize=8, xytext=(-10, 5),
                      textcoords='offset points')
-    for i, row in data.iterrows():
-        plt.annotate(row['Name'], (row['YOI'], row['Aspect Ratio']),
-                     fontsize=6, xytext=(-10, 5),
+    plt.annotate('A380', (2007, 7.6),
+                     fontsize=8, xytext=(-10, 5),
                      textcoords='offset points')
 
-    xlabel = 'Year of Introduction'
+    xlabel = 'Aircraft Year of Introduction'
     ylabel = 'Aspect Ratio'
+
     plot.plot_layout(None, xlabel, ylabel, ax)
     plt.tight_layout()
     if savefig:

@@ -1,5 +1,5 @@
-import warnings
 import database_creation.atmospheric_conditions
+import database_creation.airtimeefficiency
 import database_creation.overallefficiency
 import database_creation.emissions.icaoemssions
 import database_creation.emissions.to_vs_cruise_sfc
@@ -17,6 +17,7 @@ import database_creation.aggregate_per_aircraft
 import database_creation.index_decomposition
 import database_creation.index_decomposition_operational
 import database_creation.index_decomposition_engine
+import warnings
 import datetime
 import os
 current_date = datetime.datetime.now()
@@ -41,8 +42,10 @@ heatingvalue_kg = 43.1  # MJ/kg
 gravity = 9.81  # m/s^2
 
 print(' --> [START]')
-print(' --> [CREATE AIRCRAFT DATABASE]:Calculate Atmospheric Conditions...')
+print(' --> [CREATE AIRCRAFT DATABASE]: Calculate Atmospheric Conditions...')
 air_density, flight_vel, temp = database_creation.atmospheric_conditions.calculate(altitude, mach)
+print(' --> [CREATE AIRCRAFT DATABASE]: Calculate Airtime Efficiency...')
+database_creation.airtimeefficiency.calculate(flight_vel, savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Load Demand Data from the US DOT...')
 database_creation.overallefficiency.calculate(savefig, km, heatingvalue_gallon, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Calibrate Linear Fit for Take-Off vs Cruise TSFC...')

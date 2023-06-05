@@ -93,14 +93,10 @@ def calculate(savefig, km, mj, folder_path):
        # Projection legend
        projection_handles = ax.get_legend_handles_labels()[0][7:]  # Exclude the first 8 handles (historic data)
        projection_labels = ax.get_legend_handles_labels()[1][7:]  # Exclude the first 8 labels (historic data)
-       projection_legend = ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
+       ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
                                      title="Historic Projections", frameon=False)
 
        ax.add_artist(historic_legend)
-
-
-       # Set the title for the lower legend
-       #plt.gca().add_artist(projection_legend)
 
        #Arrange plot size
        plt.ylim(0, 4)
@@ -136,13 +132,3 @@ def calculate(savefig, km, mj, folder_path):
        aircraft_database.loc[aircraft_database['Name']=='A380', 'EU (MJ/ASK)'] = 0.88*boeing747
 
        aircraft_database.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
-       #create annual data and calculate Energy Intensity
-
-       fleet_avg_year = fleet_avg_year.reset_index(drop=False)
-       fleet_avg_year = fleet_avg_year.loc[:,['YEAR', 'MJ/ASK']].rename(columns={'YEAR':'Year', 'MJ/ASK':'EU (MJ/ASK)'})
-
-       fleet_avg_year = fleet_avg_year.append(overall_large_fleet)
-       fleet_avg_year = fleet_avg_year.groupby(['Year'], as_index=False).agg({'EU (MJ/ASK)':'mean'})
-       historic_slf['PLF'] = historic_slf['PLF'].str.replace(',', '.').astype(float)
-       fleet_avg_year = fleet_avg_year.merge(historic_slf[['Year', 'PLF']], on='Year')
-       fleet_avg_year['EI (MJ/RPK)'] = fleet_avg_year['EU (MJ/ASK)']/fleet_avg_year['PLF']

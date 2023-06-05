@@ -127,26 +127,22 @@ def calculate(savefig, folder_path):
         plt.savefig(folder_path+'/bypass_vs_pressure_ratio.png')
 
     # BYPASS RATIO vs Weight
-    fig = plt.figure(dpi=120)
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
-    y = yearly_emissions['Dry weight,integer,kilogram']
+    y = yearly_emissions['Fan diameter,float,metre']
     x = yearly_emissions['B/P Ratio']
-
-    x_int = x.astype(np.int64)
-    z = np.polyfit(x_int, y, 1)
-    p = np.poly1d(z)
 
     ax.scatter(x, y, c=colors, marker='o')
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')
 
-    ylabel = 'Dry Weight [kg]'
+    ylabel = 'Fan Diameter [m]'
     xlabel = 'Bypass Ratio'
     plt.xlim(0, 13)
-    plt.ylim(0, 10000)
+    plt.ylim(0, 4)
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(folder_path+'/bypass_vs_weight.png')
+        plt.savefig(folder_path+'/bypass_vs_dia.png')

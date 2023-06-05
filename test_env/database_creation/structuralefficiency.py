@@ -8,11 +8,20 @@ def calculate(savefig, folder_path):
     aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
     aircrafts['OEW/MTOW_2'] = aircrafts['OEW'] / aircrafts['MTOW']
     aircrafts['Composites'] = aircrafts['Composites'].fillna(0)
+    aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
+
+    # Calculate the min weight which could be obtained using 100% composite materials for a Boeing 787-10 Dreamliner
     CFR = 1.55  # g/cm^2
     alu2024t3 = 2.78  # g/cm^2
+    steel = 8 # g/cm^2
+    titanium = 4.48 #g/cm^2
+    other = 8 # assume heaviest material for possibly biggest OEW decrease
+    oew_b787 = aircrafts.loc[aircrafts['Name']=='787-10 Dreamliner', 'OEW'].iloc[0]
+    exit_b787 = aircrafts.loc[aircrafts['Name'] == '787-10 Dreamliner', 'Exit Limit'].iloc[0]
+    oew_b787_composites = (oew_b787/exit_b787) * (CFR) / (CFR*0.52+alu2024t3*0.2+steel*0.07+other*0.07+titanium*0.14)
+
     aircrafts['Composite OEW'] = aircrafts['OEW']*(CFR/(aircrafts['Composites']*CFR+(1-aircrafts['Composites'])*alu2024t3))
     aircrafts['Composites Exit Limit'] = aircrafts['Composite OEW'] / aircrafts['Exit Limit']
-    aircrafts.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx',  index=False)
     aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])
     aircrafts = aircrafts.groupby(['Name','Type','YOI'], as_index=False).agg({'OEW/Exit Limit':'mean', 'OEW/MTOW_2':'mean', 'OEW':'mean', 'Composites Exit Limit':'mean'})
     medium_aircrafts = aircrafts.loc[(aircrafts['Type']=='Narrow')]
@@ -29,10 +38,6 @@ def calculate(savefig, folder_path):
     data = {'x': x_all, 'y': y_all, 'predicted_y': predicted_y}
     data = pd.DataFrame(data)
     p_all = np.poly1d(z_all)
-
-    #large_aircrafts['OEW/m^2'] = large_aircrafts['OEW/Pax']/1.05
-    #medium_aircrafts['OEW/m^2'] = medium_aircrafts['OEW/Pax']/1.48
-    #years = pd.Series(range(1955, 2024))
     x_large = large_aircrafts['YOI'].astype(np.int64)
     y_large = large_aircrafts['OEW/Exit Limit'].astype(np.float64)
     z_large = np.polyfit(x_large,  y_large, 1)
@@ -76,9 +81,12 @@ def calculate(savefig, folder_path):
     ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
-    ax.scatter(large_aircrafts['YOI'], large_aircrafts['Composites Exit Limit'], marker='s', color='red', label='100% Comp')
+    #ax.scatter(large_aircrafts['YOI'], large_aircrafts['Composites Exit Limit'], marker='s', color='red', label='100% Comp')
+    ax.axhline(y=oew_b787_composites, color='black', linestyle='--', linewidth=2, label='Physical Limitation')
     ax.plot(x_large, p_large(x_large), color='orange', label='Linear Regression Narrow')
-
+    plt.annotate('B787-10 Dreamliner with 100% Composites', (1960, oew_b787_composites),
+                    fontsize=6, xytext=(-10, 5),
+                    textcoords='offset points')
     for i, row in large_aircrafts.iterrows():
         plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
                      fontsize=6, xytext=(-10, 5),
@@ -156,50 +164,6 @@ def calculate(savefig, folder_path):
     ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
     #if savefig:
         #plt.savefig('Graphs\exit_limit_vs_oew.png')
-
-    #_______PLOT EXITLIMIT VS OEW________
-
-    #fig = plt.figure(dpi=300)
-
-    #range = pd.Series(np.arange(0, 16000))
-    #z = np.polyfit(aircrafts['Range'],  aircrafts['OEW/MTOW_2'], 1)
-    #p = np.poly1d(z)
-    # Add a subplot
-    #ax = fig.add_subplot(1, 1, 1)
-    #ax.scatter(large_aircrafts['Range'], large_aircrafts['OEW/MTOW_2'], marker='s',color='orange', label='Widebody')
-    #ax.scatter(medium_aircrafts['Range'], medium_aircrafts['OEW/MTOW_2'], marker='^',color='blue', label='Narrowbody')
-    #ax.scatter(regional_aircrafts['Range'], regional_aircrafts['OEW/MTOW_2'], marker='o',color='darkred', label='Regional Jets')
-    #ax.plot(range, p(range),color='turquoise', label='Linear Regression')
-    #for i, row in new_aircrafts.iterrows():
-        #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
-            #         fontsize=6, xytext=(-10, 5), textcoords='offset points')
-
-    #equation_text = f'y = {z[0]:.2e}x + {z[1]:.2e}'
-    #ax.text(0.15,0.2, equation_text, fontsize=12, color='black', transform=fig.transFigure)
-    #ax.legend(loc='upper left')
-    # Add a legend to the plot
-    #ax.legend()
-
-    #Arrange plot size
-    #plt.ylim(0, 600)
-    #plt.xlim(0, 200)
-    #plt.xticks(np.arange(1955, 2024, 10))
-
-    # Set the x and y axis labels
-    #ax.set_xlabel('Range [km]')
-    #ax.set_ylabel('OEW/MTOW')
-
-    #ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-    #ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-    #ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
-    # Set the plot title
-    #ax.set_title('Overall Efficiency')
-    #if savefig:
-        #plt.savefig('Graphs/range_vs_mtow.png')
-    #if plotfig:
-        #plt.show()
-
-
 
     # PAX/OEW per YOI
     fig = plt.figure(dpi=300)

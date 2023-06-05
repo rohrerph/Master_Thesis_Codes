@@ -38,17 +38,13 @@ def calculate(savefig, folder_path):
 
     # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
-    x_label = 'Year'
+    x_label = 'Aircraft Year of Introduction'
     y_label = 'Seat Load Factor'
 
-    ax.plot(historic_slf['Year'], historic_slf['PLF'],color='black')
-    ax.plot(historic_slf['Year'][0], historic_slf['PLF'][0],color='black',marker='*', label='Worldwide')
-    ax.plot(overall['YEAR'], overall['SLF'],color='turquoise')
-    ax.plot(overall['YEAR'][0], overall['SLF'][0],color='turquoise',marker='o', label='US')
-    ax.plot(wide['YEAR'], wide['SLF'],color='orange')
-    ax.plot(wide['YEAR'][0], wide['SLF'][0],color='orange', marker='s', label='US Widebody')
-    ax.plot(narrow['YEAR'], narrow['SLF'],color='blue')
-    ax.plot(narrow['YEAR'][0], narrow['SLF'][0],color='blue',marker='^', label='US Narrowbody')
+    ax.plot(historic_slf['Year'], historic_slf['PLF'],color='black',marker='*',markersize=3, label='Worldwide')
+    ax.plot(overall['YEAR'], overall['SLF'],color='turquoise', marker='*',markersize=3, label='US Overall')
+    ax.plot(wide['YEAR'], wide['SLF'],color='orange', marker='s',markersize=3,label='US Widebody' )
+    ax.plot(narrow['YEAR'], narrow['SLF'],color='blue', marker='^',markersize=3, label='US Narrowbody')
     ax.legend()
 
     #Arrange plot size
@@ -64,15 +60,12 @@ def calculate(savefig, folder_path):
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
-    x_label = 'Year'
+    x_label = 'Aircraft Year of Introduction'
     y_label = 'Ratio'
 
-    ax.plot(overall['YEAR'], overall['Airborne Eff.'],color='turquoise')
-    ax.plot(overall['YEAR'][0], overall['Airborne Eff.'][0],color='turquoise',marker='o', label='Overall')
-    ax.plot(wide['YEAR'], wide['Airborne Eff.'],color='orange')
-    ax.plot(wide['YEAR'][0], wide['Airborne Eff.'][0],color='orange', marker='s', label='Widebody')
-    ax.plot(narrow['YEAR'], narrow['Airborne Eff.'],color='blue')
-    ax.plot(narrow['YEAR'][0], narrow['Airborne Eff.'][0],color='blue',marker='^', label='Narrowbody')
+    ax.plot(overall['YEAR'], overall['Airborne Eff.'],color='turquoise', marker='o',markersize=3, label='US Overall')
+    ax.plot(wide['YEAR'], wide['Airborne Eff.'],color='orange', marker='s',markersize=3, label='US Widebody')
+    ax.plot(narrow['YEAR'], narrow['Airborne Eff.'],color='blue', marker='^',markersize=3, label='US Narrowbody')
     ax.legend()
 
     #Arrange plot size

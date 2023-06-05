@@ -69,7 +69,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
                   'MTOW,integer,kilogram',
                   'MTW,integer,kilogram',
                   'MZFW,integer,kilogram',
-                  'Ma,float,None',
+                  'Mmo,float,None',
                   'Maximum operating altitude,integer,foot',
                   'OEW,integer,kilogram',
                   'Wing area,float,square-metre',
@@ -217,7 +217,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
                     #textcoords='offset points')
     ax.scatter(2020, 14.94, color='green', label='Future Projections')
     plt.annotate('GE9X', (2020, 14.94),
-                    fontsize=6, xytext=(-10, 5),
+                    fontsize=6, xytext=(-10, -10),
                     textcoords='offset points')
     ax.scatter(2025, 12.88, color='green')
     plt.annotate('Ultrafan', (2025, 12.88),
@@ -226,6 +226,10 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     ax.scatter(2030, 12.152, color='green')
     plt.annotate('Open Rotor', (2030, 12.152),
                     fontsize=6, xytext=(-10, 5),
+                    textcoords='offset points')
+    ax.scatter(2035, 12, color='green')
+    plt.annotate('CFM RISE', (2035, 12),
+                    fontsize=6, xytext=(-10, -10),
                     textcoords='offset points')
     plt.xlim(1955,2050)
         #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')

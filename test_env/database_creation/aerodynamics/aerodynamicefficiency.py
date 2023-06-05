@@ -5,15 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def calculate(savefig, air_density,flight_vel, g, folder_path):
-    #Dictionary containing engines substitutes, if one engine is not available
     aircraft_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     lift_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
-    lift_data = lift_data[~lift_data['Name'].isin(['RJ-200ER /RJ-440', 'RJ-700', 'Embraer ERJ-175'])]
-    aerodyn = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 5')
-    aerodyn_large = aerodyn.iloc[:, 8:11]
-    aerodyn_large.columns = aerodyn_large.iloc[0]
-    aerodyn_large = aerodyn_large[1:].dropna()
-
+    # Remove these Regional jets, it seems, that their data is not accurate, possibly because overall all values are much smaller.
+    lift_data = lift_data[~lift_data['Name'].isin(['RJ-200ER /RJ-440', 'RJ-700', 'Embraer ERJ-175', 'Embraer-145', 'Embraer-135', 'Embraer 190'])]
     aircraft_data = aircraft_data.merge(lift_data, on='Name', how='left')
 
     # factor Beta which accounts for the weight fraction burnt in non cruise phase
@@ -25,8 +20,6 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     aircraft_data['Factor'] = aircraft_data['Type'].apply(beta)
     aircraft_data['Ratio 1']= aircraft_data['Factor']*aircraft_data["MTOW\n(Kg)"]/aircraft_data['MZFW_POINT_1\n(Kg)']
     aircraft_data['Ratio 2']= aircraft_data['Factor']*aircraft_data["MTOW\n(Kg)"]/aircraft_data['MZFW_POINT_2\n(Kg)']
-    #aircraft_data['Ratio B']= (aircraft_data['MTOW']-6)/aircraft_data['MZFW_B']
-    #aircraft_data['Ratio C']= (aircraft_data['MTOW']-6)/aircraft_data['MZFW_C']
 
     breguet = aircraft_data
 
@@ -37,11 +30,6 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     breguet['K_2']= breguet['RANGE_POINT_2\n(Km)']/breguet['Ratio 2']
     breguet['K']=(breguet['K_1']+breguet['K_2'])/2
 
-    #some testing from where this differences might result
-    #breguet['delta_K'] = abs(breguet['K_1']-breguet['K_2'])
-    #test = breguet[['Name', 'delta_K', 'K_1', 'K_2']]
-    #test = test.sort_values(by='delta_K', ascending=False)
-    #test = test.drop_duplicates()
     breguet['A'] = breguet['K']*g*0.001*breguet['TSFC Cruise']
     breguet['L/D estimate'] = breguet['A']/flight_vel
     aircraft_data = breguet
@@ -75,34 +63,43 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     aircraft_data.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx', index=False)
 
     breguet = aircraft_data.dropna(subset='L/D estimate')
-    breguet = breguet.groupby(['Name', 'YOI'], as_index=False).agg({'L/D estimate':'mean'})
-
-
+    breguet = breguet.groupby(['Name', 'YOI', 'Type'], as_index=False).agg({'L/D estimate':'mean'})
+    wide = breguet.loc[breguet['Type']=='Wide']
+    narrow = breguet.loc[breguet['Type'] != 'Wide']
+    # Use value for 737-900 also for the ER version
+    b737 = narrow.loc[narrow['Name'] == '737-900', 'L/D estimate'].values[0]
+    narrow.loc[narrow['Name'] == '737-900ER', 'L/D estimate'] = b737
+    # Get Referenced Aircraft
+    a350 = wide.loc[wide['Name'] == 'A350-900', 'L/D estimate'].iloc[0]
+    a340 = wide.loc[wide['Name'] == 'A340-500', 'L/D estimate'].iloc[0]
+    a321 = narrow.loc[narrow['Name'] == 'A321-200n', 'L/D estimate'].iloc[0]
+    # assume 40% is induced drag for the A321 which can be reduced by the AlbatrossOne wingspan. Induced drag can be scaled by the squareroot of the ARs
+    factor = np.sqrt(10.47/18)*0.4+0.6
     fig = plt.figure(dpi=300)
-
-    # Add a subplot
-    years = np.arange(1955, 2023)
     ax = fig.add_subplot(1, 1, 1)
-    x_all = breguet['YOI'].astype(np.int64)
-    y_all = breguet['L/D estimate'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 2)
-    p_all = np.poly1d(z_all)
-
-    # Plot the dataframes with different symbols
-    ax.scatter(breguet['YOI'], breguet['L/D estimate'], marker='o', label='Breguet Range Equation')
-    #ax.plot(years, p_all(years), color='black', label='Linear Regression')
-    for i, row in breguet.iterrows():
-        plt.annotate(row['Name'], (row['YOI'], row['L/D estimate']), fontsize=6, xytext=(-8, 5),
-                     textcoords='offset points')
-    if not use_lee_et_al:
-        ax.scatter(aerodyn_large['Year'], aerodyn_large['L/Dmax'], marker='^', label='Lee et al.')
-        for i, row in aerodyn_large.iterrows():
-            plt.annotate(row['Label'], (row['Year'], row['L/Dmax']), fontsize=6, xytext=(-8, 5), textcoords='offset points')
-
-    ax.legend()
+    ax.scatter(wide['YOI'], wide['L/D estimate'], marker='o', label='Widebody')
+    ax.scatter(narrow['YOI'], narrow['L/D estimate'], marker='^', label='Narrowbody & Regional')
     xlabel = 'Aircraft Year of Introduction'
     ylabel ='L/D'
-    plt.ylim(10,25)
+    plt.ylim(10,30)
+    ax.scatter(2025, a350*1.05, color='green', s=30, label='Future Projections')
+    plt.annotate('777X', (2025, a350*1.05,),
+                    fontsize=8, xytext=(-10, 5),
+                    textcoords='offset points')
+    ax.scatter(2030, a340*1.046, color='green', s=30)
+    plt.annotate('BLADE', (2030, a340*1.046),
+                    fontsize=8, xytext=(-10, 5),
+                    textcoords='offset points')
+    ax.scatter(2030, a321/factor, color='green')
+    plt.annotate('AlbatrossONE', (2030, a321/factor),
+                    fontsize=8, xytext=(-10, -13),
+                    textcoords='offset points')
+    ax.scatter(2035, 27.8, color='green')
+    plt.annotate('SB-Wing', (2035, 27.8),
+                    fontsize=8, xytext=(-10,5),
+                    textcoords='offset points')
+    plt.xlim(1955,2050)
+    ax.legend(loc='upper left')
 
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
