@@ -183,7 +183,8 @@ class aircraftdata:
                                       'MD-83':'MD80/DC9-80',
                                       'MD-87':'MD80/DC9-80',
                                       'MD-88':'MD80/DC9-80',
-                                      'MD-90':'MD-90'}
+                                      'MD-90':'MD-90',
+                                      'DH.106 Comet': 'Comet 4'}
     def get_aircraftsfromdatabase(self):
         return self.aircraftsfromdatabase
 

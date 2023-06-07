@@ -17,6 +17,7 @@ import database_creation.aggregate_per_aircraft
 import database_creation.index_decomposition
 import database_creation.index_decomposition_operational
 import database_creation.index_decomposition_engine
+import database_creation.fleetlevel
 import warnings
 import datetime
 import os
@@ -25,7 +26,7 @@ datestamp = current_date.strftime("%Y-%m-%d")
 warnings.filterwarnings("ignore")
 
 # Create output folder with today's date and save graphs here
-base_folder = '\database_creation\graphs'
+base_folder = r'database_creation\graphs'
 folder_path = os.path.join(base_folder, datestamp)
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
@@ -80,4 +81,6 @@ print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational S
 database_creation.index_decomposition_operational.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Engine Sub-Efficiencies')
 database_creation.index_decomposition_engine.calculate(savefig, folder_path)
+print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI on Aircraft Fleet Level from 1990-2022')
+database_creation.fleetlevel.calculate(savefig, folder_path)
 print(' --> [FINISH]')
