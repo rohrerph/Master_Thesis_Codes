@@ -143,7 +143,6 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     unmatched = unmatched[unmatched['Engine Identification'].isna()]
     unmatched = unmatched.drop(columns=['Engine Identification', 'TSFC Cruise', 'Final Test Date', 'B/P Ratio', 'Pressure Ratio', 'TSFC T/O'])
 
-    models4.to_excel(r'C:\Users\PRohr\Desktop\test.xlsx')
     matchingrate =((len(models4)/len(models3))*100)
     matchingrate = round(matchingrate, 2)
     print(' --> [MATCH ENGINES WITH ICAO EMISSION DATABANK]: Matching Rate: ' + str(matchingrate) + ' %')
@@ -232,7 +231,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
                     fontsize=6, xytext=(-10, -10),
                     textcoords='offset points')
     plt.xlim(1955,2050)
-        #ax.plot(years, p_all(years), color='black', label='Quadratic Regression')
+
 
     ax.legend()
     xlabel = 'Aircraft Year of Introduction'
@@ -240,5 +239,32 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'\engineefficiency.png')
+
+    # Create Weight statistics
+    fig = plt.figure(dpi=300)
+    ax = fig.add_subplot(1, 1, 1)
+    databank = databank.loc[databank['Type']!='Regional']
+    databank['Dry weight,integer,kilogram'] = databank['Dry weight,integer,kilogram']*databank['engineCount']
+    databank['Dry weight,integer,kilogram'] = databank['Dry weight,integer,kilogram'] / databank['OEW']
+    databank.to_excel(r"C:\Users\PRohr\Desktop\test.xlsx")
+    databank = databank.groupby(['Name', 'YOI'], as_index=False).agg({'Dry weight,integer,kilogram': 'mean',  'B/P Ratio': 'mean'})
+    low = databank.loc[databank['B/P Ratio'] <= 2]
+    medium = databank.loc[(databank['B/P Ratio'] >= 2) & (databank['B/P Ratio'] <= 8)]
+    high = databank.loc[databank['B/P Ratio'] >= 8]
+
+    ax.scatter(low['YOI'], low['Dry weight,integer,kilogram'], color='red', label='BPR <2')
+    ax.scatter(medium['YOI'], medium['Dry weight,integer,kilogram'], color='purple', label='BPR 2-8')
+    ax.scatter(high['YOI'], high['Dry weight,integer,kilogram'], color='blue', label='BPR >8')
+    plt.xlim(1955, 2025)
+    plt.ylim(0, 0.2)
+
+    ax.legend()
+    title = 'Individual Aircraft'
+    xlabel = 'Aircraft Year of Introduction'
+    ylabel = 'Engine Weight / OEW'
+    plot.plot_layout(title, xlabel, ylabel, ax)
+    if savefig:
+        plt.savefig(folder_path + '\engineweight.png')
+
 
 
