@@ -82,23 +82,26 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     xlabel = 'Aircraft Year of Introduction'
     ylabel ='L/D'
     plt.ylim(10,30)
-    ax.scatter(2025, a350*1.05, color='green', s=30, label='Future Projections')
-    plt.annotate('777X', (2025, a350*1.05,),
-                    fontsize=8, xytext=(-10, 5),
-                    textcoords='offset points')
-    ax.scatter(2030, a340*1.046, color='green', s=30)
-    plt.annotate('BLADE', (2030, a340*1.046),
-                    fontsize=8, xytext=(-10, 5),
-                    textcoords='offset points')
-    ax.scatter(2030, a321/factor, color='green')
-    plt.annotate('AlbatrossONE', (2030, a321/factor),
-                    fontsize=8, xytext=(-10, -13),
-                    textcoords='offset points')
-    ax.scatter(2035, 27.8, color='green')
-    plt.annotate('SB-Wing', (2035, 27.8),
-                    fontsize=8, xytext=(-10,5),
-                    textcoords='offset points')
-    plt.xlim(1955,2050)
+    future_projections = True
+    if future_projections:
+        ax.scatter(2025, a350*1.05, color='green', s=30, label='Future Projections')
+        ax.axhline(y=a350 * 1.05 * 1.15, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
+        plt.annotate('777X', (2025, a350*1.05,),
+                        fontsize=8, xytext=(-10, 5),
+                        textcoords='offset points')
+        ax.scatter(2030, a340*1.046, color='green', s=30)
+        plt.annotate('BLADE', (2030, a340*1.046),
+                        fontsize=8, xytext=(-10, 5),
+                        textcoords='offset points')
+        ax.scatter(2030, a321/factor, color='green')
+        plt.annotate('AlbatrossONE', (2030, a321/factor),
+                        fontsize=8, xytext=(-10, -13),
+                        textcoords='offset points')
+        ax.scatter(2035, 27.8, color='green')
+        plt.annotate('SB-Wing', (2035, 27.8),
+                        fontsize=8, xytext=(-10,5),
+                        textcoords='offset points')
+        plt.xlim(1955,2050)
     ax.legend(loc='upper left')
 
     plot.plot_layout(None, xlabel, ylabel, ax)

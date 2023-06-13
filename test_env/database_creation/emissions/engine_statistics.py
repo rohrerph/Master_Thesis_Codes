@@ -84,11 +84,11 @@ def calculate(savefig, folder_path):
 
     y_emissions = yearly_emissions['TSFC T/O']
 
-    for value, color in zip(y_emissions, colors):
-        ax.axvline(x=value, color=color, linewidth=1, ymin=0, ymax=1, alpha=0.5)
+    #for value, color in zip(y_emissions, colors):
+     #   ax.axvline(x=value, color=color, linewidth=1, ymin=0, ymax=1, alpha=0.5)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
-    plt.colorbar(sm).set_label('Engine/Aircraft Year of Certification')
+    plt.colorbar(sm).set_label('Engine Year of Certification')
     ax.scatter(x, y, c=colors2, zorder=2)
     ax.plot(span, p(span),color='black', linewidth=2)
     equation_text = f'y = {z[0]:.2f}x + {z[1]:.2f} , R-squared = {r_squared}'

@@ -19,6 +19,7 @@ def calculate(savefig, km, mj, folder_path):
        AC_types = pd.read_csv(r"database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
        overall = pd.read_excel(r"database_creation\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 2')
        aircraft_database = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+       historic_slf = pd.read_excel(r"database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
 
        #Prepare Data from schedule T2
        T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
@@ -71,31 +72,32 @@ def calculate(savefig, km, mj, folder_path):
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
        ax.scatter(regional['YOI'], regional['MJ/ASK'], marker='^', color='cyan', label='Regional US DOT T2')
        ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Lee')
-       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='o', color='purple', label='Lee & US DOT T2')
+       ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='^', color='blue')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
-       ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
+       #ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
 
        historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
        historic_legend._legend_box.align = "left"
 
        #add projections from Lee et al.
-       ax.scatter([1997, 2007, 2022], [1.443, 1.238, 0.9578], marker='^', color='black', label='NASA 100 PAX')
-       ax.scatter([1997, 2007, 2022], [1.2787, 1.0386, 0.741], marker='*', color='black', label='NASA 150 PAX')
-       ax.scatter([1997, 2007, 2022], [1.2267, 0.9867, 0.681], marker='s', color='black', label='NASA 225 PAX')
-       ax.scatter([1997, 2007, 2022], [1.1704, 0.9259, 0.637], marker='o', color='black', label='NASA 300 PAX')
-       ax.scatter([1997, 2007, 2022], [0.91, 0.76, 0.559], marker='P', color='black', label='NASA 600 PAX')
-       ax.scatter(2010, 0.6587 , marker='^', color='grey', label='NRC')
-       ax.scatter(2015, 0.5866, marker='o', color='grey', label='Greene')
-       ax.scatter([2025, 2025, 2025], [0.55449, 0.6, 0.68], marker='s', color='grey', label='Lee')
+       plot_projections = False
+       if plot_projections:
+              ax.scatter([1997, 2007, 2022], [1.443, 1.238, 0.9578], marker='^', color='black', label='NASA 100 PAX')
+              ax.scatter([1997, 2007, 2022], [1.2787, 1.0386, 0.741], marker='*', color='black', label='NASA 150 PAX')
+              ax.scatter([1997, 2007, 2022], [1.2267, 0.9867, 0.681], marker='s', color='black', label='NASA 225 PAX')
+              ax.scatter([1997, 2007, 2022], [1.1704, 0.9259, 0.637], marker='o', color='black', label='NASA 300 PAX')
+              ax.scatter([1997, 2007, 2022], [0.91, 0.76, 0.559], marker='P', color='black', label='NASA 600 PAX')
+              ax.scatter(2010, 0.6587 , marker='^', color='grey', label='NRC')
+              ax.scatter(2015, 0.5866, marker='o', color='grey', label='Greene')
+              ax.scatter([2025, 2025, 2025], [0.55449, 0.6, 0.68], marker='s', color='grey', label='Lee')
 
-       # Projection legend
-       projection_handles = ax.get_legend_handles_labels()[0][7:]  # Exclude the first 8 handles (historic data)
-       projection_labels = ax.get_legend_handles_labels()[1][7:]  # Exclude the first 8 labels (historic data)
-       ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
-                                     title="Historic Projections", frameon=False)
-
-       ax.add_artist(historic_legend)
+              # Projection legend
+              projection_handles = ax.get_legend_handles_labels()[0][7:]  # Exclude the first 8 handles (historic data)
+              projection_labels = ax.get_legend_handles_labels()[1][7:]  # Exclude the first 8 labels (historic data)
+              ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
+                                            title="Historic Projections", frameon=False)
+              ax.add_artist(historic_legend)
 
        #Arrange plot size
        plt.ylim(0, 4)
@@ -131,3 +133,16 @@ def calculate(savefig, km, mj, folder_path):
        aircraft_database.loc[aircraft_database['Name']=='A380', 'EU (MJ/ASK)'] = 0.88*boeing747
 
        aircraft_database.to_excel(r'Databank.xlsx', index=False)
+
+       #create annual data and calculate Energy Intensity
+
+       fleet_avg_year = fleet_avg_year.reset_index(drop=False)
+       fleet_avg_year = fleet_avg_year.loc[:,['YEAR', 'MJ/ASK']].rename(columns={'YEAR':'Year', 'MJ/ASK':'EU (MJ/ASK)'})
+
+       fleet_avg_year = fleet_avg_year.append(overall_large_fleet)
+       fleet_avg_year = fleet_avg_year.groupby(['Year'], as_index=False).agg({'EU (MJ/ASK)':'mean'})
+       historic_slf['PLF'] = historic_slf['PLF'].str.replace(',', '.').astype(float)
+       fleet_avg_year = fleet_avg_year.merge(historic_slf[['Year', 'PLF']], on='Year')
+       fleet_avg_year['EI (MJ/RPK)'] = fleet_avg_year['EU (MJ/ASK)']/fleet_avg_year['PLF']
+       fleet_avg_year.to_excel(r'database_creation\rawdata\annualdata.xlsx', index=False)
+

@@ -53,7 +53,7 @@ def calculate(savefig, folder_path):
     y_label = 'OEW/MTOW'
     x_label = 'OEW[kt]'
 
-    oew = pd.Series(np.arange(0, 200000))
+    oew = pd.Series(np.arange(0, 275000))
     z = np.polyfit(aircrafts['OEW'],  aircrafts['OEW/MTOW_2'], 1)
     p = np.poly1d(z)
     # Add a subplot
@@ -61,15 +61,17 @@ def calculate(savefig, folder_path):
     ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/MTOW_2'], marker='s',color='orange', label='Widebody')
     ax.scatter(medium_aircrafts['OEW']/1000, medium_aircrafts['OEW/MTOW_2'], marker='^',color='blue', label='Narrowbody')
     ax.scatter(regional_aircrafts['OEW']/1000, regional_aircrafts['OEW/MTOW_2'], marker='o',color='darkred', label='Regional Jets')
-    ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
+    #ax.plot(oew/1000, p(oew),color='black', label='Linear Regression')
     #for i, row in new_aircrafts.iterrows():
         #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
             #         fontsize=6, xytext=(-10, 5), textcoords='offset points')
 
-    equation_text = f'y = {z[0]:.1e}x + {z[1]:.1e}'
-    ax.text(0.15,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
-
+    #equation_text = f'y = {z[0]:.1e}x + {z[1]:.1e}'
+    #ax.text(0.15,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
+    ax.legend()
     plot.plot_layout(None, x_label, y_label, ax)
+    if savefig:
+        plt.savefig(folder_path+'\oewmtow_vs_oew.png')
 
     #_______PLOT OEW/EXITLIMIT WIDEBODY________
 
@@ -83,14 +85,14 @@ def calculate(savefig, folder_path):
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
     #ax.scatter(large_aircrafts['YOI'], large_aircrafts['Composites Exit Limit'], marker='s', color='red', label='100% Comp')
     ax.axhline(y=oew_b787_composites, color='black', linestyle='--', linewidth=2, label='Physical Limitation')
-    ax.plot(x_large, p_large(x_large), color='orange', label='Linear Regression Narrow')
+    ax.plot(x_large, p_large(x_large), color='orange')
     plt.annotate('B787-10 Dreamliner with 100% Composites', (1960, oew_b787_composites),
                     fontsize=6, xytext=(-10, 5),
                     textcoords='offset points')
-    for i, row in large_aircrafts.iterrows():
-        plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
-                     fontsize=6, xytext=(-10, 5),
-                     textcoords='offset points')
+    #for i, row in large_aircrafts.iterrows():
+     #   plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
+      #               fontsize=6, xytext=(-10, 5),
+       #              textcoords='offset points')
 
     #plt.ylim(0, 4)
     plt.xlim(1955, 2025)
@@ -112,16 +114,15 @@ def calculate(savefig, folder_path):
 
     ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
     ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Exit Limit'], marker='^',color='blue', label='Narrowbody')
-    ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['Composites Exit Limit'], marker='^', color='green',label='100% Comp')
-    ax.plot(x_medium, p_medium(x_medium), color='blue', label='Linear Regression Narrow')
-    for i, row in medium_aircrafts.iterrows():
-        plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
-                     fontsize=6, xytext=(-10, 5),
-                     textcoords='offset points')
-    for i, row in regional_aircrafts.iterrows():
-        plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
-                     fontsize=6, xytext=(-10, 5),
-                     textcoords='offset points')
+    ax.plot(x_medium, p_medium(x_medium), color='blue')
+    #for i, row in medium_aircrafts.iterrows():
+     #   plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
+      #               fontsize=6, xytext=(-10, 5),
+       #              textcoords='offset points')
+    #for i, row in regional_aircrafts.iterrows():
+     #   plt.annotate(row['Name'], (row['YOI'], row['OEW/Exit Limit']),
+      #               fontsize=6, xytext=(-10, 5),
+       #              textcoords='offset points')
 
     ax.legend()
     plt.xlim(1955, 2025)
@@ -138,7 +139,6 @@ def calculate(savefig, folder_path):
 
     fig = plt.figure(dpi=300)
 
-    oew = pd.Series(np.arange(0, 200000))
     z = np.polyfit(aircrafts['OEW'],  aircrafts['OEW/Exit Limit'], 1)
     p = np.poly1d(z)
     # Add a subplot
@@ -146,39 +146,33 @@ def calculate(savefig, folder_path):
     ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
     ax.scatter(medium_aircrafts['OEW']/1000, medium_aircrafts['OEW/Exit Limit'], marker='^',color='blue', label='Narrowbody')
     ax.scatter(regional_aircrafts['OEW']/1000, regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
-    ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
+    #ax.plot(oew/1000, p(oew),color='black', label='Linear Regression')
     #for i, row in new_aircrafts.iterrows():
         #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
             #         fontsize=6, xytext=(-10, 5), textcoords='offset points')
 
-    equation_text = f'y = {z[0]:.2e}x + {z[1]:.2e}'
-    ax.text(0.4,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
+    #equation_text = f'y = {z[0]:.2e}x + {z[1]:.2e}'
+    #ax.text(0.4,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
     ax.legend()
 
     # Set the x and y axis labels
-    ax.set_xlabel('OEW[kt]')
-    ax.set_ylabel('OEW[kg]/Pax Exit Limit')
-
-    ax.grid(which='major', axis='y', linestyle='-', linewidth = 0.5)
-    ax.grid(which='minor', axis='y', linestyle='--', linewidth = 0.5)
-    ax.grid(which='major', axis='x', linestyle='-', linewidth = 0.5)
-    #if savefig:
-        #plt.savefig('Graphs\exit_limit_vs_oew.png')
+    xlabel='OEW[kt]'
+    ylabel='OEW[kg]/Pax Exit Limit'
+    plot.plot_layout(None, xlabel, ylabel, ax)
+    if savefig:
+        plt.savefig(folder_path+'/exit_limit_vs_oew.png')
 
     # PAX/OEW per YOI
     fig = plt.figure(dpi=300)
-
-
-    # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
+
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
     ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Exit Limit'], marker='^',color='blue', label='Narrowbody')
     ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
-    ax.plot(x_all, p_all(x_all), color='black', label='Linear Regression')
-    #ax.plot(oew/1000, p(oew),color='turquoise', label='Linear Regression')
-    #for i, row in new_aircrafts.iterrows():
-        #plt.annotate(row['Name'], (row['OEW'], row['Exit Limit']),
-            #         fontsize=6, xytext=(-10, 5), textcoords='offset points')
+    ax.plot(x_large, p_large(x_large), color='orange')
+    ax.plot(x_medium, p_medium(x_medium), color='blue')
+    plt.annotate('A330-900', (2018, 299), fontsize=8, xytext=(-10, -10), textcoords='offset points')
+    plt.annotate('B787-10', (2018, 308), fontsize=8, xytext=(-10, 5), textcoords='offset points')
 
     ax.legend(loc='upper left')
     # Add a legend to the plot
