@@ -1,7 +1,6 @@
 import pandas as pd
 import math
-from test_env.tools import dict
-from test_env.tools import plot
+from test_env.database_creation.tools import dict, plot
 import matplotlib.pyplot as plt
 import numpy as np
 def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
@@ -169,7 +168,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
             databank['Engine Efficiency'] = flight_vel / (heatingvalue * databank['TSFC Cruise'])
     databank.to_excel(r'Databank.xlsx', index=False)
 
-
+    #PLOT engine efficiency
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     years = np.arange(1955, 2023)
@@ -182,32 +181,17 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     limit = (0.555 * heatingvalue / flight_vel)**-1
     limit_nox = (0.50875 * heatingvalue / flight_vel) ** -1
 
-    if use_lee_et_al:
-        bpr = databank.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean',  'B/P Ratio': 'mean'})
-        low = bpr.loc[bpr['B/P Ratio'] <= 2]
-        medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
-        high = bpr.loc[bpr['B/P Ratio'] >= 8]
+    bpr = databank.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean',  'B/P Ratio': 'mean', 'Pressure Ratio':'mean'})
+    low = bpr.loc[bpr['B/P Ratio'] <= 2]
+    medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
+    high = bpr.loc[bpr['B/P Ratio'] >= 8]
 
-        ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR <2')
-        ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
-        ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
+    ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR <2')
+    ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
+    ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
 
-        ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
-        ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
-
-    # Add a subplot
-    else:
-        bpr = databank.groupby(['Name', 'YOI'], as_index=False).agg({'TSFC Cruise': 'mean',  'B/P Ratio': 'mean'})
-        low = bpr.loc[bpr['B/P Ratio'] <= 2]
-        medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
-        high = bpr.loc[bpr['B/P Ratio'] >= 8]
-
-        ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR <2')
-        ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
-        ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
-
-        ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
-        ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
+    ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
+    ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
 
     # Fuse in Data for Future projections
     #ax.scatter(2020, 13.736, color='green')
@@ -239,6 +223,28 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'\engineefficiency.png')
+
+    # PLOT colors for OPR
+    fig = plt.figure(dpi=300)
+    ax = fig.add_subplot(1, 1, 1)
+
+    low = bpr.loc[bpr['Pressure Ratio'] <= 20]
+    medium = bpr.loc[(bpr['Pressure Ratio'] >= 20) & (bpr['Pressure Ratio'] <= 35)]
+    high = bpr.loc[bpr['Pressure Ratio'] >= 35]
+
+    ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='OPR <20')
+    ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='OPR 20-35')
+    ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='OPR >35')
+
+    ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
+    ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
+
+    ax.legend()
+    xlabel = 'Aircraft Year of Introduction'
+    ylabel = 'Cruise TSFC [g/kNs]'
+    plot.plot_layout(None, xlabel, ylabel, ax)
+    if savefig:
+        plt.savefig(folder_path+'\engineefficiency_opr.png')
 
     # Create Weight statistics
     fig = plt.figure(dpi=300)

@@ -1,10 +1,6 @@
 import pandas as pd
 import math
 import numpy as np
-from test_env.tools import plot
-import numpy as np
-import matplotlib.pyplot as plt
-import os
 
 aircraft = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\civiljet_aircraft_design\all_aircraft.xlsx')
 aircraft = aircraft.set_index('Manufacturer')

@@ -1,11 +1,13 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from test_env.tools import plot
+from test_env.database_creation.tools import plot
+
 
 def calculate(savefig, folder_path):
     aircrafts = pd.read_excel(r'Databank.xlsx')
     aircrafts['OEW/Exit Limit'] = aircrafts['OEW'] / aircrafts['Exit Limit']
+    aircrafts['OEW/Pax'] = aircrafts['OEW'] / aircrafts['Pax']
     aircrafts['OEW/MTOW_2'] = aircrafts['OEW'] / aircrafts['MTOW']
     aircrafts['Composites'] = aircrafts['Composites'].fillna(0)
     aircrafts.to_excel(r'Databank.xlsx', index=False)
@@ -23,7 +25,7 @@ def calculate(savefig, folder_path):
     aircrafts['Composite OEW'] = aircrafts['OEW']*(CFR/(aircrafts['Composites']*CFR+(1-aircrafts['Composites'])*alu2024t3))
     aircrafts['Composites Exit Limit'] = aircrafts['Composite OEW'] / aircrafts['Exit Limit']
     aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])
-    aircrafts = aircrafts.groupby(['Name','Type','YOI'], as_index=False).agg({'OEW/Exit Limit':'mean', 'OEW/MTOW_2':'mean', 'OEW':'mean', 'Composites Exit Limit':'mean'})
+    aircrafts = aircrafts.groupby(['Name','Type','YOI'], as_index=False).agg({'OEW/Exit Limit':'mean', 'OEW/MTOW_2':'mean', 'OEW':'mean', 'Composites Exit Limit':'mean', 'OEW/Pax':'mean'})
     medium_aircrafts = aircrafts.loc[(aircrafts['Type']=='Narrow')]
     large_aircrafts = aircrafts.loc[(aircrafts['Type']=='Wide')]
     regional_aircrafts = aircrafts.loc[(aircrafts['Type']=='Regional')]
@@ -187,5 +189,27 @@ def calculate(savefig, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'/exit_limit_vs_year.png')
+
+    #_______PLOT PAX VS OEW________
+    fig = plt.figure(dpi=300)
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
+    ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Pax'], marker='^',color='blue', label='Narrowbody')
+    ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Pax'], marker='o',color='darkred', label='Regional Jets')
+
+    ax.legend(loc='upper left')
+    # Add a legend to the plot
+    ax.legend()
+
+    #Arrange plot size
+    plt.ylim(0, 600)
+    plt.xlim(1955, 2020)
+
+    xlabel = 'Year'
+    ylabel = 'OEW[kg]/Pax'
+    plot.plot_layout(None, xlabel, ylabel, ax)
+    if savefig:
+        plt.savefig(folder_path+'/pax_vs_year.png')
 
 

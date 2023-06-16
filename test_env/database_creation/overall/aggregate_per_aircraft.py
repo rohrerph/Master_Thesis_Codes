@@ -1,7 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from test_env.tools import plot
-import numpy as np
+from test_env.database_creation.tools import plot
+
+
 def calculate(savefig, folder_path):
     aircrafts = pd.read_excel(r'Databank.xlsx')
     aircrafts = aircrafts[['Company',

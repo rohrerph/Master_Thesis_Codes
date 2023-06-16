@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from test_env.tools import plot
+from test_env.database_creation.tools import plot
 import matplotlib.colors as mcolors
 
 def calculate(savefig, folder_path):
@@ -94,8 +94,8 @@ def calculate(savefig, folder_path):
     equation_text = f'y = {z[0]:.2f}x + {z[1]:.2f} , R-squared = {r_squared}'
     #Polynom obtained by Lee et al. was 0.869x + 8.65 for comparison
     ax.text(0.30,0.15, equation_text, fontsize=10, color='black', transform=fig.transFigure)
-    xlabel = 'Take-Off TFSC'
-    ylabel = 'Cruise TFSC'
+    xlabel = 'Take-Off TSFC'
+    ylabel = 'Cruise TSFC'
     plt.ylim(14, 24)
     plt.xlim(6, 20)
     plot.plot_layout(None, xlabel, ylabel, ax)

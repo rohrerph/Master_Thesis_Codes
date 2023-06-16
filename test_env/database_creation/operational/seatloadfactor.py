@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
-from test_env.tools import dict
-from test_env.tools import T2_preprocessing
-from test_env.tools import plot
+from test_env.database_creation.tools import dict, plot, T2_preprocessing
 import matplotlib.pyplot as plt
 
 def calculate(savefig, folder_path):

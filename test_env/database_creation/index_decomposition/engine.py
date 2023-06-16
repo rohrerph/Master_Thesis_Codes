@@ -1,8 +1,9 @@
 import pandas as pd
-from test_env.tools import plot
+from test_env.database_creation.tools import plot
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import curve_fit
+
+
 def calculate(savefig, folder_path):
     # Prepare data and normalize
     data = pd.read_excel(r'Databank.xlsx')

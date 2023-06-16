@@ -1,6 +1,5 @@
 import pandas as pd
-from test_env.tools import dict
-from test_env.tools import plot
+from test_env.database_creation.tools import dict, plot
 import geopandas as gpd
 from shapely.geometry import Point
 from shapely.geometry import LineString

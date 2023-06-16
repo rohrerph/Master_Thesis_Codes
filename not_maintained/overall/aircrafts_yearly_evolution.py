@@ -50,8 +50,6 @@ ncols = 5
 # Create a figure and subplots using the layout
 fig, axes = plt.subplots(nrows=nrows, ncols=ncols, figsize=(15, 10), sharex=True)
 
-
-
 # Flatten the axes array to simplify indexing
 axes = axes.flatten()
 
