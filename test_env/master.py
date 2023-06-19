@@ -17,6 +17,7 @@ import test_env.database_creation.overall.aggregate_per_aircraft
 import test_env.database_creation.index_decomposition.technological
 import test_env.database_creation.index_decomposition.engine
 import test_env.database_creation.index_decomposition.technooperational
+import test_env.database_creation.aerodynamics.payload_range
 import warnings
 import datetime
 import os
@@ -74,6 +75,8 @@ print(' --> [CREATE AIRCRAFT DATABASE]: Summarize Data per Aircraft Type')
 test_env.database_creation.overall.aggregate_per_aircraft.calculate(savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Create Graphs for Aerodynamic Statistics...')
 database_creation.aerodynamics.aerodynamic_statistics.calculate(savefig, folder_path)
+print(' --> [CREATE AIRCRAFT DATABASE]: Create Payload Range Diagram for A320-200 and B777-200...')
+test_env.database_creation.aerodynamics.payload_range.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical Sub-Efficiencies')
 test_env.database_creation.index_decomposition.technological.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational Sub-Efficiencies')

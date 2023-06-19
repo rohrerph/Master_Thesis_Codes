@@ -24,6 +24,7 @@ As an output the Excel File Databank.xlsx will be produced.
 * [therm_prop_eff](test_env/database_creation/emissions/therm_prop_eff.py) : This File splits the Engine Efficiency into Propulsive and Thermal Efficiency by calculating the Propulsive Efficiency, assuming that Propulsive efficiency * Thermal efficiency = Engine efficiency. The values are then added to the Databank.   
 * [aggregate_per_aircraft](test_env/database_creation/overall/aggregate_per_aircraft.py) : The Databank contains now multiple entries for each Aircraft, accounting for different Engines, different OEW and MTOW series. This file groups all the data on Aircraft Level. 
 * [aerodynamic_statistics](test_env/database_creation/aerodynamics/aerodynamic_statistics.py) : Creates Plots regarding the FAA Box Limit and the evolution of AR
+* [payload_range](test_env/database_creation/aerodynamics/payload_range.py) : Creates Payload Range Diagrams for the A320 and the B777-200
 * [index_decomposition](test_env/database_creation/index_decomposition/technological.py) : Decomposes the Technical Efficiency Improvements MJ/ASK into Structural, Aerodynamic, Engine and Residual Efficiency.  
 * [index_decomposition_operational](test_env/database_creation/index_decomposition/technooperational.py) : Integrates the SLF to calculate MJ/RPK and decomposes the efficiency gains into Structural, Aerodynamic, Engine, Operational and Residual.
 * [index_decomposition_engine](test_env/database_creation/index_decomposition/engine.py) : Decomposes Engine Efficiency into Thermal- and Propulsive- Efficiency
