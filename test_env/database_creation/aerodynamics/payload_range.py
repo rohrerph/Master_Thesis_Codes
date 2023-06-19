@@ -52,7 +52,8 @@ def calculate(savefig, folder_path):
     cbar = plt.colorbar(im)
     plt.ylim(0,22)
     plt.xlim(0,6900)
-    plt.show()
+    if savefig:
+        plt.savefig(folder_path+ '/a320_payload_range.png')
 
     # PLOT 777-200 POTENTIALLY BETTER RESULTS
 
@@ -76,5 +77,8 @@ def calculate(savefig, folder_path):
     ylabel = 'Payload'
     plot.plot_layout(title, xlabel, ylabel, ax)
     cbar = plt.colorbar(im)
+    if savefig:
+        plt.savefig(folder_path+ '/b777_payload_range.png')
+
 
     # These heatmaps look way different than the ones from Literature, e.g. Ackert
