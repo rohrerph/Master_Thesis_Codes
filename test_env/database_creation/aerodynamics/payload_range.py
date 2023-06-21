@@ -38,7 +38,7 @@ def calculate(savefig, folder_path):
 
     # Calculate the heatmap data
     heatmap, xedges, yedges = np.histogram2d(a320['DISTANCE'], a320['PAYLOAD'], bins=20)
-    heatmap[heatmap<5]=0
+    heatmap[heatmap<5] = np.nan
     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
     # Plot the heatmap
@@ -46,10 +46,10 @@ def calculate(savefig, folder_path):
     ax.plot(a320_boundaries['Range'], a320_boundaries['Payload'], label='Limit', color='black')
     # Set labels
     title = 'Payload/Range Diagram'
-    xlabel = 'Distance'
-    ylabel = 'Payload'
+    xlabel = 'Distance [km]'
+    ylabel = 'Payload [t]'
     plot.plot_layout(title, xlabel, ylabel, ax)
-    cbar = plt.colorbar(im)
+    plt.colorbar(im).set_label('Number of Flights')
     plt.ylim(0,22)
     plt.xlim(0,6900)
     if savefig:
@@ -73,10 +73,10 @@ def calculate(savefig, folder_path):
     ax.plot(b777_boundaries['Range'], b777_boundaries['Payload'], label='Limit', color='black')
     # Set labels
     title = 'Payload/Range Diagram'
-    xlabel = 'Distance'
-    ylabel = 'Payload'
+    xlabel = 'Distance [km]'
+    ylabel = 'Payload [t]'
     plot.plot_layout(title, xlabel, ylabel, ax)
-    cbar = plt.colorbar(im)
+    plt.colorbar(im).set_label('Number of Flights')
     if savefig:
         plt.savefig(folder_path+ '/b777_payload_range.png')
 

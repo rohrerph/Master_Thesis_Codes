@@ -147,7 +147,18 @@ def calculate(savefig, folder_path):
     labels = ['Overall (MJ/RPK)','Operational (SLF(1959 Normalized))', 'Aerodynamic (L/D)','Structural (OEW/Exit)','Engine (TSFC)', 'Residual' ]
 
     # Create subplots for each column
-    fig, ax = plt.subplots(dpi=300)
+    cm = 1 / 2.54  # for inches-cm conversion
+    plt.rcParams.update({
+        "text.usetex": True,
+        "font.family": "Arial",
+        'font.size': 10
+    })
+    fig, ax = plt.subplots(
+        num='main',
+        nrows=1,
+        ncols=1,
+        dpi=300,
+        figsize=(16.65 * cm, 12 * cm))  # A4=(210x297)mm)
 
     # Plot stacked areas for other columns
     data_positive = data.drop('deltaC_Tot_Ops', axis=1).clip(lower=0)
@@ -170,14 +181,27 @@ def calculate(savefig, folder_path):
     ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
 
     xlabel = 'Year'
-    ylabel = 'Efficiency Improvements [%]'
+    ylabel = 'Efficiency Improvements [\%]'
     ax.set_xlim(1960, 2020)
     ax.set_ylim(-50, 400)
+
+    ax.minorticks_on()
+    ax.tick_params(axis='x', which='both', bottom=False)
+    ax.tick_params(axis='y', which='both', bottom=False)
+
+    # GRIDS ######################
+
+    ax.grid(which='both', axis='y', linestyle='-', linewidth=0.5)
+    ax.grid(which='both', axis='x', linestyle='-', linewidth=0.5)
+
     ax.legend(loc='upper left')
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(folder_path+'/ida_operational.png')
+        plt.savefig(folder_path+'/ida_operational.pdf',
+                    format="pdf",
+                    bbox_inches='tight',
+                    transparent = False)
 
 
 
