@@ -21,23 +21,19 @@ def calculate(savefig, folder_path):
     data['OEW/Exit Limit'] = 100 / data['OEW/Exit Limit']
     data = data[['Name','YOI', 'TSFC Cruise','EI (MJ/RPK)', 'OEW/Exit Limit', 'L/D estimate']]
     data = data.dropna()
-    oew = data.dropna(subset='OEW/Exit Limit')
-    oew['OEW/Exit Limit'] = oew['OEW/Exit Limit'] - 100
+    data['OEW/Exit Limit'] = data['OEW/Exit Limit'] - 100
 
     max_tsfc = data.loc[data['YOI']==1959, 'TSFC Cruise'].iloc[0]
     data['TSFC Cruise'] = 100 / (data['TSFC Cruise'] / max_tsfc)
-    tsfc = data.dropna(subset='TSFC Cruise')
-    tsfc['TSFC Cruise'] = tsfc['TSFC Cruise']-100
+    data['TSFC Cruise'] = data['TSFC Cruise']-100
 
     max_eu = data.loc[data['YOI']==1959, 'EI (MJ/RPK)'].iloc[0]
     data['EI (MJ/RPK)'] = 100/ (data['EI (MJ/RPK)'] / max_eu)
-    eu = data.dropna(subset='EI (MJ/RPK)')
-    eu['EI (MJ/RPK)'] = eu['EI (MJ/RPK)'] - 100
+    data['EI (MJ/RPK)'] = data['EI (MJ/RPK)'] - 100
 
     min_ld = data.loc[data['YOI']==1959, 'L/D estimate'].iloc[0]
     data['L/D estimate'] = 100 / (min_ld / data['L/D estimate'])
-    ld = data.dropna(subset='L/D estimate')
-    ld['L/D estimate'] = ld['L/D estimate'] - 100
+    data['L/D estimate'] = data['L/D estimate'] - 100
 
     # Groupby Aircraft by the release Year and take the following years for the IDA
     data = data[['Name','YOI', 'TSFC Cruise','EI (MJ/RPK)', 'OEW/Exit Limit', 'L/D estimate']]
@@ -45,23 +41,20 @@ def calculate(savefig, folder_path):
     data = data.dropna()
 
     years = np.arange(1959, 2022)
-    x_all = ld['YOI'].astype(np.int64)
-    y_all = ld['L/D estimate'].astype(np.float64)
+    x_all = data['YOI'].astype(np.int64)
+    y_all = data['L/D estimate'].astype(np.float64)
     z_all = np.polyfit(x_all,  y_all, 4)
     p_all_ld = np.poly1d(z_all)
 
-    x_all = oew['YOI'].astype(np.int64)
-    y_all = oew['OEW/Exit Limit'].astype(np.float64)
+    y_all = data['OEW/Exit Limit'].astype(np.float64)
     z_all = np.polyfit(x_all,  y_all, 4)
     p_all_oew = np.poly1d(z_all)
 
-    x_all = tsfc['YOI'].astype(np.int64)
-    y_all = tsfc['TSFC Cruise'].astype(np.float64)
+    y_all = data['TSFC Cruise'].astype(np.float64)
     z_all = np.polyfit(x_all,  y_all, 4)
     p_all_tsfc = np.poly1d(z_all)
 
-    x_all = eu['YOI'].astype(np.int64)
-    y_all = eu['EI (MJ/RPK)'].astype(np.float64)
+    y_all = data['EI (MJ/RPK)'].astype(np.float64)
     z_all = np.polyfit(x_all,  y_all, 4)
     p_all_eu = np.poly1d(z_all)
 
@@ -73,10 +66,10 @@ def calculate(savefig, folder_path):
     x_label = 'Aircraft Year of Introduction'
     y_label = 'Efficiency Increase [%]'
 
-    ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='black', label='Engine (TSFC)')
-    ax.scatter(eu['YOI'], eu['EI (MJ/RPK)'],color='turquoise', label='Overall (MJ/RPK)')
-    ax.scatter(oew['YOI'], oew['OEW/Exit Limit'],color='orange', label='Structural (OEW/Exit)')
-    ax.scatter(ld['YOI'], ld['L/D estimate'],color='blue', label='Aerodynamic (L/D)')
+    ax.scatter(data['YOI'], data['TSFC Cruise'],color='black', label='Engine (TSFC)')
+    ax.scatter(data['YOI'], data['EI (MJ/RPK)'],color='turquoise', label='Overall (MJ/RPK)')
+    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='orange', label='Structural (OEW/Exit)')
+    ax.scatter(data['YOI'], data['L/D estimate'],color='blue', label='Aerodynamic (L/D)')
     ax.scatter(slf['Year'], slf['PLF'], color='green', label='Operational (SLF (1959 normalized))')
 
     ax.plot(years, p_all_tsfc(years),color='black')
@@ -129,10 +122,10 @@ def calculate(savefig, folder_path):
 
     # Get percentage increase of each efficiency and drop first row which only contains NaN
     data = data[['YOI', 'deltaC_Structural_Ops', 'deltaC_Engine_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_SLF_Ops','deltaC_Res_Ops', 'deltaC_Tot_Ops']]
-    dashboard = pd.read_excel(r'Dashboard.xlsx')
+    dashboard = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx')
     data = data.drop(data.index[0])
     dashboard = dashboard.merge(data, on='YOI')
-    dashboard.to_excel(r'Dashboard.xlsx', index=False)
+    dashboard.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Dashboard.xlsx', index=False)
     data = data.set_index('YOI')
 
     # Set the width of each group and create new indexes just the set the space right

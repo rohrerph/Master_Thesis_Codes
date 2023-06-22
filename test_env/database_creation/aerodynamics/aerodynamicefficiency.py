@@ -73,6 +73,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     a350 = wide.loc[wide['Name'] == 'A350-900', 'L/D estimate'].iloc[0]
     a340 = wide.loc[wide['Name'] == 'A340-500', 'L/D estimate'].iloc[0]
     a321 = narrow.loc[narrow['Name'] == 'A321-200n', 'L/D estimate'].iloc[0]
+    limit = a350 * 1.05 * 1.15
     # assume 40% is induced drag for the A321 which can be reduced by the AlbatrossOne wingspan. Induced drag can be scaled by the squareroot of the ARs
     factor = np.sqrt(10.47/18)*0.4+0.6
     fig = plt.figure(dpi=300)
@@ -85,7 +86,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     future_projections = True
     if future_projections:
         ax.scatter(2025, a350*1.05, color='green', s=30, label='Future Projections')
-        ax.axhline(y=a350 * 1.05 * 1.15, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
+        ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
         plt.annotate('777X', (2025, a350*1.05,),
                         fontsize=8, xytext=(-10, 5),
                         textcoords='offset points')
@@ -107,4 +108,4 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'/aerodynamicsL_over_D_estimation_approach.png')
-
+    return limit

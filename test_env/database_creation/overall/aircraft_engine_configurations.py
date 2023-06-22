@@ -272,5 +272,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     if savefig:
         plt.savefig(folder_path + '\engineweight.png')
 
+    return limit
+
 
 

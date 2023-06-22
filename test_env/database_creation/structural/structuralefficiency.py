@@ -197,7 +197,7 @@ def calculate(savefig, folder_path):
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
     ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Pax'], marker='^',color='blue', label='Narrowbody')
     ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Pax'], marker='o',color='darkred', label='Regional Jets')
-
+    ax.axhline(y=232, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
     ax.legend(loc='upper left')
     # Add a legend to the plot
     ax.legend()
