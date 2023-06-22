@@ -18,6 +18,7 @@ import test_env.database_creation.index_decomposition.technological
 import test_env.database_creation.index_decomposition.engine
 import test_env.database_creation.index_decomposition.technooperational
 import test_env.database_creation.aerodynamics.payload_range
+import test_env.database_creation.dashboard_prep.future_scen1
 import warnings
 import datetime
 import os
@@ -83,4 +84,6 @@ print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational S
 test_env.database_creation.index_decomposition.technooperational.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Engine Sub-Efficiencies')
 test_env.database_creation.index_decomposition.engine.calculate(savefig, folder_path)
+print(' --> [PREPARE DASHBOARD]: Create future scenarios')
+test_env.database_creation.dashboard_prep.future_scen1.calculate(limit_tsfc, limit_aero)
 print(' --> [FINISH]')

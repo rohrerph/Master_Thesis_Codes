@@ -33,11 +33,6 @@ def calculate(savefig, folder_path):
     ld = data.dropna(subset='L/D estimate')
     ld['L/D estimate'] = ld['L/D estimate'] - 100
 
-    # Groupby Aircraft by the release Year and take the following years for the IDA
-    data = data[['Name','YOI', 'TSFC Cruise','EU (MJ/ASK)', 'OEW/Exit Limit', 'L/D estimate']]
-    #data['Multiplied'] = data['TSFC Cruise']*data['OEW/Exit Limit']*data['L/D estimate']
-    data = data.dropna()
-
     # Define a function to calculate R^2
     def calculate_r_squared(y_true, y_pred):
         y_mean = np.mean(y_true)
@@ -131,7 +126,6 @@ def calculate(savefig, folder_path):
 
     # Create the DataFrame
     df = pd.DataFrame(data)
-
 
     data = df
 
