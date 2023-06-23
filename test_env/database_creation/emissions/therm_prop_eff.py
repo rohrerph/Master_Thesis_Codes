@@ -31,7 +31,7 @@ def calculate(savefig, flight_speed, folder_path):
     cmap = plt.colormaps.get_cmap('cool')
     colors = cmap(norm_column_data)
 
-    fig = plt.figure(dpi=150)
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     # Plot the dataframes with different symbols
@@ -56,8 +56,8 @@ def calculate(savefig, flight_speed, folder_path):
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')
     ax.legend()
-    xlabel = 'Propulsive Efficiency'
-    ylabel = 'Thermal Efficiency'
+    xlabel = 'Propulsive Efficiency [\%]'
+    ylabel = 'Thermal Efficiency [\%]'
     plt.ylim(0.4, 0.65)
     plt.xlim(0.7, 1)
 

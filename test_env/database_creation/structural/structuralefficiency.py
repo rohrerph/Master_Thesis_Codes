@@ -20,6 +20,7 @@ def calculate(savefig, folder_path):
     other = 8 # assume heaviest material for possibly biggest OEW decrease
     oew_b787 = aircrafts.loc[aircrafts['Name']=='787-10 Dreamliner', 'OEW'].iloc[0]
     exit_b787 = aircrafts.loc[aircrafts['Name'] == '787-10 Dreamliner', 'Exit Limit'].iloc[0]
+    oew_exit_b777 = aircrafts.loc[aircrafts['Name'] == '777-300/300ER/333ER', 'OEW/Exit Limit'].iloc[0]
     oew_b787_composites = (oew_b787/exit_b787) * (CFR) / (CFR*0.52+alu2024t3*0.2+steel*0.07+other*0.07+titanium*0.14)
 
     aircrafts['Composite OEW'] = aircrafts['OEW']*(CFR/(aircrafts['Composites']*CFR+(1-aircrafts['Composites'])*alu2024t3))
@@ -79,16 +80,16 @@ def calculate(savefig, folder_path):
 
     fig = plt.figure(dpi=300)
     y_label = 'OEW[kg]/Pax Exit Limit'
-    x_label = 'Year'
+    x_label = 'Aircraft Year of Introduction'
 
     # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
     #ax.scatter(large_aircrafts['YOI'], large_aircrafts['Composites Exit Limit'], marker='s', color='red', label='100% Comp')
-    ax.axhline(y=oew_b787_composites, color='black', linestyle='--', linewidth=2, label='Physical Limitation')
+    ax.axhline(y=oew_exit_b777*0.8, color='black', linestyle='--', linewidth=2, label='Physical Limitation')
     ax.plot(x_large, p_large(x_large), color='orange')
-    plt.annotate('B787-10 Dreamliner with 100% Composites', (1960, oew_b787_composites),
+    plt.annotate('NASA ERA Project', (1960, oew_exit_b777*0.8),
                     fontsize=6, xytext=(-10, 5),
                     textcoords='offset points')
     #for i, row in large_aircrafts.iterrows():
@@ -130,7 +131,7 @@ def calculate(savefig, folder_path):
     plt.xlim(1955, 2025)
     plt.xticks(np.arange(1955, 2024, 10))
 
-    xlabel = 'Year'
+    xlabel = 'Aircraft Year of Introduction'
     ylabel = 'OEW[kg]/Pax Exit Limit'
 
     plot.plot_layout(None, xlabel, ylabel, ax)
@@ -184,7 +185,7 @@ def calculate(savefig, folder_path):
     plt.ylim(0, 400)
     plt.xlim(1955, 2020)
 
-    xlabel = 'Year'
+    xlabel = 'Aircraft Year of Introduction'
     ylabel = 'OEW[kg]/Pax Exit Limit'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
@@ -197,7 +198,7 @@ def calculate(savefig, folder_path):
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
     ax.scatter(medium_aircrafts['YOI'], medium_aircrafts['OEW/Pax'], marker='^',color='blue', label='Narrowbody')
     ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Pax'], marker='o',color='darkred', label='Regional Jets')
-    ax.axhline(y=232, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
+    #ax.axhline(y=232, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
     ax.legend(loc='upper left')
     # Add a legend to the plot
     ax.legend()
@@ -206,7 +207,7 @@ def calculate(savefig, folder_path):
     plt.ylim(0, 600)
     plt.xlim(1955, 2020)
 
-    xlabel = 'Year'
+    xlabel = 'Aircraft Year of Introduction'
     ylabel = 'OEW[kg]/Pax'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:

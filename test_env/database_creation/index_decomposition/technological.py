@@ -89,7 +89,7 @@ def calculate(savefig, folder_path):
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x_label = 'Aircraft Year of Introduction'
-    y_label = 'Efficiency Increase [%]'
+    y_label = 'Efficiency Improvements [\%]'
 
     ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='black', label='Engine (TSFC)')
     ax.scatter(eu['YOI'], eu['EU (MJ/ASK)'],color='turquoise', label='Overall (MJ/ASK)')
@@ -182,7 +182,7 @@ def calculate(savefig, folder_path):
     ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
 
     xlabel = 'Year'
-    ylabel = 'Efficiency Improvements [%]'
+    ylabel = 'Efficiency Improvements [\%]'
     ax.set_xlim(1960, 2020)
     ax.set_ylim(-30, 280)
     ax.legend(loc='upper left')

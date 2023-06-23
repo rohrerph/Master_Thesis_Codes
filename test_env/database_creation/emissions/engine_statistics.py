@@ -58,7 +58,7 @@ def calculate(savefig, folder_path):
     plt.xlim(0.5, 3.5)
     x = np.linspace(0,3.5, 50)
     y = x**2
-    ax.plot(x, y, label='y = x^2')
+    ax.plot(x, y, label='$y = x^2$', color='black')
     ax.legend()
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
@@ -91,11 +91,12 @@ def calculate(savefig, folder_path):
     plt.colorbar(sm).set_label('Engine Year of Certification')
     ax.scatter(x, y, c=colors2, zorder=2)
     ax.plot(span, p(span),color='black', linewidth=2)
-    equation_text = f'y = {z[0]:.2f}x + {z[1]:.2f} , R-squared = {r_squared}'
+    equation_text = r'$y = {:.2f}x + {:.2f}$, $R^2 = {:.2f}$'.format(z[0], z[1], r_squared)
+
     #Polynom obtained by Lee et al. was 0.869x + 8.65 for comparison
     ax.text(0.30,0.15, equation_text, fontsize=10, color='black', transform=fig.transFigure)
-    xlabel = 'Take-Off TSFC'
-    ylabel = 'Cruise TSFC'
+    xlabel = 'Take-Off TSFC [g/kNs]'
+    ylabel = 'Cruise TSFC  [g/kNs]'
     plt.ylim(14, 24)
     plt.xlim(6, 20)
     plot.plot_layout(None, xlabel, ylabel, ax)
@@ -119,7 +120,7 @@ def calculate(savefig, folder_path):
 
     ylabel = 'Pressure Ratio'
     xlabel = 'Bypass Ratio'
-    plt.ylim(10, 55)
+    plt.ylim(10, 60)
     plt.xlim(0, 13)
     plot.plot_layout(None, xlabel, ylabel, ax)
 

@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
+from test_env.database_creation.tools import plot
 def calculate(savefig, folder_path, vel, air_density):
     # Parameters
     thrusts = np.linspace(0, 200000, 200)
@@ -25,18 +26,18 @@ def calculate(savefig, folder_path, vel, air_density):
     efficiency_heatmap = efficiency_heatmap.mask(efficiency_heatmap < 0.6)
 
     # Create a figure and axes
-    fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
+    fig, ax = plt.subplots(dpi=300)
 
     # Plot the array as a heatmap using imshow
     im = ax.imshow(efficiency_heatmap[::-1], cmap='coolwarm', aspect='auto')
     contours = plt.contour(efficiency_heatmap[::-1], colors='black', linestyles='dashed', levels=10)
-    plt.clabel(contours, inline=True, fontsize=8)
+    plt.clabel(contours, inline=True, fontsize=10)
 
-    cbar = plt.colorbar(im, label='Propulsive Efficiency')
+    cbar = plt.colorbar(im, label='Propulsive Efficiency [\%]')
 
     # Set x and y labels
-    ax.set_ylabel('Fan Diameter')
-    ax.set_xlabel('Thrust [kN]')
+    ylabel='Fan Diameter [m]'
+    xlabel='Thrust [kN]'
 
     new_xticks = [0, 50, 100, 150, 200]
     new_xlabels = ['0', '50', '100','150','200']
@@ -56,7 +57,8 @@ def calculate(savefig, folder_path, vel, air_density):
     ax.text(2, 67, 'CFM56-7B Series', horizontalalignment='left', verticalalignment='center')
     ax.text(2, 41, 'PW4090', horizontalalignment='left', verticalalignment='center')
     ax.text(2, 8, 'Open Rotor', horizontalalignment='left', verticalalignment='center')
-    ax.set_title(r'Commercial Aircraft with 2 Turbofan Engines', loc='center')
+    plot.plot_layout(None, xlabel, ylabel, ax)
+    ax.set_title(r'Commercial Aircraft with 2 Turbofan Engines', loc = 'center')
     if savefig:
         plt.savefig(folder_path + '/prop_efficiency_limitation.png')
 

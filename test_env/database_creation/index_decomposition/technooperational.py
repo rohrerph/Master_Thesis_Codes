@@ -64,7 +64,7 @@ def calculate(savefig, folder_path):
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x_label = 'Aircraft Year of Introduction'
-    y_label = 'Efficiency Increase [%]'
+    y_label = 'Efficiency Improvements [\%]'
 
     ax.scatter(data['YOI'], data['TSFC Cruise'],color='black', label='Engine (TSFC)')
     ax.scatter(data['YOI'], data['EI (MJ/RPK)'],color='turquoise', label='Overall (MJ/RPK)')
@@ -177,15 +177,6 @@ def calculate(savefig, folder_path):
     ylabel = 'Efficiency Improvements [\%]'
     ax.set_xlim(1960, 2020)
     ax.set_ylim(-50, 400)
-
-    ax.minorticks_on()
-    ax.tick_params(axis='x', which='both', bottom=False)
-    ax.tick_params(axis='y', which='both', bottom=False)
-
-    # GRIDS ######################
-
-    ax.grid(which='both', axis='y', linestyle='-', linewidth=0.5)
-    ax.grid(which='both', axis='x', linestyle='-', linewidth=0.5)
 
     ax.legend(loc='upper left')
     plot.plot_layout(None, xlabel, ylabel, ax)

@@ -60,8 +60,8 @@ def calculate(savefig, folder_path):
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')
 
-    plt.xlabel('Wingspan (m)')
-    plt.ylabel('Height (m)')
+    plt.xlabel('Wingspan [m]')
+    plt.ylabel('Height [m]')
     plt.title('FAA Aircraft Categorisation')
     plt.ylim(0,24.4)
     plt.xlim(0,80)

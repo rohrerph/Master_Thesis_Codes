@@ -27,13 +27,13 @@ def calibrate(savefig, folder_path):
     r_squared = 1 - (rss / tss)
     r_squared = r_squared.round(2)
 
-    ax.scatter(x_all, y_all, marker='o', color='black', zorder=2)
-    ax.plot(span, p_all(span),color='black', label='Combined', linewidth=2)
+    ax.scatter(x_all, y_all, marker='o', color='black', label='Turbofan Engines',zorder=2)
+    ax.plot(span, p_all(span),color='black', label='Linear Regression', linewidth=2)
 
     equation_text = f'y = {z_all[0]:.2f}x + {z_all[1]:.2f} , R-squared = {r_squared}'
     #can these values be compared to Lee if a different polynom was used ?
     #Polynom obtained by Lee et al. was 0.869x + 8.65 for comparison
-    ax.text(0.35,0.15, equation_text, fontsize=10, color='black', transform=fig.transFigure)
+    ax.text(0.4,0.15, equation_text, fontsize=10, color='black', transform=fig.transFigure)
     ax.legend(loc='upper left')
 
     #Arrange plot size

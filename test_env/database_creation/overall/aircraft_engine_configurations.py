@@ -186,9 +186,9 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
     high = bpr.loc[bpr['B/P Ratio'] >= 8]
 
-    ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR <2')
-    ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2-8')
-    ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR >8')
+    ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR $<$ 2')
+    ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2 - 8')
+    ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='BPR $>$ 8')
 
     ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
     ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
@@ -232,9 +232,9 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     medium = bpr.loc[(bpr['Pressure Ratio'] >= 20) & (bpr['Pressure Ratio'] <= 35)]
     high = bpr.loc[bpr['Pressure Ratio'] >= 35]
 
-    ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='OPR <20')
-    ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='OPR 20-35')
-    ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='OPR >35')
+    ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='OPR $<$ 20')
+    ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='OPR 20 - 35')
+    ax.scatter(high['YOI'], high['TSFC Cruise'], color='blue', label='OPR $>$ 35')
 
     ax.axhline(y=limit_nox, color='black', linestyle='--', linewidth=2, label='Practical Limit w.r.t. NOx')
     ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label = 'Theoretical Limit')
@@ -258,9 +258,9 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     medium = databank.loc[(databank['B/P Ratio'] >= 2) & (databank['B/P Ratio'] <= 8)]
     high = databank.loc[databank['B/P Ratio'] >= 8]
 
-    ax.scatter(low['YOI'], low['Dry weight,integer,kilogram'], color='red', label='BPR <2')
-    ax.scatter(medium['YOI'], medium['Dry weight,integer,kilogram'], color='purple', label='BPR 2-8')
-    ax.scatter(high['YOI'], high['Dry weight,integer,kilogram'], color='blue', label='BPR >8')
+    ax.scatter(low['YOI'], low['Dry weight,integer,kilogram'], color='red', label='BPR $< 2$')
+    ax.scatter(medium['YOI'], medium['Dry weight,integer,kilogram'], color='purple', label='BPR 2 - 8')
+    ax.scatter(high['YOI'], high['Dry weight,integer,kilogram'], color='blue', label=r'BPR $> 8$')
     plt.xlim(1955, 2025)
     plt.ylim(0, 0.2)
 

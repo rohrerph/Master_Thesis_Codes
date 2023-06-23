@@ -42,7 +42,7 @@ def calculate(savefig, folder_path):
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x_label = 'Aircraft Year of Introduction'
-    y_label = 'Efficiency Increase [%]'
+    y_label = 'Efficiency Improvements [\%]'
 
     ax.scatter(data['YOI'], data['Engine Efficiency'],color='black', label='Overall Efficiency')
     ax.scatter(data['YOI'], data['thermal_eff'],color='turquoise', label='Thermal Efficiency')
@@ -123,7 +123,7 @@ def calculate(savefig, folder_path):
     overall_efficiency = data['deltaC_Tot']
     ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
     xlabel = 'Year'
-    ylabel = 'Efficiency Improvements [%]'
+    ylabel = 'Efficiency Improvements [\%]'
     ax.set_xlim(1970, 2020)
     ax.set_ylim(-5, 20)
     ax.legend(loc='upper left')

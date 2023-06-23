@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from test_env.database_creation.tools import plot
 
 def calculate(savefig, folder_path, temp):
     # Parameters
@@ -43,18 +44,18 @@ def calculate(savefig, folder_path, temp):
     data = data.T
 
     # Create a figure and axes
-    fig, ax = plt.subplots(figsize=(10, 6), dpi=300)
+    fig, ax = plt.subplots(dpi=300)
 
     # Plot the array as a heatmap using imshow
     im = ax.imshow(data[::-1], cmap='coolwarm', aspect='auto')
     contours = plt.contour(data[::-1], colors='black', linestyles='dashed', levels=10)
-    plt.clabel(contours, inline=True, fontsize=8)
+    plt.clabel(contours, inline=True, fontsize=10)
 
-    cbar = plt.colorbar(im, label='Thermal Efficiency')
+    cbar = plt.colorbar(im, label='Thermal Efficiency [\%]')
 
     # Set x and y labels
-    ax.set_ylabel('Pressure Ratio')
-    ax.set_xlabel('Burner Exit Temperature')
+    ylabel ='Pressure Ratio'
+    xlabel = 'Burner Exit Temperature [K]'
 
     new_xticks = [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600]
     new_xlabels = ['1000', '1200', '1400','1600','1800','2000', '2200', '2400', '2600']
@@ -63,10 +64,12 @@ def calculate(savefig, folder_path, temp):
     new_yticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     new_ylabels = ['100', '90', '80','70','60','50', '40', '30', '20', '10']
     plt.yticks(new_yticks, new_ylabels)
-    ax.vlines(1000,0,90, color='black', label='Temp NOx Limit', linewidth=3)
-    ax.vlines(1600,0,90, color='black', label='Stoichiometric Limit', linewidth=3)
-    ax.text(1000, -3, 'Temp NOx Limit', horizontalalignment='center', verticalalignment='center',  weight='bold')
-    ax.text(1600, -3, 'Stochiometric Limit', horizontalalignment='center', verticalalignment='center',  weight='bold')
+    ax.vlines(1000,0,90, color='black', label=r'\textbf{Temp NOx Limit}', linewidth=1.5)
+    ax.vlines(1600,0,90, color='black', label=r'\textbf{Stoichiometric Limit}', linewidth=1.5)
+    ax.text(1040, 45, r'\textbf{Temp NOx Limit}',rotation=90, horizontalalignment='center', verticalalignment='center',  weight='bold')
+    ax.text(1640, 45, r'\textbf{Stoichiometric Limit}',rotation=90,  horizontalalignment='center', verticalalignment='center',  weight='bold')
+
+    plot.plot_layout(None, xlabel, ylabel, ax)
     ax.set_title(r'With $\eta_{Compressor}$ and $\eta_{Turbine}$ = 0.9', loc='left')
     if savefig:
         plt.savefig(folder_path + '/thermal_efficiency_limitation.png')

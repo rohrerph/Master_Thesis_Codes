@@ -59,7 +59,7 @@ def calculate(savefig, folder_path):
     ax = fig.add_subplot(1, 1, 1)
 
     x_label = 'Aircraft Year of Introduction'
-    y_label = 'Ratio'
+    y_label = 'Airborne Efficiency'
 
     ax.plot(overall['YEAR'], overall['Airborne Eff.'],color='turquoise', marker='o',markersize=3, label='US Overall')
     ax.plot(wide['YEAR'], wide['Airborne Eff.'],color='orange', marker='s',markersize=3, label='US Widebody')
