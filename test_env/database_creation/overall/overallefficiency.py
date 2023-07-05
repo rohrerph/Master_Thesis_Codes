@@ -62,9 +62,10 @@ def calculate(savefig, km, mj, folder_path):
 
        regional = airplanes_release_year.loc[airplanes_release_year['Description'].isin(regionalcarriers)]
        normal = airplanes_release_year.loc[~airplanes_release_year['Description'].isin(regionalcarriers)]
-       fig = plt.figure(dpi=300)
+       # Create subplots for each column
 
-       # Add a subplot
+       cm = 1 / 2.54  # for inches-cm conversion
+       fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
        ax = fig.add_subplot(1, 1, 1)
 
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
@@ -74,9 +75,9 @@ def calculate(savefig, km, mj, folder_path):
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
        #ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
-
-       historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
-       historic_legend._legend_box.align = "left"
+       ax.legend()
+       #historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
+       #historic_legend._legend_box.align = "left"
 
        #add projections from Lee et al.
        plot_projections = False
@@ -95,11 +96,11 @@ def calculate(savefig, km, mj, folder_path):
               projection_labels = ax.get_legend_handles_labels()[1][7:]  # Exclude the first 8 labels (historic data)
               ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
                                             title="Historic Projections", frameon=False)
-              ax.add_artist(historic_legend)
+              #ax.add_artist(historic_legend)
 
        #Arrange plot size
        plt.ylim(0, 4)
-       plt.xlim(1955, 2030)
+       plt.xlim(1955, 2025)
        plt.xticks(np.arange(1955, 2031, 10))
 
        # Set the x and y axis labels

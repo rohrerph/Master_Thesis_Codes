@@ -166,7 +166,9 @@ def calculate(savefig, folder_path):
         plt.savefig(folder_path+'/exit_limit_vs_oew.png')
 
     # PAX/OEW per YOI
-    fig = plt.figure(dpi=300)
+    # Create subplots for each column
+    cm = 1 / 2.54  # for inches-cm conversion
+    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
     ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
@@ -174,8 +176,8 @@ def calculate(savefig, folder_path):
     ax.scatter(regional_aircrafts['YOI'], regional_aircrafts['OEW/Exit Limit'], marker='o',color='darkred', label='Regional Jets')
     ax.plot(x_large, p_large(x_large), color='orange')
     ax.plot(x_medium, p_medium(x_medium), color='blue')
-    plt.annotate('A330-900', (2018, 299), fontsize=8, xytext=(-10, -10), textcoords='offset points')
-    plt.annotate('B787-10', (2018, 308), fontsize=8, xytext=(-10, 5), textcoords='offset points')
+    plt.annotate('A330-900', (2018, 299), fontsize=8, xytext=(-20, -10), textcoords='offset points')
+    plt.annotate('B787-10', (2018, 308), fontsize=8, xytext=(-20, 5), textcoords='offset points')
 
     ax.legend(loc='upper left')
     # Add a legend to the plot
@@ -189,10 +191,11 @@ def calculate(savefig, folder_path):
     ylabel = 'OEW[kg]/Pax Exit Limit'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(folder_path+'/exit_limit_vs_year.png')
+        plt.savefig(folder_path+'/exit_limit_vs_year.png',  bbox_inches='tight')
 
     #_______PLOT PAX VS OEW________
-    fig = plt.figure(dpi=300)
+    cm = 1 / 2.54  # for inches-cm conversion
+    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
     ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')
@@ -211,6 +214,6 @@ def calculate(savefig, folder_path):
     ylabel = 'OEW[kg]/Pax'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(folder_path+'/pax_vs_year.png')
+        plt.savefig(folder_path+'/pax_vs_year.png', bbox_inches='tight')
 
 

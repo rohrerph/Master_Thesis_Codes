@@ -52,10 +52,10 @@ def calculate(savefig, folder_path):
     ax.scatter(71.75, 19.5, color='yellow', s=30, label='777X')
     plt.annotate('777X Folded Wings', (64.85 , 19.5),
                      fontsize=8, xytext=(-10, -10),
-                     textcoords='offset points')
+                     textcoords='offset points', weight='bold')
     plt.annotate('777X', (71.75, 19.5),
                      fontsize=8, xytext=(-10, 5),
-                     textcoords='offset points')
+                     textcoords='offset points', weight='bold')
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')

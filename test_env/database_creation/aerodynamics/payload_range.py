@@ -44,8 +44,18 @@ def calculate(savefig, folder_path):
     # Plot the heatmap
     im = ax.imshow(heatmap.T, origin='lower', extent=extent, aspect='auto', cmap='YlGn')
     ax.plot(a320_boundaries['Range'], a320_boundaries['Payload'], label='Limit', color='black')
+
+    ax.scatter(4000, 19.9, color='red', zorder=2)
+    ax.scatter(5200, 15.9, color='red', zorder=2)
+    plt.annotate('Point B', (4000, 19.9),
+                    fontsize=10, xytext=(5, 0),
+                    textcoords='offset points',weight='bold')
+    plt.annotate('Point C', (5200, 15.9),
+                    fontsize=10, xytext=(5, 0),
+                    textcoords='offset points', weight='bold')
+
     # Set labels
-    title = 'Payload/Range Diagram'
+    title = 'Airbus A320-100/200'
     xlabel = 'Distance [km]'
     ylabel = 'Payload [t]'
     plot.plot_layout(title, xlabel, ylabel, ax)
@@ -71,10 +81,20 @@ def calculate(savefig, folder_path):
     # Plot the heatmap
     im = ax.imshow(heatmap.T, origin='lower', extent=extent, aspect='auto', cmap='YlGn')
     ax.plot(b777_boundaries['Range'], b777_boundaries['Payload'], label='Limit', color='black')
+    ax.scatter(14070, 50.352, color='red', zorder=2)
+    ax.scatter(15023, 43.262, color='red', zorder=2)
+    plt.annotate('Point B', (14070, 50.352),
+                    fontsize=10, xytext=(5, 0),
+                    textcoords='offset points', weight='bold')
+    plt.annotate('Point C', (15023, 43.262),
+                    fontsize=10, xytext=(5, 0),
+                    textcoords='offset points', weight='bold')
+
     # Set labels
-    title = 'Payload/Range Diagram'
+    title = 'Boeing B777-200'
     xlabel = 'Distance [km]'
     ylabel = 'Payload [t]'
+    plt.ylim(0, 55)
     plot.plot_layout(title, xlabel, ylabel, ax)
     plt.colorbar(im).set_label('Number of Flights')
     if savefig:

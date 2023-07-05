@@ -141,7 +141,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     unmatched = pd.merge(unmatched, icao, left_on='name_x_y', how='left', right_on='Engine Identification')
     unmatched = unmatched[unmatched['Engine Identification'].isna()]
     unmatched = unmatched.drop(columns=['Engine Identification', 'TSFC Cruise', 'Final Test Date', 'B/P Ratio', 'Pressure Ratio', 'TSFC T/O'])
-
+    unmatched.to_excel(r"C:\Users\PRohr\Desktop\unmatched.xlsx")
     matchingrate =((len(models4)/len(models3))*100)
     matchingrate = round(matchingrate, 2)
     print(' --> [MATCH ENGINES WITH ICAO EMISSION DATABANK]: Matching Rate: ' + str(matchingrate) + ' %')
@@ -168,10 +168,14 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
             databank['Engine Efficiency'] = flight_vel / (heatingvalue * databank['TSFC Cruise'])
     databank.to_excel(r'Databank.xlsx', index=False)
 
+    databank.to_excel(r"C:\Users\PRohr\Desktop\allaircraft.xlsx")
+
     #PLOT engine efficiency
-    fig = plt.figure(dpi=300)
+    # Create subplots for each column
+    cm = 1 / 2.54  # for inches-cm conversion
+    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
     ax = fig.add_subplot(1, 1, 1)
-    years = np.arange(1955, 2023)
+
     x_all = databank['YOI'].astype(np.int64)
     y_all = databank['TSFC Cruise'].astype(np.float64)
     z_all = np.polyfit(x_all,  y_all, 2)
@@ -212,7 +216,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
                     textcoords='offset points')
     ax.scatter(2035, 12, color='green')
     plt.annotate('CFM RISE', (2035, 12),
-                    fontsize=6, xytext=(-10, -10),
+                    fontsize=6, xytext=(10, 0),
                     textcoords='offset points')
     plt.xlim(1955,2050)
 
@@ -222,10 +226,11 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     ylabel = 'Cruise TSFC [g/kNs]'
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
-        plt.savefig(folder_path+'\engineefficiency.png')
+        plt.savefig(folder_path+'\engineefficiency.png', bbox_inches='tight')
 
     # PLOT colors for OPR
-    fig = plt.figure(dpi=300)
+    cm = 1 / 2.54  # for inches-cm conversion
+    fig = plt.figure(dpi=300, figsize=(25 * cm, 10 * cm))
     ax = fig.add_subplot(1, 1, 1)
 
     low = bpr.loc[bpr['Pressure Ratio'] <= 20]

@@ -21,10 +21,12 @@ def calculate(savefig, folder_path):
                                  'Name',
                                  'YOI']]
     emissions_df = emissions_df.groupby(['YOI','Name', 'Engine Identification' ], as_index=False).mean()
+
+    emissions_df.to_excel(r"C:\Users\PRohr\Desktop\allengines2.xlsx")
     yearly_emissions = emissions_df.groupby(['Engine Identification', 'Dry weight,integer,kilogram',
        'Fan diameter,float,metre', 'TSFC Cruise','TSFC T/O', 'B/P Ratio',
        'Pressure Ratio', 'Engine Efficiency', 'Overall pressure ratio,float,None'], as_index=False).agg({'YOI':'min'})
-
+    yearly_emissions.to_excel(r"C:\Users\PRohr\Desktop\allengines.xlsx")
     # Get color spectrum for years
     years = yearly_emissions['YOI']
     years2 = data['Application Date']
@@ -105,6 +107,7 @@ def calculate(savefig, folder_path):
         plt.savefig(folder_path+'\icao_to_tsfc_vs_years.png')
 
     # BYPASS RATIO vs Pressure Ratio
+    # Note the only geared engine (PW1100 Series does not have the Pressure Ratio given, therefore not appearing in the Plot.
     fig = plt.figure(dpi=300)
 
     y = yearly_emissions['Overall pressure ratio,float,None']

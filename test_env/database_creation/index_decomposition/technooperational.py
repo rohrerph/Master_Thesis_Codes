@@ -137,21 +137,12 @@ def calculate(savefig, folder_path):
     data = data[column_order]
 
     # Create new Labels
-    labels = ['Overall (MJ/RPK)','Operational (SLF(1959 Normalized))', 'Aerodynamic (L/D)','Structural (OEW/Exit)','Engine (TSFC)', 'Residual' ]
+    labels = ['Overall Eff. (baseline MJ/RPK(1960))','Operational (SLF)', 'Aerodynamic (L/D)','Structural (OEW/Exit)','Engine (TSFC)', 'Residual' ]
 
     # Create subplots for each column
     cm = 1 / 2.54  # for inches-cm conversion
-    plt.rcParams.update({
-        "text.usetex": True,
-        "font.family": "Arial",
-        'font.size': 10
-    })
-    fig, ax = plt.subplots(
-        num='main',
-        nrows=1,
-        ncols=1,
-        dpi=300,
-        figsize=(16.65 * cm, 12 * cm))  # A4=(210x297)mm)
+    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+    ax = fig.add_subplot(1, 1, 1)
 
     # Plot stacked areas for other columns
     data_positive = data.drop('deltaC_Tot_Ops', axis=1).clip(lower=0)
@@ -182,10 +173,7 @@ def calculate(savefig, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(folder_path+'/ida_operational.pdf',
-                    format="pdf",
-                    bbox_inches='tight',
-                    transparent = False)
+        plt.savefig(folder_path+'/ida_operational.png', bbox_inches='tight', transparent = False)
 
 
 
