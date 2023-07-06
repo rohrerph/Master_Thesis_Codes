@@ -65,7 +65,7 @@ def calculate(savefig, km, mj, folder_path):
        # Create subplots for each column
 
        cm = 1 / 2.54  # for inches-cm conversion
-       fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+       fig = plt.figure(dpi=300)
        ax = fig.add_subplot(1, 1, 1)
 
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
@@ -73,14 +73,14 @@ def calculate(savefig, km, mj, folder_path):
        ax.scatter(overall_large['Year'], overall_large['EU (MJ/ASK)'], marker='s',color='red', label='Lee')
        ax.scatter(doubled['Year'], doubled['MJ/ASK mixed'], marker='^', color='blue')
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/ASK'],color='blue', label='US DOT T2 Fleet')
-       #ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
+       ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(overall_large_fleet['Year'], overall_large_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
        ax.legend()
-       #historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
-       #historic_legend._legend_box.align = "left"
+       historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
+       historic_legend._legend_box.align = "left"
 
        #add projections from Lee et al.
-       plot_projections = False
+       plot_projections = True
        if plot_projections:
               ax.scatter([1997, 2007, 2022], [1.443, 1.238, 0.9578], marker='^', color='black', label='NASA 100 PAX')
               ax.scatter([1997, 2007, 2022], [1.2787, 1.0386, 0.741], marker='*', color='black', label='NASA 150 PAX')
@@ -96,7 +96,7 @@ def calculate(savefig, km, mj, folder_path):
               projection_labels = ax.get_legend_handles_labels()[1][7:]  # Exclude the first 8 labels (historic data)
               ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
                                             title="Historic Projections", frameon=False)
-              #ax.add_artist(historic_legend)
+              ax.add_artist(historic_legend)
 
        #Arrange plot size
        plt.ylim(0, 4)

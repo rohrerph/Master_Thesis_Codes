@@ -55,7 +55,7 @@ def calculate(savefig, flight_speed, folder_path):
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')
-    ax.legend()
+    ax.legend(loc='upper left')
     xlabel = 'Propulsive Efficiency [\%]'
     ylabel = 'Thermal Efficiency [\%]'
     plt.ylim(0.4, 0.65)

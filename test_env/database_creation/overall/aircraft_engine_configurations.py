@@ -52,8 +52,6 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     engines_grouped = engines_grouped.merge(manufacturers, left_on='manufacturer',right_on='id')
     engines_grouped = engines_grouped.drop(columns=['id_y','manufacturer'])
 
-    #engines_grouped.to_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\other\output\engines_fan_diameter.xlsx')
-
     models = models.merge(manufacturers, left_on='manufacturer', right_on='id')
     models = models.replace(properties_dict)
     models2 = models.pivot(columns='property',values='value')
@@ -141,7 +139,6 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     unmatched = pd.merge(unmatched, icao, left_on='name_x_y', how='left', right_on='Engine Identification')
     unmatched = unmatched[unmatched['Engine Identification'].isna()]
     unmatched = unmatched.drop(columns=['Engine Identification', 'TSFC Cruise', 'Final Test Date', 'B/P Ratio', 'Pressure Ratio', 'TSFC T/O'])
-    unmatched.to_excel(r"C:\Users\PRohr\Desktop\unmatched.xlsx")
     matchingrate =((len(models4)/len(models3))*100)
     matchingrate = round(matchingrate, 2)
     print(' --> [MATCH ENGINES WITH ICAO EMISSION DATABANK]: Matching Rate: ' + str(matchingrate) + ' %')
@@ -168,12 +165,10 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
             databank['Engine Efficiency'] = flight_vel / (heatingvalue * databank['TSFC Cruise'])
     databank.to_excel(r'Databank.xlsx', index=False)
 
-    databank.to_excel(r"C:\Users\PRohr\Desktop\allaircraft.xlsx")
-
     #PLOT engine efficiency
     # Create subplots for each column
     cm = 1 / 2.54  # for inches-cm conversion
-    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     x_all = databank['YOI'].astype(np.int64)
