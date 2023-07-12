@@ -111,7 +111,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
         plt.annotate('SB-Wing', (2035, 27.8),
                         fontsize=8, xytext=(-10,5),
                         textcoords='offset points')
-        plt.xlim(1948,2050)
+        plt.xlim(1955,2050)
     ax.legend(loc='upper left')
 
     plot.plot_layout(None, xlabel, ylabel, ax)

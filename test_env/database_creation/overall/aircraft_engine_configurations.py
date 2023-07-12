@@ -232,7 +232,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     plt.annotate('CFM RISE', (2035, 12),
                     fontsize=6, xytext=(10, 0),
                     textcoords='offset points')
-    plt.xlim(1948,2050)
+    plt.xlim(1955,2050)
 
     ax.legend()
     xlabel = 'Aircraft Year of Introduction'
@@ -287,7 +287,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     ax.scatter(low['YOI'], low['Dry weight,integer,kilogram'], color='red', label='BPR $< 2$')
     ax.scatter(medium['YOI'], medium['Dry weight,integer,kilogram'], color='purple', label='BPR 2 - 8')
     ax.scatter(high['YOI'], high['Dry weight,integer,kilogram'], color='blue', label=r'BPR $> 8$')
-    plt.xlim(1948, 2025)
+    plt.xlim(1955, 2025)
     plt.ylim(0, 0.2)
     ax.legend()
 

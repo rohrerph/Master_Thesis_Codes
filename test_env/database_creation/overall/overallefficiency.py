@@ -69,7 +69,7 @@ def calculate(savefig, km, mj, folder_path):
 
        # Get MJ/ASK value for the Comet 4
        boeing707 = lee.loc[lee['Label']=='B707-100B/300', 'EU (MJ/ASK)'].iloc[0]
-       comet4 = {'Label': 'Comet 4', 'EU (MJ/ASK)': boeing707/0.88, 'Year':1949}
+       comet4 = {'Label': 'Comet 4', 'EU (MJ/ASK)': boeing707/0.88, 'Year':1958}
        lee = lee.append(comet4, ignore_index=True)
 
        # Plot Comet 4 Separately
@@ -112,8 +112,8 @@ def calculate(savefig, km, mj, folder_path):
 
        #Arrange plot size
        plt.ylim(0, 4)
-       plt.xlim(1947, 2025)
-       plt.xticks(np.arange(1950, 2031, 10))
+       plt.xlim(1955, 2025)
+       plt.xticks(np.arange(1955, 2031, 10))
 
        # Set the x and y axis labels
        xlabel = 'Aircraft Year of Introduction'

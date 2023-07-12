@@ -18,17 +18,17 @@ def calculate(savefig, folder_path):
     oew = data.dropna(subset='OEW/Exit Limit')
     oew['OEW/Exit Limit'] = oew['OEW/Exit Limit'] - 100
 
-    max_tsfc = data.loc[data['YOI']==1949, 'TSFC Cruise'].iloc[0]
+    max_tsfc = data.loc[data['YOI']==1958, 'TSFC Cruise'].iloc[0]
     data['TSFC Cruise'] = 100 / (data['TSFC Cruise'] / max_tsfc)
     tsfc = data.dropna(subset='TSFC Cruise')
     tsfc['TSFC Cruise'] = tsfc['TSFC Cruise']-100
 
-    max_eu = data.loc[data['YOI']==1949, 'EU (MJ/ASK)'].iloc[0]
+    max_eu = data.loc[data['YOI']==1958, 'EU (MJ/ASK)'].iloc[0]
     data['EU (MJ/ASK)'] = 100/ (data['EU (MJ/ASK)'] / max_eu)
     eu = data.dropna(subset='EU (MJ/ASK)')
     eu['EU (MJ/ASK)'] = eu['EU (MJ/ASK)'] - 100
 
-    min_ld = data.loc[data['YOI']==1949, 'L/D estimate'].iloc[0]
+    min_ld = data.loc[data['YOI']==1958, 'L/D estimate'].iloc[0]
     data['L/D estimate'] = 100 / (min_ld / data['L/D estimate'])
     ld = data.dropna(subset='L/D estimate')
     ld['L/D estimate'] = ld['L/D estimate'] - 100
@@ -42,7 +42,7 @@ def calculate(savefig, folder_path):
         return r_squared
 
     # Polynomial for YOI vs. L/D estimate
-    years = np.arange(1949, 2021)
+    years = np.arange(1958, 2021)
     x_all = ld['YOI'].astype(np.int64)
     y_all = ld['L/D estimate'].astype(np.float64)
     z_all = np.polyfit(x_all, y_all, 4)
@@ -103,7 +103,7 @@ def calculate(savefig, folder_path):
 
     # Add a legend to the plot
     ax.legend()
-    plt.xlim(1945, 2025)
+    plt.xlim(1955, 2025)
     plt.ylim(-30, 400)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
@@ -183,7 +183,7 @@ def calculate(savefig, folder_path):
 
     xlabel = 'Year'
     ylabel = 'Efficiency Improvements [\%]'
-    ax.set_xlim(1950, 2020)
+    ax.set_xlim(1958, 2020)
     ax.set_ylim(-40, 380)
     ax.legend(loc='upper left')
     plot.plot_layout(None, xlabel, ylabel, ax)

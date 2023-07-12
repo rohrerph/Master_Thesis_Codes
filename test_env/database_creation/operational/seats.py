@@ -2,19 +2,17 @@ import pandas as pd
 import os
 from test_env.database_creation.tools import dict
 
-
-#Add a row to the Aircraft Databank with the mean passenger number per aircraft type
 def calculate():
-    #load dictionaries
+
+    # Load Dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
     airlines = dict.USAirlines().get_airlines()
 
-
     # Create an empty dataframe to hold the data
     T100 = pd.DataFrame()
 
-    # Get a list of all files in the folder
+    # Get a list of all files in the folder and load Databank
     file_list = os.listdir(r'database_creation\rawdata\USDOT\T100_Annual')
     aircraft = pd.read_excel(r'Databank.xlsx')
 
@@ -24,17 +22,20 @@ def calculate():
         df = pd.read_csv(file_path)
         T100 = T100.append(df, ignore_index=True)
 
-    #Data from December 2022, is also monthly available back to 1990.
+
     AC_types = pd.read_csv(r"database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
 
+    # Get Aircraft passenger configuration and commercial aircraft group
     T100 = T100.loc[T100['CARRIER_GROUP'] == 3]
-    # subgroup 1 for aircraft passenger configuration
     T100 = T100.loc[T100['AIRCRAFT_CONFIG'] == 1]
-    # Use the 19 Airlines
+
+    # Use the Airlines and Aircraft from the Dictionary
     T100 = T100.loc[T100['UNIQUE_CARRIER_NAME'].isin(airlines)]
     T100 = pd.merge(T100, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
     T100 = T100.loc[T100['Description'].isin(airplanes)]
     T100 = T100.loc[T100['SEATS']>0]
+
+    # Calculate the Average Seats per Flight
     average_seats = T100.groupby(['Description', 'UNIQUE_CARRIER_NAME'], as_index=False).agg({'SEATS':'sum', 'DEPARTURES_PERFORMED':'sum'})
     average_seats['Average Seats']=average_seats['SEATS']/average_seats['DEPARTURES_PERFORMED']
     average_seats['Average Seats'] = average_seats['Average Seats'].round(0)
@@ -42,6 +43,7 @@ def calculate():
     average_seats = average_seats.groupby(['Description'], as_index=False).agg({'Average Seats':'mean'})
     average_seats = average_seats.round(0)
 
+    # Merge the average seat number to the aircraft Databank and save
     fullnames = dict.fullname().get_aircraftfullnames()
     average_seats['Description'] = average_seats['Description'].replace(fullnames)
     average_seats['Description'] = average_seats['Description'].str.strip()
