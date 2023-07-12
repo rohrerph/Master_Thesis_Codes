@@ -4,11 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def calculate(savefig, folder_path):
+
+    # Load Dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
     airlines = dict.USAirlines().get_airlines()
 
-    # Air time efficiency in 2022
+    # Load Data for 2022
     AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
     T100 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T_T100_SEGMENT_ALL_CARRIER_2022.csv")
 
@@ -24,7 +26,6 @@ def calculate(savefig, folder_path):
     T100 = T100.reset_index(drop=True)
 
     # Check for a 777-200 and an A320 and create the payload range diagrams.
-
     a320 = T100.loc[T100['Description']=='Airbus Industrie A320-100/200']
     b777 = T100.loc[T100['Description']=='Boeing 777-200ER/200LR/233LR']
 
@@ -54,7 +55,6 @@ def calculate(savefig, folder_path):
                     fontsize=10, xytext=(5, 0),
                     textcoords='offset points', weight='bold')
 
-    # Set labels
     title = 'Airbus A320-100/200'
     xlabel = 'Distance [km]'
     ylabel = 'Payload [t]'
@@ -65,8 +65,7 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+ '/a320_payload_range.png')
 
-    # PLOT 777-200 POTENTIALLY BETTER RESULTS
-
+    # PLOT 777-200
     b777_boundaries = {
         'Range': [0, 14070, 15023, 17687],
         'Payload': [50.352, 50.352, 43.262, 0]}
@@ -100,5 +99,3 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+ '/b777_payload_range.png')
 
-
-    # These heatmaps look way different than the ones from Literature, e.g. Ackert

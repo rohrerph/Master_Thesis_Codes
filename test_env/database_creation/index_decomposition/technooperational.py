@@ -4,13 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def calculate(savefig, folder_path):
-    # Read SLF data
+    # Load SLF data
     slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
     slf = slf[['Year', 'PLF']]
     slf['PLF'] = slf['PLF'].str.replace(',', '.').astype(float)
     slf = slf[slf['Year'] >= 1958]
 
-    #prepare data and normalize
+    # Load Aircraft Data and Calculate MJ/RPK
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
     data = data.merge(slf, left_on='YOI', right_on='Year', how='left')
@@ -37,9 +37,8 @@ def calculate(savefig, folder_path):
 
     # Groupby Aircraft by the release Year and take the following years for the IDA
     data = data[['Name','YOI', 'TSFC Cruise','EI (MJ/RPK)', 'OEW/Exit Limit', 'L/D estimate']]
-    #data['Multiplied'] = data['TSFC Cruise']*data['OEW/Exit Limit']*data['L/D estimate']
-    data = data.dropna()
 
+    # Create Polynomial Regression
     years = np.arange(1958, 2022)
     x_all = data['YOI'].astype(np.int64)
     y_all = data['L/D estimate'].astype(np.float64)
@@ -60,7 +59,7 @@ def calculate(savefig, folder_path):
 
     slf['PLF'] = (100*slf['PLF'] / slf['PLF'].iloc[0]) -100
 
-    # Plot all Data as Scatterpoints and the data for the years above as a line
+    # Plot Scatterpoint for the Aircraft and the Polynomials
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x_label = 'Aircraft Year of Introduction'
@@ -104,10 +103,9 @@ def calculate(savefig, folder_path):
     }
 
     # Create the DataFrame
-    df = pd.DataFrame(data)
-    data = df
-    # Use LMDI Method
+    data = pd.DataFrame(data)
 
+    # Use LMDI Method
     data['LMDI'] = (data['EU (MJ/ASK)'] - data['EU (MJ/ASK)'].iloc[0]) / (np.log(data['EU (MJ/ASK)']) - np.log(data['EU (MJ/ASK)'].iloc[0]))
     data['Engine_LMDI'] = np.log(data['TSFC Cruise'] / data['TSFC Cruise'].iloc[0])
     data['Aerodyn_LMDI'] = np.log(data['L/D estimate'] / data['L/D estimate'].iloc[0])
@@ -131,9 +129,8 @@ def calculate(savefig, folder_path):
     # Set the width of each group and create new indexes just the set the space right
     data = data[['deltaC_Tot_Ops', 'deltaC_SLF_Ops','deltaC_Engine_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_Structural_Ops', 'deltaC_Res_Ops']]
 
-    column_order = ['deltaC_Tot_Ops','deltaC_SLF_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_Structural_Ops', 'deltaC_Engine_Ops', 'deltaC_Res_Ops']
-
     # Reorder the columns
+    column_order = ['deltaC_Tot_Ops','deltaC_SLF_Ops', 'deltaC_Aerodyn_Ops', 'deltaC_Structural_Ops', 'deltaC_Engine_Ops', 'deltaC_Res_Ops']
     data = data[column_order]
 
     # Create new Labels

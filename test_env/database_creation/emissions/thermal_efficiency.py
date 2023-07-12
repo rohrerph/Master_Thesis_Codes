@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from test_env.database_creation.tools import plot
 
 def calculate(savefig, folder_path, temp):
+
     # Parameters
     T1 = temp  # Kelvin, Air Temperature in Altitude
     T3_NOx = 2000  # Max Temp in Kelvin regarding NOx emissions
@@ -16,6 +17,8 @@ def calculate(savefig, folder_path, temp):
     pressure_ratios = np.linspace(10, 100, 90)
 
     results = []
+
+    # For loops to create all combinations of values
     for pressure_ratio in pressure_ratios:
         for T3 in T3s:
             T2_s = T1 * (pressure_ratio) ** ((gamma - 1) / gamma)
@@ -38,10 +41,10 @@ def calculate(savefig, folder_path, temp):
 
     # Reshape data for heatmap
     efficiency_heatmap = df.pivot('Burner Exit Temperature', 'Pressure Ratio', 'Thermal Efficiency')
-
     efficiency_heatmap = efficiency_heatmap.mask(efficiency_heatmap < 0.4)
-    data = efficiency_heatmap
-    data = data.T
+
+    # Transpose Data
+    data = efficiency_heatmap.T
 
     # Create a figure and axes
     fig, ax = plt.subplots(dpi=300)
@@ -50,13 +53,13 @@ def calculate(savefig, folder_path, temp):
     im = ax.imshow(data[::-1], cmap='coolwarm', aspect='auto')
     contours = plt.contour(data[::-1], colors='black', linestyles='dashed', levels=10)
     plt.clabel(contours, inline=True, fontsize=10)
+    plt.colorbar(im, label='Thermal Efficiency [\%]')
 
-    cbar = plt.colorbar(im, label='Thermal Efficiency [\%]')
-
-    # Set x and y labels
     ylabel ='Pressure Ratio'
     xlabel = 'Burner Exit Temperature [K]'
 
+
+    # Use arbitrary Ticks
     new_xticks = [0, 200, 400, 600, 800, 1000, 1200, 1400, 1600]
     new_xlabels = ['1000', '1200', '1400','1600','1800','2000', '2200', '2400', '2600']
     plt.xticks(new_xticks, new_xlabels)
@@ -64,6 +67,8 @@ def calculate(savefig, folder_path, temp):
     new_yticks = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90]
     new_ylabels = ['100', '90', '80','70','60','50', '40', '30', '20', '10']
     plt.yticks(new_yticks, new_ylabels)
+
+    # Add Limit Lines
     ax.vlines(1000,0,90, color='black', label=r'\textbf{Temp NOx Limit}', linewidth=1.5)
     ax.vlines(1600,0,90, color='black', label=r'\textbf{Stoichiometric Limit}', linewidth=1.5)
     ax.text(1040, 45, r'\textbf{Temp NOx Limit}',rotation=90, horizontalalignment='center', verticalalignment='center',  weight='bold')

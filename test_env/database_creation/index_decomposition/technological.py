@@ -5,7 +5,7 @@ import numpy as np
 
 
 def calculate(savefig, folder_path):
-    # Prepare data and normalize
+    # Load Data and Filter Regional out
     data = pd.read_excel(r'Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
     data = data.loc[data['Type']!='Regional']
@@ -85,7 +85,7 @@ def calculate(savefig, folder_path):
     r2_eu = calculate_r_squared(y_all, y_pred_eu)
     #print("R^2 for YOI vs. EU (MJ/ASK):", r2_eu)
 
-    # Plot all Data as Scatterpoints and the data for the years above as a line
+    # Plot Scatterpoint for the Aircraft and the Polynomials
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x_label = 'Aircraft Year of Introduction'
@@ -109,7 +109,7 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+'/ida_technological_normalized.png')
 
-    # Evaluate the polynomials for the x values
+    # Evaluate the polynomials for the x values and add 100 to get back to the Efficiency
     p_all_tsfc_values = p_all_tsfc(years) + 100
     p_all_oew_values = p_all_oew(years) + 100
     p_all_ld_values = p_all_ld(years) + 100
@@ -125,13 +125,9 @@ def calculate(savefig, folder_path):
     }
 
     # Create the DataFrame
-    df = pd.DataFrame(data)
-
-    data = df
-
+    data = pd.DataFrame(data)
 
     # Use LMDI Method
-
     data['LMDI'] = (data['EU (MJ/ASK)'] - data['EU (MJ/ASK)'].iloc[0]) / (np.log(data['EU (MJ/ASK)']) - np.log(data['EU (MJ/ASK)'].iloc[0]))
     data['Engine_LMDI'] = np.log(data['TSFC Cruise'] / data['TSFC Cruise'].iloc[0])
     data['Aerodyn_LMDI'] = np.log(data['L/D estimate'] / data['L/D estimate'].iloc[0])
@@ -150,10 +146,9 @@ def calculate(savefig, folder_path):
 
     # Set the width of each group and create new indexes just the set the space right
     data = data[['deltaC_Tot', 'deltaC_Engine', 'deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Res']]
-    # Define the desired order of columns
-    column_order = ['deltaC_Tot','deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Engine', 'deltaC_Res']
 
     # Reorder the columns
+    column_order = ['deltaC_Tot','deltaC_Aerodyn', 'deltaC_Structural', 'deltaC_Engine', 'deltaC_Res']
     data = data[column_order]
     # Create new Labels
     labels = ['Overall (MJ/ASK)', 'Aerodynamic (L/D)','Structural (OEW/Exit)','Engine (TSFC)', 'Residual' ]

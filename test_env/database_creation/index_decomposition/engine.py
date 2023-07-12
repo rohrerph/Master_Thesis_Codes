@@ -2,7 +2,7 @@ import pandas as pd
 from test_env.database_creation.tools import plot
 import matplotlib.pyplot as plt
 import numpy as np
-
+# Probably Delete this code, does not seem useful
 
 def calculate(savefig, folder_path):
     # Prepare data and normalize
@@ -12,6 +12,7 @@ def calculate(savefig, folder_path):
     data = data[['Name','YOI','Engine Efficiency', 'prop_eff', 'thermal_eff']]
     data = data.dropna()
 
+    # Normalize Efficiency Improvements
     therm = data.loc[data['YOI']==1970, 'thermal_eff'].iloc[0]
     data['thermal_eff'] = (100 / (data['thermal_eff'] / therm))-100
     data['thermal_eff'] = -1 * data['thermal_eff']
@@ -24,6 +25,7 @@ def calculate(savefig, folder_path):
     data['Engine Efficiency'] = (100 / (data['Engine Efficiency'] / engine))-100
     data['Engine Efficiency'] = -1 * data['Engine Efficiency']
 
+    # Create Polynomials
     years = np.arange(1970, 2021)
     x_all = data['YOI'].astype(np.int64)
     y_all = data['thermal_eff'].astype(np.float64)
@@ -38,7 +40,7 @@ def calculate(savefig, folder_path):
     z_all = np.polyfit(x_all,  y_all, 4)
     p_all_engine = np.poly1d(z_all)
 
-    # Plot all Data as Scatterpoints and the data for the years above as a line
+    # Plot Engines and Polynomials
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x_label = 'Aircraft Year of Introduction'
@@ -73,12 +75,9 @@ def calculate(savefig, folder_path):
         'Thermal Efficiency': p_all_thermal_values,
     }
     # Create the DataFrame
-    df = pd.DataFrame(data)
-    data = df
-
+    data = pd.DataFrame(data)
 
     # Use LMDI Method
-
     data['LMDI'] = (data['Overall Efficiency'] - data['Overall Efficiency'].iloc[0]) / (np.log(data['Overall Efficiency']) - np.log(data['Overall Efficiency'].iloc[0]))
     data['Thermal_LMDI'] = np.log(data['Thermal Efficiency'] / data['Thermal Efficiency'].iloc[0])
     data['Prop_LMDI'] = np.log(data['Propulsive Efficiency'] / data['Propulsive Efficiency'].iloc[0])

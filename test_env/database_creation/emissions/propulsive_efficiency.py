@@ -4,12 +4,14 @@ import matplotlib.pyplot as plt
 import math
 from test_env.database_creation.tools import plot
 def calculate(savefig, folder_path, vel, air_density):
+
     # Parameters
     thrusts = np.linspace(0, 200000, 200)
     fan_diameters = np.linspace(1, 5, 80)
     engine_count= 2
 
     results = []
+    # Calculate Propelsive Eff. for all combinations of thrust and Diameter
     for thrust in thrusts:
         for fan_diameter in fan_diameters:
             fan_area = (math.pi*fan_diameter**2)/4
@@ -32,13 +34,13 @@ def calculate(savefig, folder_path, vel, air_density):
     im = ax.imshow(efficiency_heatmap[::-1], cmap='coolwarm', aspect='auto')
     contours = plt.contour(efficiency_heatmap[::-1], colors='black', linestyles='dashed', levels=10)
     plt.clabel(contours, inline=True, fontsize=10)
-
-    cbar = plt.colorbar(im, label='Propulsive Efficiency [\%]')
+    plt.colorbar(im, label='Propulsive Efficiency [\%]')
 
     # Set x and y labels
     ylabel='Fan Diameter [m]'
     xlabel='Thrust [kN]'
 
+    # Add arbitrary ticks
     new_xticks = [0, 50, 100, 150, 200]
     new_xlabels = ['0', '50', '100','150','200']
     plt.xticks(new_xticks, new_xlabels)
@@ -47,6 +49,7 @@ def calculate(savefig, folder_path, vel, air_density):
     new_ylabels = ['5','4', '3', '2', '1']
     plt.yticks(new_yticks, new_ylabels)
 
+    # Add Lines and Text for some Examples
     ax.hlines(69, 0, 200, color='black', label='CFM56-7 Series', linewidth=1.5)
     ax.hlines(43, 0, 200, color='black', label='PW4090', linewidth=1.5)
     ax.hlines(10, 0, 200, color='black', label='Open Rotor', linewidth=1.5)

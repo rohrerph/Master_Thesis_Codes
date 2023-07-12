@@ -7,15 +7,20 @@ from test_env.database_creation.tools import plot
 
 def calculate(savefig, folder_path):
 
+    # Load Data
     data = pd.read_excel(r'Databank.xlsx')
+
+    # Filer for relevant Data
     data = data.loc[data['Aspect Ratio']<=15] # Filter out 767-400 where a wrong value is set in the database
-    #data = data.loc[data['YOI'] >= 2000]
     data = data.loc[data['Type']!='Regional']
     data = data.dropna(subset=['Wingspan,float,metre', 'MTOW,integer,kilogram'])
+
+    # Values for the Height of the B787 are missing
     data.loc[data['Name'] == 'B787-800 Dreamliner', 'Height,float,metre'] = 16.92
     data.loc[data['Name'] == 'B787-900 Dreamliner', 'Height,float,metre'] = 17.02
     data.loc[data['Name'] == '787-10 Dreamliner', 'Height,float,metre'] = 17.02
 
+    # FAA Airplane Design Groups
     groups = [
         {'Group': 'Group I', 'Min Span': 0, 'Max Span': 15, 'Min Height': 0, 'Max Height': 6.1},
         {'Group': 'Group II', 'Min Span': 15, 'Max Span': 24, 'Min Height': 6.1, 'Max Height': 9.1},
@@ -28,18 +33,17 @@ def calculate(savefig, folder_path):
 
     # Plot FAA Group Regulations for Airport Wingspan and Height
     fig, ax = plt.subplots(dpi=300)
-    column_data1 = pd.to_numeric(data['YOI'], errors='coerce')
+
+    # Create Colormap
+    column_data = pd.to_numeric(data['YOI'], errors='coerce')
     norm = mcolors.Normalize(vmin=1959, vmax=2020)
-    norm_column_data1 = norm(column_data1)
-    # create a colormap and map normalized values to colors
+    norm_column_data = norm(column_data)
     colors = ['white', 'lightcoral', 'red']
     cmap = mcolors.ListedColormap(colors)
-
-    #cmap = plt.colormaps.get_cmap('Reds')
-    colors = cmap(norm_column_data1)
-
+    colors = cmap(norm_column_data)
     colormap = plt.cm.get_cmap('Blues', len(df))
 
+    # Plot Groups
     for _, group in df[::-1].iterrows():
         x2, y2 = group['Max Span'], group['Max Height']
 
@@ -47,6 +51,7 @@ def calculate(savefig, folder_path):
         ax.add_patch(square)
         ax.legend(loc='lower right')
 
+    # Plot and annotate Aircraft
     ax.scatter(data['Wingspan,float,metre'], data['Height,float,metre'], color=colors, s=30)
     ax.scatter(64.85 , 19.5, color='yellow', s=30, label='777X Folded Wings')
     ax.scatter(71.75, 19.5, color='yellow', s=30, label='777X')
@@ -59,6 +64,8 @@ def calculate(savefig, folder_path):
     plt.annotate('A380', (80 , 24.4),
                      fontsize=8, xytext=(-30, -10),
                      textcoords='offset points', weight='bold')
+
+    # Plot Colorbar
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')
@@ -72,10 +79,9 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+ '/faa_wingspan_regulations.png')
 
-
     # Plot Aspect Ratio vs the Year of Release
-
     fig, ax = plt.subplots(dpi=300)
+
     ax.scatter(data['YOI'], data['Aspect Ratio'], color='black', s=30)
     ax.scatter(2025, 9.96, color='blue', s=30)
     plt.annotate('777X', (2025, 9.96),

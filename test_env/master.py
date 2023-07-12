@@ -74,7 +74,7 @@ database_creation.emissions.thermal_efficiency.calculate(savefig, folder_path, t
 print(' --> [CREATE AIRCRAFT DATABASE]: Calculating maximal Propulsive Efficiency fregarding Thrust Level and Fan Diameter')
 database_creation.emissions.propulsive_efficiency.calculate(savefig, folder_path, flight_vel, air_density)
 print(' --> [CREATE AIRCRAFT DATABASE]: Summarize Data per Aircraft Type')
-test_env.database_creation.overall.aggregate_per_aircraft.calculate(savefig, folder_path)
+test_env.database_creation.overall.aggregate_per_aircraft.calculate()
 print(' --> [CREATE AIRCRAFT DATABASE]: Create Graphs for Aerodynamic Statistics...')
 database_creation.aerodynamics.aerodynamic_statistics.calculate(savefig, folder_path)
 print(' --> [CREATE AIRCRAFT DATABASE]: Create Payload Range Diagram for A320-200 and B777-200...')

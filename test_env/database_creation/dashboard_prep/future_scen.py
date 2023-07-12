@@ -187,7 +187,7 @@ def calculate(limit_tsfc, limit_aero, savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+'/futurefleeteff.png')
 
-### Compare annual value with the single aircraft values
+    ### Compare annual value with the single aircraft values
     annual_data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\annualdata.xlsx')
     annual_data = annual_data[['Year', 'EU (MJ/ASK)']]
     annual_data = annual_data.rename(columns={'Year': 'YOI'})
@@ -198,5 +198,4 @@ def calculate(limit_tsfc, limit_aero, savefig, folder_path):
     data = data.merge(annual_data, on='YOI', how='outer')
     data = data.sort_values('YOI')
     data = data.fillna(0)
-
-    print(data)
+    # Lets still see if this could work...
