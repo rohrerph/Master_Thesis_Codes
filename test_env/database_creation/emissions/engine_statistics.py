@@ -5,6 +5,8 @@ from test_env.database_creation.tools import plot
 import matplotlib.colors as mcolors
 
 def calculate(savefig, folder_path):
+
+    # Load Engine Data and Aircraft Databank
     data = pd.read_excel(r'database_creation\rawdata\emissions\all_engines_for_calibration_years.xlsx', skiprows=range(2), header=3, usecols='A,B,C,D,E,F')
     data = data.groupby(['Engine'], as_index=False).agg(
         {'Engine TSFC cruise [g/kNs]': 'mean', 'Engine TSFC take off [g/kNs]': 'mean', 'Release year': 'mean', 'Application Date':'mean'})
@@ -20,14 +22,15 @@ def calculate(savefig, folder_path):
                                  'Engine Efficiency',
                                  'Name',
                                  'YOI']]
+    # Get all Aircraft-Engine Combinations
     emissions_df = emissions_df.groupby(['YOI','Name', 'Engine Identification' ], as_index=False).mean()
 
-    emissions_df.to_excel(r"C:\Users\PRohr\Desktop\allengines2.xlsx")
+    # Get the First Appearance of an Engine in a Commercial Aircraft
     yearly_emissions = emissions_df.groupby(['Engine Identification', 'Dry weight,integer,kilogram',
        'Fan diameter,float,metre', 'TSFC Cruise','TSFC T/O', 'B/P Ratio',
        'Pressure Ratio', 'Engine Efficiency', 'Overall pressure ratio,float,None'], as_index=False).agg({'YOI':'min'})
-    yearly_emissions.to_excel(r"C:\Users\PRohr\Desktop\allengines.xlsx")
-    # Get color spectrum for years
+
+    # Create Colorspectrum for First Engine Appearance in Commercial Aircraft and the ICAO Testdate
     years = yearly_emissions['YOI']
     years2 = data['Application Date']
 
@@ -41,14 +44,11 @@ def calculate(savefig, folder_path):
     colors = cmap(norm_column_data1)
     colors2 = cmap(norm_column_data2)
 
-    #-------------------Weight vs Diameter-------------------------
+    #-------------------Plot Weight vs Diameter-------------------------
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     x = yearly_emissions['Fan diameter,float,metre']
     y = yearly_emissions['Dry weight,integer,kilogram']/1000
-
-    z = np.polyfit(x, y, 1)
-    p = np.poly1d(z)
 
     ax.scatter(x, y, c=colors)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
@@ -58,25 +58,30 @@ def calculate(savefig, folder_path):
     ylabel = 'Engine Dry Weight [t]'
     plt.ylim(0, 10)
     plt.xlim(0.5, 3.5)
+
+    # Plot y = x^2
     x = np.linspace(0,3.5, 50)
     y = x**2
     ax.plot(x, y, label='$y = x^2$', color='black')
     ax.legend()
+
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:
         plt.savefig(folder_path+'\weight_vs_diameter.png')
 
-    #-------------------TSFC-------------------------
+    #-------------------T/O vs Cruise TSFC-------------------------
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     x = data['Engine TSFC take off [g/kNs]']
     y = data['Engine TSFC cruise [g/kNs]']
 
+    # Linear Regression
     z = np.polyfit(x, y, 1)
     p = np.poly1d(z)
     span = pd.Series(np.arange(7,19,0.2))
 
+    # Calculate R-Squared
     y_mean = np.mean(y)
     tss = np.sum((y - y_mean)**2)
     y_pred = p(x)
@@ -84,10 +89,6 @@ def calculate(savefig, folder_path):
     r_squared = 1 - (rss / tss)
     r_squared = r_squared.round(2)
 
-    y_emissions = yearly_emissions['TSFC T/O']
-
-    #for value, color in zip(y_emissions, colors):
-     #   ax.axvline(x=value, color=color, linewidth=1, ymin=0, ymax=1, alpha=0.5)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     plt.colorbar(sm).set_label('Engine Year of Certification')
@@ -106,15 +107,13 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+'\icao_to_tsfc_vs_years.png')
 
-    # BYPASS RATIO vs Pressure Ratio
+    #------------- BYPASS RATIO vs Pressure Ratio --------------------
     # Note the only geared engine (PW1100 Series does not have the Pressure Ratio given, therefore not appearing in the Plot.
     fig = plt.figure(dpi=300)
+    ax = fig.add_subplot(1, 1, 1)
 
     y = yearly_emissions['Overall pressure ratio,float,None']
     x = yearly_emissions['B/P Ratio']
-
-    # Add a subplot
-    ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(x,y,c=colors)
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
@@ -130,7 +129,7 @@ def calculate(savefig, folder_path):
     if savefig:
         plt.savefig(folder_path+'/bypass_vs_pressure_ratio.png')
 
-    # BYPASS RATIO vs Weight
+    #-------------- BYPASS RATIO vs Weight--------------
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 

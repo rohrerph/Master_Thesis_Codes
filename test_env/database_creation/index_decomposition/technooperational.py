@@ -8,7 +8,9 @@ def calculate(savefig, folder_path):
     slf = pd.read_excel(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
     slf = slf[['Year', 'PLF']]
     slf['PLF'] = slf['PLF'].str.replace(',', '.').astype(float)
-    slf = slf[slf['Year'] >= 1959]
+    slf = slf.fillna(value=slf.loc[slf['Year'] == 1950].iloc[0])
+    slf = slf[slf['Year'] >= 1949]
+
 
     #prepare data and normalize
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
@@ -23,15 +25,15 @@ def calculate(savefig, folder_path):
     data = data.dropna()
     data['OEW/Exit Limit'] = data['OEW/Exit Limit'] - 100
 
-    max_tsfc = data.loc[data['YOI']==1959, 'TSFC Cruise'].iloc[0]
+    max_tsfc = data.loc[data['YOI']==1949, 'TSFC Cruise'].iloc[0]
     data['TSFC Cruise'] = 100 / (data['TSFC Cruise'] / max_tsfc)
     data['TSFC Cruise'] = data['TSFC Cruise']-100
 
-    max_eu = data.loc[data['YOI']==1959, 'EI (MJ/RPK)'].iloc[0]
+    max_eu = data.loc[data['YOI']==1949, 'EI (MJ/RPK)'].iloc[0]
     data['EI (MJ/RPK)'] = 100/ (data['EI (MJ/RPK)'] / max_eu)
     data['EI (MJ/RPK)'] = data['EI (MJ/RPK)'] - 100
 
-    min_ld = data.loc[data['YOI']==1959, 'L/D estimate'].iloc[0]
+    min_ld = data.loc[data['YOI']==1949, 'L/D estimate'].iloc[0]
     data['L/D estimate'] = 100 / (min_ld / data['L/D estimate'])
     data['L/D estimate'] = data['L/D estimate'] - 100
 
@@ -40,7 +42,7 @@ def calculate(savefig, folder_path):
     #data['Multiplied'] = data['TSFC Cruise']*data['OEW/Exit Limit']*data['L/D estimate']
     data = data.dropna()
 
-    years = np.arange(1959, 2022)
+    years = np.arange(1949, 2022)
     x_all = data['YOI'].astype(np.int64)
     y_all = data['L/D estimate'].astype(np.float64)
     z_all = np.polyfit(x_all,  y_all, 4)
@@ -55,7 +57,7 @@ def calculate(savefig, folder_path):
     p_all_tsfc = np.poly1d(z_all)
 
     y_all = data['EI (MJ/RPK)'].astype(np.float64)
-    z_all = np.polyfit(x_all,  y_all, 4)
+    z_all = np.polyfit(x_all,  y_all, 6)
     p_all_eu = np.poly1d(z_all)
 
     slf['PLF'] = (100*slf['PLF'] / slf['PLF'].iloc[0]) -100
@@ -80,8 +82,8 @@ def calculate(savefig, folder_path):
 
     # Add a legend to the plot
     ax.legend()
-    plt.xlim(1955, 2025)
-    plt.ylim(-30, 400)
+    plt.xlim(1948, 2025)
+    plt.ylim(-30, 450)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
         plt.savefig(folder_path+'/ida_operational_normalized.png')
@@ -166,8 +168,8 @@ def calculate(savefig, folder_path):
 
     xlabel = 'Year'
     ylabel = 'Efficiency Improvements [\%]'
-    ax.set_xlim(1960, 2020)
-    ax.set_ylim(-50, 400)
+    ax.set_xlim(1950, 2020)
+    ax.set_ylim(-50, 500)
 
     ax.legend(loc='upper left')
     plot.plot_layout(None, xlabel, ylabel, ax)

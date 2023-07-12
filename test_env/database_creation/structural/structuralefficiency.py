@@ -185,7 +185,7 @@ def calculate(savefig, folder_path):
 
     #Arrange plot size
     plt.ylim(0, 400)
-    plt.xlim(1955, 2020)
+    plt.xlim(1947, 2020)
 
     xlabel = 'Aircraft Year of Introduction'
     ylabel = 'OEW[kg]/Pax Exit Limit'

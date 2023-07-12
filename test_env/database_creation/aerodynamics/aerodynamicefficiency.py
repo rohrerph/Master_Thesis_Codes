@@ -29,9 +29,13 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     breguet['K_1']= breguet['RANGE_POINT_1\n(Km)']/breguet['Ratio 1']
     breguet['K_2']= breguet['RANGE_POINT_2\n(Km)']/breguet['Ratio 2']
     breguet['K']=(breguet['K_1']+breguet['K_2'])/2
+    comet_k1 = 5190 / (np.log(0.94*73480/43410)) # data for the Comet 4 from Aerospaceweb.org
+    breguet.loc[breguet['Name'] == 'Comet 4', 'K_1'] = comet_k1
 
     breguet['A'] = breguet['K_1']*g*0.001*breguet['TSFC Cruise']
     breguet['L/D estimate'] = breguet['A']/flight_vel
+    comet_A = breguet.loc[breguet['Name'] == 'Comet 4', 'A']
+    breguet.loc[breguet['Name'] == 'Comet 4', 'L/D estimate'] = comet_A/223.6 # account for lower speed of the Comet 4
     aircraft_data = breguet
     aircraft_data = aircraft_data.drop(columns=['#', 'Aircraft Model Chart', 'Link', 'Factor', 'Ratio 1',
            'Ratio 2', 'K_1', 'K_2', 'K', 'A'])
@@ -81,7 +85,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
 
     # Create subplots for each column
     cm = 1 / 2.54  # for inches-cm conversion
-    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
     ax.scatter(wide['YOI'], wide['L/D estimate'], marker='o', label='Widebody')
     ax.scatter(narrow['YOI'], narrow['L/D estimate'], marker='^', label='Narrowbody \& Regional')
@@ -91,7 +95,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     future_projections = True
     if future_projections:
         ax.scatter(2025, a350*1.05, color='green', s=30, label='Future Projections')
-        #ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
+        ax.axhline(y=limit, color='black', linestyle='-', linewidth=2, label='Theoretical Limit for TW')
         plt.annotate('777X', (2025, a350*1.05,),
                         fontsize=8, xytext=(-10, 5),
                         textcoords='offset points')
@@ -107,7 +111,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
         plt.annotate('SB-Wing', (2035, 27.8),
                         fontsize=8, xytext=(-10,5),
                         textcoords='offset points')
-        plt.xlim(1955,2050)
+        plt.xlim(1948,2050)
     ax.legend(loc='upper left')
 
     plot.plot_layout(None, xlabel, ylabel, ax)

@@ -44,7 +44,6 @@ heatingvalue_gallon = 142.2  # 142.2 MJ per Gallon of kerosene
 heatingvalue_kg = 43.1  # MJ/kg
 gravity = 9.81  # m/s^2
 
-#test_env.database_creation.dashboard_prep.fleet_behavior.calculate(savefig, km, folder_path)
 print(' --> [START]')
 print(' --> [CREATE AIRCRAFT DATABASE]: Calculate Atmospheric Conditions...')
 air_density, flight_vel, temp = test_env.database_creation.tools.atmospheric_conditions.calculate(altitude, mach)

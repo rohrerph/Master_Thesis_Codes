@@ -56,6 +56,9 @@ def calculate(savefig, folder_path):
     plt.annotate('777X', (71.75, 19.5),
                      fontsize=8, xytext=(-10, 5),
                      textcoords='offset points', weight='bold')
+    plt.annotate('A380', (80 , 24.4),
+                     fontsize=8, xytext=(-30, -10),
+                     textcoords='offset points', weight='bold')
     sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
     sm.set_array([])
     plt.colorbar(sm).set_label('Aircraft Year of Introduction')
