@@ -67,15 +67,15 @@ def calculate(savefig, folder_path):
 
     ax.scatter(data['YOI'], data['EI (MJ/RPK)'],color='black', label='Overall (MJ/RPK)')
     ax.scatter(slf['Year'], slf['PLF'], color='blue', label='Operational (SLF (1959 normalized))')
-    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='royalblue', label='Structural (OEW/Exit)')
     ax.scatter(data['YOI'], data['L/D estimate'],color='steelblue', label='Aerodynamic (L/D)')
+    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='royalblue', label='Structural (OEW/Exit)')
     ax.scatter(data['YOI'], data['TSFC Cruise'],color='lightblue', label='Engine (TSFC)')
 
-    ax.plot(years, p_all_tsfc(years),color='black')
-    ax.plot(years, p_all_eu(years),color='turquoise')
-    ax.plot(years, p_all_oew(years),color='orange')
-    ax.plot(years, p_all_ld(years), color='blue')
-    ax.plot(slf['Year'], slf['PLF'], color='green')
+    ax.plot(years, p_all_tsfc(years),color='lightblue')
+    ax.plot(years, p_all_eu(years),color='black')
+    ax.plot(years, p_all_oew(years),color='steelblue')
+    ax.plot(years, p_all_ld(years), color='royalblue')
+    ax.plot(slf['Year'], slf['PLF'], color='blue')
 
     # Add a legend to the plot
     ax.legend()
@@ -171,7 +171,7 @@ def calculate(savefig, folder_path):
     plot.plot_layout(None, xlabel, ylabel, ax)
 
     if savefig:
-        plt.savefig(folder_path+'/ida_operational.png', bbox_inches='tight', transparent = False)
+        plt.savefig(folder_path+'/ida_operational.png')
 
 
 

@@ -96,10 +96,10 @@ def calculate(savefig, folder_path):
     ax.scatter(oew['YOI'], oew['OEW/Exit Limit'],color='steelblue', label='Structural (OEW/Exit)')
     ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='lightblue', label='Engine (TSFC)')
 
-    ax.plot(years, p_all_tsfc(years),color='black')
-    ax.plot(years, p_all_eu(years),color='turquoise')
-    ax.plot(years, p_all_oew(years),color='orange')
-    ax.plot(years, p_all_ld(years), color='blue')
+    ax.plot(years, p_all_tsfc(years),color='lightblue')
+    ax.plot(years, p_all_eu(years),color='black')
+    ax.plot(years, p_all_oew(years),color='steelblue')
+    ax.plot(years, p_all_ld(years), color='royalblue')
 
     # Add a legend to the plot
     ax.legend()

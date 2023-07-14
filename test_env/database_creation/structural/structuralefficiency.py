@@ -118,7 +118,7 @@ def calculate(savefig, folder_path):
 
     #-------- PAX/OEW per YOI-----------------
     cm = 1 / 2.54  # for inches-cm conversion
-    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
