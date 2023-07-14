@@ -145,7 +145,7 @@ def calculate(savefig, folder_path):
 
     #_______PLOT PAX VS OEW________
     cm = 1 / 2.54  # for inches-cm conversion
-    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     ax.scatter(large_aircrafts['YOI'], large_aircrafts['OEW/Pax'], marker='s',color='orange', label='Widebody')

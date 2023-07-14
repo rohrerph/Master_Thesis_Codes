@@ -65,11 +65,11 @@ def calculate(savefig, folder_path):
     x_label = 'Aircraft Year of Introduction'
     y_label = 'Efficiency Improvements [\%]'
 
-    ax.scatter(data['YOI'], data['TSFC Cruise'],color='black', label='Engine (TSFC)')
-    ax.scatter(data['YOI'], data['EI (MJ/RPK)'],color='turquoise', label='Overall (MJ/RPK)')
-    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='orange', label='Structural (OEW/Exit)')
-    ax.scatter(data['YOI'], data['L/D estimate'],color='blue', label='Aerodynamic (L/D)')
-    ax.scatter(slf['Year'], slf['PLF'], color='green', label='Operational (SLF (1959 normalized))')
+    ax.scatter(data['YOI'], data['EI (MJ/RPK)'],color='black', label='Overall (MJ/RPK)')
+    ax.scatter(slf['Year'], slf['PLF'], color='blue', label='Operational (SLF (1959 normalized))')
+    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='royalblue', label='Structural (OEW/Exit)')
+    ax.scatter(data['YOI'], data['L/D estimate'],color='steelblue', label='Aerodynamic (L/D)')
+    ax.scatter(data['YOI'], data['TSFC Cruise'],color='lightblue', label='Engine (TSFC)')
 
     ax.plot(years, p_all_tsfc(years),color='black')
     ax.plot(years, p_all_eu(years),color='turquoise')
@@ -138,7 +138,7 @@ def calculate(savefig, folder_path):
 
     # Create subplots for each column
     cm = 1 / 2.54  # for inches-cm conversion
-    fig = plt.figure(dpi=300, figsize=(25 * cm, 8 * cm))
+    fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
 
     # Plot stacked areas for other columns
@@ -148,6 +148,11 @@ def calculate(savefig, folder_path):
     positive_stack = np.zeros(len(data))
     negative_stack = np.zeros(len(data))
 
+    # Plot overall efficiency as a line
+    overall_efficiency = data['deltaC_Tot_Ops']
+    ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
+
+    # Plot Subefficiencies
     colors = ['blue', 'royalblue', 'steelblue', 'lightblue', 'red']
     for i, column in enumerate(data_positive.columns):
         ax.fill_between(data.index, positive_stack, positive_stack + data_positive.iloc[:, i], color=colors[i],
@@ -156,10 +161,6 @@ def calculate(savefig, folder_path):
     for i, column in enumerate(data_negative.columns):
         ax.fill_between(data.index, negative_stack, negative_stack + data_negative.iloc[:, i], color=colors[i], linewidth=0)
         negative_stack += data_negative.iloc[:, i]
-
-    # Plot overall efficiency as a line
-    overall_efficiency = data['deltaC_Tot_Ops']
-    ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
 
     xlabel = 'Year'
     ylabel = 'Efficiency Improvements [\%]'

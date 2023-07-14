@@ -35,7 +35,7 @@ def calibrate(savefig, folder_path):
 
     # Add Text to the Plot
     equation_text = f'y = {z_all[0]:.2f}x + {z_all[1]:.2f} , R-squared = {r_squared}'
-    ax.text(0.4,0.15, equation_text, fontsize=10, color='black', transform=fig.transFigure)
+    ax.text(0.4,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
     ax.legend(loc='upper left')
 
     #Arrange plot size

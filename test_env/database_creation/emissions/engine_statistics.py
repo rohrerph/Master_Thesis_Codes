@@ -36,7 +36,7 @@ def calculate(savefig, folder_path):
 
     column_data1 = pd.to_numeric(years, errors='coerce')
     column_data2 = pd.to_numeric(years2, errors='coerce')
-    norm = mcolors.Normalize(vmin=1959, vmax=2020)
+    norm = mcolors.Normalize(vmin=1959, vmax=2000)
     norm_column_data1 = norm(column_data1)
     norm_column_data2 = norm(column_data2)
     # create a colormap and map normalized values to colors
@@ -97,7 +97,7 @@ def calculate(savefig, folder_path):
     equation_text = r'$y = {:.2f}x + {:.2f}$, $R^2 = {:.2f}$'.format(z[0], z[1], r_squared)
 
     #Polynom obtained by Lee et al. was 0.869x + 8.65 for comparison
-    ax.text(0.30,0.15, equation_text, fontsize=10, color='black', transform=fig.transFigure)
+    ax.text(0.30,0.15, equation_text, fontsize=12, color='black', transform=fig.transFigure)
     xlabel = 'Take-Off TSFC [g/kNs]'
     ylabel = 'Cruise TSFC  [g/kNs]'
     plt.ylim(14, 24)

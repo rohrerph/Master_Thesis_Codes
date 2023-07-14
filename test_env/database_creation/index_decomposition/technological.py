@@ -91,10 +91,10 @@ def calculate(savefig, folder_path):
     x_label = 'Aircraft Year of Introduction'
     y_label = 'Efficiency Improvements [\%]'
 
-    ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='black', label='Engine (TSFC)')
-    ax.scatter(eu['YOI'], eu['EU (MJ/ASK)'],color='turquoise', label='Overall (MJ/ASK)')
-    ax.scatter(oew['YOI'], oew['OEW/Exit Limit'],color='orange', label='Structural (OEW/Exit)')
-    ax.scatter(ld['YOI'], ld['L/D estimate'],color='blue', label='Aerodynamic (L/D)')
+    ax.scatter(eu['YOI'], eu['EU (MJ/ASK)'],color='black', label='Overall (MJ/ASK)')
+    ax.scatter(ld['YOI'], ld['L/D estimate'],color='royalblue', label='Aerodynamic (L/D)')
+    ax.scatter(oew['YOI'], oew['OEW/Exit Limit'],color='steelblue', label='Structural (OEW/Exit)')
+    ax.scatter(tsfc['YOI'], tsfc['TSFC Cruise'],color='lightblue', label='Engine (TSFC)')
 
     ax.plot(years, p_all_tsfc(years),color='black')
     ax.plot(years, p_all_eu(years),color='turquoise')
@@ -163,6 +163,11 @@ def calculate(savefig, folder_path):
     positive_stack = np.zeros(len(data))
     negative_stack = np.zeros(len(data))
 
+    # Plot overall efficiency as a line
+    overall_efficiency = data['deltaC_Tot']
+    ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
+
+    #Plot Subefficiencies
     colors = ['royalblue', 'steelblue', 'lightblue', 'red']
     for i, column in enumerate(data_positive.columns):
         ax.fill_between(data.index, positive_stack, positive_stack + data_positive.iloc[:, i], color=colors[i],
@@ -171,10 +176,6 @@ def calculate(savefig, folder_path):
     for i, column in enumerate(data_negative.columns):
         ax.fill_between(data.index, negative_stack, negative_stack + data_negative.iloc[:, i], color=colors[i], linewidth=0)
         negative_stack += data_negative.iloc[:, i]
-
-    # Plot overall efficiency as a line
-    overall_efficiency = data['deltaC_Tot']
-    ax.plot(data.index, overall_efficiency, color='black', label=labels[0], linewidth= 3)
 
     xlabel = 'Year'
     ylabel = 'Efficiency Improvements [\%]'

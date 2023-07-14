@@ -95,8 +95,8 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     cm = 1 / 2.54  # for inches-cm conversion
     fig = plt.figure(dpi=300)
     ax = fig.add_subplot(1, 1, 1)
-    ax.scatter(wide['YOI'], wide['L/D estimate'], marker='o', label='Widebody')
-    ax.scatter(narrow['YOI'], narrow['L/D estimate'], marker='^', label='Narrowbody \& Regional')
+    ax.scatter(wide['YOI'], wide['L/D estimate'], marker='s', label='Widebody', color='orange')
+    ax.scatter(narrow['YOI'], narrow['L/D estimate'], marker='^', label='Narrowbody \& Regional', color='blue')
     xlabel = 'Aircraft Year of Introduction'
     ylabel ='L/D'
     plt.ylim(10,30)

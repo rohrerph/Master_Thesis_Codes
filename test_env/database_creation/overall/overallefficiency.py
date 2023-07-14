@@ -80,7 +80,7 @@ def calculate(savefig, km, mj, folder_path):
        cm = 1 / 2.54  # for inches-cm conversion
        fig = plt.figure(dpi=300)
        ax = fig.add_subplot(1, 1, 1)
-       ax.scatter(comet4['Year'], comet4['EU (MJ/ASK)'], marker='o', color='black', label='IPCC')
+       ax.scatter(comet4['Year'], comet4['EU (MJ/ASK)'], marker='o', color='black', label='Comet 4')
        ax.scatter(normal['YOI'], normal['MJ/ASK'], marker='^',color='blue', label='US DOT T2')
        ax.scatter(regional['YOI'], regional['MJ/ASK'], marker='^', color='cyan', label='Regional US DOT T2')
        ax.scatter(rest['Year'], rest['EU (MJ/ASK)'], marker='s',color='red', label='Lee')
@@ -88,11 +88,11 @@ def calculate(savefig, km, mj, folder_path):
        ax.plot(fleet_avg_year.index, fleet_avg_year['MJ/RPK'],color='blue',linestyle='--', label='US DOT T2 Fleet RPK')
        ax.plot(lee_fleet['Year'], lee_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
        ax.legend()
-       historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
-       historic_legend._legend_box.align = "left"
+       #historic_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
+       #historic_legend._legend_box.align = "left"
 
        #Add projections from Lee et al.
-       plot_projections = True
+       plot_projections = False
        if plot_projections:
               ax.scatter([1997, 2007, 2022], [1.443, 1.238, 0.9578], marker='^', color='black', label='NASA 100 PAX')
               ax.scatter([1997, 2007, 2022], [1.2787, 1.0386, 0.741], marker='*', color='black', label='NASA 150 PAX')
