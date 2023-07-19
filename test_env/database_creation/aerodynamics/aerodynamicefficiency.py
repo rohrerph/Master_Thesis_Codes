@@ -28,14 +28,20 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     breguet['K']=(breguet['K_1']+breguet['K_2'])/2
 
     # Add K_1 for the Comet 4
-    comet_k1 = 5190 / (np.log(0.94*73480/43410)) # data for the Comet 4 from Aerospaceweb.org
-    breguet.loc[breguet['Name'] == 'Comet 4', 'K_1'] = comet_k1
+    comet4_k1 = 5190 / (np.log(0.94*73480/43410)) # data for the Comet 4 from Aerospaceweb.org
+    breguet.loc[breguet['Name'] == 'Comet 4', 'K_1'] = comet4_k1
+
+    # Add K_1 for the Comet 1. Real Flight Data
+    comet1_k1 = 2761.4 / (np.log(98370/73000)) # data for the Comet 4 from Aerospaceweb.org
+    breguet.loc[breguet['Name'] == 'Comet 1', 'K_1'] = comet1_k1
 
     # Calculate L /D, important only K_1 (Point B) is considered
     breguet['A'] = breguet['K_1']*g*0.001*breguet['TSFC Cruise']
     breguet['L/D estimate'] = breguet['A']/flight_vel
-    comet_A = breguet.loc[breguet['Name'] == 'Comet 4', 'A']
-    breguet.loc[breguet['Name'] == 'Comet 4', 'L/D estimate'] = comet_A/223.6 # account for lower speed of the Comet 4
+    comet4_A = breguet.loc[breguet['Name'] == 'Comet 4', 'A']
+    comet1_A = breguet.loc[breguet['Name'] == 'Comet 1', 'A']
+    breguet.loc[breguet['Name'] == 'Comet 4', 'L/D estimate'] = comet4_A/223.6 # account for lower speed of the Comet 4
+    breguet.loc[breguet['Name'] == 'Comet 1', 'L/D estimate'] = comet1_A / 201.4  # account for lower speed of the Comet 1
 
     # Calculate further Aerodynamic Statistics
     aircraft_data = breguet.drop(columns=['#', 'Aircraft Model Chart', 'Link', 'Factor', 'Ratio 1',
@@ -83,13 +89,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     # Get Referenced Aircraft
     a350 = wide.loc[wide['Name'] == 'A350-900', 'L/D estimate'].iloc[0]
     a340 = wide.loc[wide['Name'] == 'A340-500', 'L/D estimate'].iloc[0]
-    a321 = narrow.loc[narrow['Name'] == 'A321-200n', 'L/D estimate'].iloc[0]
     limit = a350 * 1.05 * 1.15 # Limit based on NLF technology plus 777x
-
-    # assume 40% is induced drag for the A321 which can be reduced by the AlbatrossOne wingspan. Induced drag can be scaled by the squareroot of the ARs
-    factor = np.sqrt(10.47/18)*0.4+0.6 # Factor to scale AlbatrossOne, Probably remove AlbatrossONE completely from analysis
-
-
 
     # ----------PLOT L/D vs YEAR----------------
     cm = 1 / 2.54  # for inches-cm conversion
@@ -111,15 +111,11 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
         plt.annotate('BLADE', (2030, a340*1.046),
                         fontsize=8, xytext=(-10, 10),
                         textcoords='offset points')
-        ax.scatter(2030, a321/factor, color='green')
-        plt.annotate('AlbatrossONE', (2030, a321/factor),
-                        fontsize=8, xytext=(-10, -13),
-                        textcoords='offset points')
         ax.scatter(2035, 27.8, color='green')
         plt.annotate('SB-Wing', (2035, 27.8),
                         fontsize=8, xytext=(-10,5),
                         textcoords='offset points')
-        plt.xlim(1955,2050)
+        plt.xlim(1950,2050)
     ax.legend(loc='upper left')
 
     plot.plot_layout(None, xlabel, ylabel, ax)

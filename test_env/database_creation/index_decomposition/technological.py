@@ -9,12 +9,13 @@ def calculate(savefig, folder_path):
     data = pd.read_excel(r'Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
     data = data.loc[data['Type']!='Regional']
+    data = data.drop(data.index[0])
 
     # Normalize Data for TSFC, L/D, OEW/Exit Limit and EU using 1959 as a Basis, for OEW normalize regarding heaviest value of each Type
     data['OEW/Exit Limit'] = data.groupby('Type')['OEW/Exit Limit'].transform(lambda x: x / x.max())
-    data['OEW/Exit Limit'] = 100 / data['OEW/Exit Limit']
     data = data[['Name','YOI', 'TSFC Cruise','EU (MJ/ASK)', 'OEW/Exit Limit', 'L/D estimate']]
     data = data.dropna()
+    data['OEW/Exit Limit'] = 100 / data['OEW/Exit Limit']
     oew = data.dropna(subset='OEW/Exit Limit')
     oew['OEW/Exit Limit'] = oew['OEW/Exit Limit'] - 100
 
@@ -104,7 +105,7 @@ def calculate(savefig, folder_path):
     # Add a legend to the plot
     ax.legend()
     plt.xlim(1955, 2025)
-    plt.ylim(-30, 400)
+    plt.ylim(-30, 350)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
         plt.savefig(folder_path+'/ida_technological_normalized.png')
@@ -180,7 +181,7 @@ def calculate(savefig, folder_path):
     xlabel = 'Year'
     ylabel = 'Efficiency Improvements [\%]'
     ax.set_xlim(1958, 2020)
-    ax.set_ylim(-40, 380)
+    ax.set_ylim(-30, 330)
     ax.legend(loc='upper left')
     plot.plot_layout(None, xlabel, ylabel, ax)
     if savefig:

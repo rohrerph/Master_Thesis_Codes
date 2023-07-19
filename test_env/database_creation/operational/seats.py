@@ -7,7 +7,6 @@ def calculate():
     # Load Dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
-    airlines = dict.USAirlines().get_airlines()
 
     # Create an empty dataframe to hold the data
     T100 = pd.DataFrame()
@@ -30,7 +29,6 @@ def calculate():
     T100 = T100.loc[T100['AIRCRAFT_CONFIG'] == 1]
 
     # Use the Airlines and Aircraft from the Dictionary
-    T100 = T100.loc[T100['UNIQUE_CARRIER_NAME'].isin(airlines)]
     T100 = pd.merge(T100, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
     T100 = T100.loc[T100['Description'].isin(airplanes)]
     T100 = T100.loc[T100['SEATS']>0]

@@ -61,31 +61,6 @@ class AirplaneModels:
     def get_models(self):
         return self.models
 
-#All US Airlines used for the analysis of the T2 Data
-class USAirlines:
-    def __init__(self):
-        self.airlines = ['American Airlines Inc.',
-                          'United Air Lines Inc.',
-                          'Delta Air Lines Inc.',
-                          'Southwest Airlines Co.',
-                          'Northwest Airlines Inc.',
-                          'Continental Air Lines Inc.',
-                          'US Airways Inc.',
-                          'Alaska Airlines Inc.',
-                          'JetBlue Airways',
-                          'Trans World Airways LLC',
-                          'America West Airlines Inc.',
-                          'SkyWest Airlines Inc.',
-                          'Spirit Air Lines',
-                          'Frontier Airlines Inc.',
-                          'Hawaiian Airlines Inc.',
-                          'Envoy Air',
-                          'AirTran Airways Corporation',
-                          'ExpressJet Airlines LLC d/b/a aha!',
-                          'ATA Airlines d/b/a ATA']
-
-    def get_airlines(self):
-        return self.airlines
 
 #map names from the Aircraft-Database to the abbreviation names for my Database
 class aircraftdata:

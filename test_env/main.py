@@ -85,6 +85,6 @@ print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Technical and Operational S
 test_env.database_creation.index_decomposition.technooperational.calculate(savefig, folder_path)
 print(' --> [INDEX DECOMPOSITION ANALYSIS]: LMDI for Engine Sub-Efficiencies')
 test_env.database_creation.index_decomposition.engine.calculate(savefig, folder_path)
-print(' --> [PREPARE DASHBOARD]: Create future scenarios')
+print(' --> [PREPARE DASHBOARD]: Create Future Scenarios')
 test_env.database_creation.dashboard_prep.future_scen.calculate(limit_tsfc, limit_aero, savefig, folder_path)
 print(' --> [FINISH]')

@@ -8,7 +8,6 @@ def calculate(savefig, folder_path):
     #Load Dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
-    airlines = dict.USAirlines().get_airlines()
     airplane_types = dict.AirplaneTypes().get_types()
     airplane_types = pd.DataFrame({'Description': list(airplane_types.keys()), 'Type': list(airplane_types.values())})
 
@@ -20,7 +19,7 @@ def calculate(savefig, folder_path):
     historic_slf['PLF'] = historic_slf['PLF'].str.replace(',', '.').astype(float)
 
     # Preprocess Data from Schedule T2
-    T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)
+    T2 = T2_preprocessing.preprocessing(T2, AC_types, airplanes)
     T2 = T2.merge(airplane_types)
 
     # Get Annual values for the SLF per Type (Narrow, Wide, Regional)

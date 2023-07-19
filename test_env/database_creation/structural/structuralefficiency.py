@@ -18,7 +18,7 @@ def calculate(savefig, folder_path):
     oew_exit_b777 = aircrafts.loc[aircrafts['Name'] == '777-300/300ER/333ER', 'OEW/Exit Limit'].iloc[0]
 
     # Divide Aircrafts by Type.
-    aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])
+    #aircrafts = aircrafts.dropna(subset=['OEW/Exit Limit', 'OEW/MTOW_2'])
     aircrafts = aircrafts.groupby(['Name','Type','YOI'], as_index=False).agg({'OEW/Exit Limit':'mean', 'OEW/MTOW_2':'mean', 'OEW':'mean', 'OEW/Pax':'mean'})
     medium_aircrafts = aircrafts.loc[(aircrafts['Type']=='Narrow')]
     large_aircrafts = aircrafts.loc[(aircrafts['Type']=='Wide')]
@@ -100,8 +100,6 @@ def calculate(savefig, folder_path):
 
     fig = plt.figure(dpi=300)
 
-    z = np.polyfit(aircrafts['OEW'],  aircrafts['OEW/Exit Limit'], 1)
-    p = np.poly1d(z)
     # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
     ax.scatter(large_aircrafts['OEW']/1000, large_aircrafts['OEW/Exit Limit'], marker='s',color='orange', label='Widebody')
@@ -129,13 +127,13 @@ def calculate(savefig, folder_path):
     plt.annotate('A330-900', (2018, 299), fontsize=8, xytext=(-20, -10), textcoords='offset points')
     plt.annotate('B787-10', (2018, 308), fontsize=8, xytext=(-20, 5), textcoords='offset points')
 
-    ax.legend(loc='upper left')
+    ax.legend(loc='lower right')
     # Add a legend to the plot
     ax.legend()
 
     #Arrange plot size
-    plt.ylim(0, 400)
-    plt.xlim(1955, 2020)
+    plt.ylim(0, 800)
+    plt.xlim(1950, 2020)
 
     xlabel = 'Aircraft Year of Introduction'
     ylabel = 'OEW[kg]/Pax Exit Limit'

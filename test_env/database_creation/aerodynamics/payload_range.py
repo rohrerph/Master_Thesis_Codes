@@ -8,14 +8,12 @@ def calculate(savefig, folder_path):
     # Load Dictionaries
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
-    airlines = dict.USAirlines().get_airlines()
 
     # Load Data for 2022
     AC_types = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
     T100 = pd.read_csv(r"C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\database_creation\rawdata\USDOT\T_T100_SEGMENT_ALL_CARRIER_2022.csv")
 
     # Use the 19 Airlines
-    T100 = T100.loc[T100['UNIQUE_CARRIER_NAME'].isin(airlines)]
     T100 = pd.merge(T100, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
     T100 = T100.loc[T100['Description'].isin(airplanes)]
     T100 = T100.loc[T100['AIR_TIME'] > 0]

@@ -176,8 +176,10 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
 
     # Get the value of the B707 to calculate the TSFC from the Comet 4
     b707 = lee.loc[lee['Name']=='B707-100B/300', 'TSFC Cruise'].iloc[0]
-    databank.loc[databank['Name'] == 'Comet 4', 'TSFC Cruise'] = b707/0.92
-    comet4 = databank.loc[databank['Name']=='Comet 4']
+    databank.loc[databank['Name'] == 'Comet 4', 'TSFC Cruise'] = 26.4 # wikipedia value
+    databank.loc[databank['Name'] == 'Comet 1', 'TSFC Cruise'] = 28.9  # wikipedia value
+    comet4 = databank.loc[databank['Name'] == 'Comet 4']
+    comet1 = databank.loc[databank['Name'] == 'Comet 1']
 
     # Decision to use the values from Lee et al. when possible
     use_lee_et_al = True
@@ -207,6 +209,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     medium = bpr.loc[(bpr['B/P Ratio'] >= 2) & (bpr['B/P Ratio'] <= 8)]
     high = bpr.loc[bpr['B/P Ratio'] >= 8]
 
+    ax.scatter(comet1['YOI'], comet1['TSFC Cruise'], color='red')
     ax.scatter(comet4['YOI'], comet4['TSFC Cruise'], color='red')
     ax.scatter(low['YOI'], low['TSFC Cruise'], color='red', label='BPR $<$ 2')
     ax.scatter(medium['YOI'], medium['TSFC Cruise'], color='purple', label='BPR 2 - 8')
@@ -232,7 +235,7 @@ def calculate(heatingvalue, air_density, flight_vel, savefig, folder_path):
     plt.annotate('CFM RISE', (2035, 12),
                     fontsize=6, xytext=(10, 0),
                     textcoords='offset points')
-    plt.xlim(1955,2050)
+    plt.xlim(1950,2050)
 
     ax.legend()
     xlabel = 'Aircraft Year of Introduction'

@@ -11,7 +11,6 @@ def calculate(vel, savefig, folder_path):
     # Get Dictionary Values
     airplanes_dict = dict.AirplaneModels().get_models()
     airplanes = airplanes_dict.keys()
-    airlines = dict.USAirlines().get_airlines()
 
     # Load Input Data ( US DOT Form 41 from 2022 and Airport Coordinate Data )
     AC_types = pd.read_csv(
@@ -21,7 +20,6 @@ def calculate(vel, savefig, folder_path):
     airport_coordinates = airport_coordinates.loc[airport_coordinates['type']=='large_airport']
 
     # Filter for the 19 Largest US Airlines and the Airplanes which are in the Dictionary.
-    T100 = T100.loc[T100['UNIQUE_CARRIER_NAME'].isin(airlines)]
     T100 = pd.merge(T100, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
     T100 = T100.loc[T100['Description'].isin(airplanes)]
     T100 = T100.loc[T100['AIR_TIME'] > 0]

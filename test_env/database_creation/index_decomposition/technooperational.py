@@ -13,6 +13,7 @@ def calculate(savefig, folder_path):
     # Load Aircraft Data and Calculate MJ/RPK
     data = pd.read_excel(r'C:\Users\PRohr\Desktop\Masterarbeit\Python\test_env\Databank.xlsx')
     data = data.sort_values('YOI', ascending=True)
+    data = data.drop(data.index[0])
     data = data.merge(slf, left_on='YOI', right_on='Year', how='left')
     data['EI (MJ/RPK)'] = data['EU (MJ/ASK)']/data['PLF']
 
@@ -67,8 +68,8 @@ def calculate(savefig, folder_path):
 
     ax.scatter(data['YOI'], data['EI (MJ/RPK)'],color='black', label='Overall (MJ/RPK)')
     ax.scatter(slf['Year'], slf['PLF'], color='blue', label='Operational (SLF (1959 normalized))')
-    ax.scatter(data['YOI'], data['L/D estimate'],color='steelblue', label='Aerodynamic (L/D)')
-    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='royalblue', label='Structural (OEW/Exit)')
+    ax.scatter(data['YOI'], data['L/D estimate'],color='royalblue', label='Aerodynamic (L/D)')
+    ax.scatter(data['YOI'], data['OEW/Exit Limit'],color='steelblue', label='Structural (OEW/Exit)')
     ax.scatter(data['YOI'], data['TSFC Cruise'],color='lightblue', label='Engine (TSFC)')
 
     ax.plot(years, p_all_tsfc(years),color='lightblue')
@@ -80,7 +81,7 @@ def calculate(savefig, folder_path):
     # Add a legend to the plot
     ax.legend()
     plt.xlim(1955, 2025)
-    plt.ylim(-30, 450)
+    plt.ylim(-30, 500)
     plot.plot_layout(None, x_label, y_label, ax)
     if savefig:
         plt.savefig(folder_path+'/ida_operational_normalized.png')

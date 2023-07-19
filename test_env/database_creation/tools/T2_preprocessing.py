@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-def preprocessing(T2, AC_types, airlines, airplanes):
+def preprocessing(T2, AC_types, airplanes):
     T2 = T2.dropna(subset=['AVL_SEAT_MILES_320', 'REV_PAX_MILES_140', 'AIRCRAFT_FUELS_921'])
     T2 = T2.loc[T2['AIRCRAFT_FUELS_921'] > 0]
     T2 = T2.loc[T2['AVL_SEAT_MILES_320'] > 0]
@@ -12,7 +12,7 @@ def preprocessing(T2, AC_types, airlines, airplanes):
     # subgroup 1 for aircraft passenger configuration
     T2 = T2.loc[T2['AIRCRAFT_CONFIG'] == 1]
     # Use the 19 Airlines
-    T2 = T2.loc[T2['UNIQUE_CARRIER_NAME'].isin(airlines)]
+    #T2 = T2.loc[T2['UNIQUE_CARRIER_NAME'].isin(airlines)]
     T2 = pd.merge(T2, AC_types, left_on='AIRCRAFT_TYPE', right_on='Code')
     T2 = T2.loc[T2['Description'].isin(airplanes)]
     T2['GAL/ASM'] = T2['AIRCRAFT_FUELS_921'] / T2['AVL_SEAT_MILES_320']
