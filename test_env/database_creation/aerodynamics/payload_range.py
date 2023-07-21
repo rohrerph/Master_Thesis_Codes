@@ -36,12 +36,12 @@ def calculate(savefig, folder_path):
     fig, ax = plt.subplots(dpi=300)
 
     # Calculate the heatmap data
-    heatmap, xedges, yedges = np.histogram2d(a320['DISTANCE'], a320['PAYLOAD'], bins=20)
+    heatmap, xedges, yedges = np.histogram2d(a320['DISTANCE'], a320['PAYLOAD'], bins=40)
     heatmap[heatmap<5] = np.nan
     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
     # Plot the heatmap
-    im = ax.imshow(heatmap.T, origin='lower', extent=extent, aspect='auto', cmap='YlGn')
+    im = ax.imshow(heatmap.T, origin='lower', extent=extent, aspect='auto', cmap='viridis_r')
     ax.plot(a320_boundaries['Range'], a320_boundaries['Payload'], label='Limit', color='black')
 
     ax.scatter(4000, 19.9, color='red', zorder=2)
@@ -72,11 +72,12 @@ def calculate(savefig, folder_path):
     fig, ax = plt.subplots(dpi=300)
 
     # Calculate the heatmap data
-    heatmap, xedges, yedges = np.histogram2d(b777['DISTANCE'], b777['PAYLOAD'], bins=20)
+    heatmap, xedges, yedges = np.histogram2d(b777['DISTANCE'], b777['PAYLOAD'], bins=40)
+    heatmap[heatmap<5] = np.nan
     extent = [xedges[0], xedges[-1], yedges[0], yedges[-1]]
 
     # Plot the heatmap
-    im = ax.imshow(heatmap.T, origin='lower', extent=extent, aspect='auto', cmap='YlGn')
+    im = ax.imshow(heatmap.T, origin='lower', extent=extent, aspect='auto', cmap='viridis_r')
     ax.plot(b777_boundaries['Range'], b777_boundaries['Payload'], label='Limit', color='black')
     ax.scatter(14070, 50.352, color='red', zorder=2)
     ax.scatter(15023, 43.262, color='red', zorder=2)
