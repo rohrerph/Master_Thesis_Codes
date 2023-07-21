@@ -34,7 +34,6 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     # Add K_1 for the Comet 1. Real Flight Data
     comet1_k1 = 2761.4 / (np.log(98370/73000)) # data for the Comet 4 from Aerospaceweb.org
     breguet.loc[breguet['Name'] == 'Comet 1', 'K_1'] = comet1_k1
-    print(flight_vel)
     # Calculate L /D, important only K_1 (Point B) is considered
     breguet['A'] = breguet['K_1']*g*0.001*breguet['TSFC Cruise']
     breguet['L/D estimate'] = breguet['A']/flight_vel

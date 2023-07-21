@@ -92,8 +92,8 @@ def calculate(savefig, km, mj, folder_path):
        ax.plot(lee_fleet['Year'], lee_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
 
        ax.legend()
-       future_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
-       future_legend._legend_box.align = "left"
+       #future_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
+       #future_legend._legend_box.align = "left"
 
        #Add projections from Lee et al.
        plot_past_projections = False
@@ -113,7 +113,7 @@ def calculate(savefig, km, mj, folder_path):
               ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
                                             title="Historic Projections", frameon=False)
               ax.add_artist(future_legend)
-       plot_future_projections = True
+       plot_future_projections = False
        if plot_future_projections:
               ax.scatter(2035,0.592344579, marker='s', color='black', label='SB-Wing')
               ax.scatter(2035,0.381840741, marker='o', color='black', label='Double Bubble')
@@ -130,8 +130,8 @@ def calculate(savefig, km, mj, folder_path):
 
        #Arrange plot size
        plt.ylim(0, 9)
-       plt.xlim(1950, 2052)
-       plt.xticks(np.arange(1950, 2051, 10))
+       plt.xlim(1950, 2024)
+       plt.xticks(np.arange(1950, 2023, 10))
 
        # Set the x and y axis labels
        xlabel = 'Aircraft Year of Introduction'
