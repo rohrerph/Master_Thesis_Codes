@@ -113,7 +113,7 @@ def calculate(savefig, km, mj, folder_path):
               ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
                                             title="Historic Projections", frameon=False)
               ax.add_artist(future_legend)
-       plot_future_projections = False
+       plot_future_projections = True
        if plot_future_projections:
               ax.scatter(2035,0.592344579, marker='s', color='black', label='SB-Wing')
               ax.scatter(2035,0.381840741, marker='o', color='black', label='Double Bubble')
