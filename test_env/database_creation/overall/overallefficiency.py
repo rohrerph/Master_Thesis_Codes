@@ -92,8 +92,8 @@ def calculate(savefig, km, mj, folder_path):
        ax.plot(lee_fleet['Year'], lee_fleet['EU (MJ/ASK)'],color='red', label='Lee Fleet')
 
        ax.legend()
-       #future_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
-       #future_legend._legend_box.align = "left"
+       future_legend = ax.legend(loc='upper left', bbox_to_anchor=(1, 1), title="Historic Data", frameon=False)
+       future_legend._legend_box.align = "left"
 
        #Add projections from Lee et al.
        plot_past_projections = False
@@ -119,7 +119,7 @@ def calculate(savefig, km, mj, folder_path):
               ax.scatter(2035,0.381840741, marker='o', color='black', label='Double Bubble')
               ax.scatter(2040,0.82264895, marker='P', color='black', label='Advanced TW')
               ax.scatter(2040,0.797082164, marker='*', color='black', label='BWB')
-              ax.scatter(2050,0.814943788, marker='^', color='black', label='TW Limit')
+              ax.scatter(2050,0.618628347, marker='^', color='black', label='TW Limit')
 
               # Projection legend
               projection_handles = ax.get_legend_handles_labels()[0][8:]  # Exclude the first 8 handles (historic data)
