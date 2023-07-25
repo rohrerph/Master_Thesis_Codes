@@ -255,11 +255,11 @@ def calculate(limit_tsfc, limit_aero, savefig, folder_path):
                                           target['EI (CO2/RPK)'])
     target.loc[target['Year'] < 2005, 'IATA Target CO2'] = ''
 
-    # EUROCONTROL 65% OF ALl EMISSIONS
+    # EUROCONTROL 75% OF ALl EMISSIONS
     rpk_2011 = historic_rpk.loc[historic_rpk['Year'] == 2011, 'Billion RPK'].values[0]
     ec_target_start = target.loc[target['Year'] == 2011, 'EI (CO2/RPK)'].values[0]
     ec_target_start = rpk_2011*ec_target_start
-    ec_percentage_decrease = 0.015
+    ec_percentage_decrease = 0.035
     target['EC Target CO2'] = np.where(target['Year'] >= 2011,
                                           ec_target_start * (1 - ec_percentage_decrease) ** (target['Year'] - 2011),
                                           target['EI (CO2/RPK)'])
@@ -273,12 +273,12 @@ def calculate(limit_tsfc, limit_aero, savefig, folder_path):
     # Add a subplot
     ax = fig.add_subplot(1, 1, 1)
 
-    ax.plot(techfreeze['Year'],techfreeze['EU (MJ/ASK)'],color='red', label= 'Tech Freeze')
     ax.plot(techlimit['Year'], techlimit['EU (MJ/ASK)'], color='blue', label='Tech Limit')
     ax.plot(advancedtw['Year'], advancedtw['EU (MJ/ASK)'], color='purple', label='Advanced TW')
     ax.plot(bwb['Year'], bwb['EU (MJ/ASK)'], color='green', label='Blended Wing Body')
     ax.plot(doublebubble['Year'], doublebubble['EU (MJ/ASK)'], color='grey', label='Double Bubble D8')
     ax.plot(ttwb['Year'], ttwb['EU (MJ/ASK)'], color='pink', label='Strut-Braced Wing')
+    ax.plot(techfreeze['Year'],techfreeze['EU (MJ/ASK)'],color='red', label= 'Tech Freeze', zorder=2)
     ax.legend()
     ylabel = 'Energy Usage (MJ/ASK)'
     xlabel = 'Year'

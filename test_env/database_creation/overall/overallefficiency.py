@@ -113,13 +113,13 @@ def calculate(savefig, km, mj, folder_path):
               ax.legend(projection_handles, projection_labels, loc='lower left', bbox_to_anchor=(1, -0.05),
                                             title="Historic Projections", frameon=False)
               ax.add_artist(future_legend)
-       plot_future_projections = True
+       plot_future_projections = False
        if plot_future_projections:
               ax.scatter(2035,0.592344579, marker='s', color='black', label='SB-Wing')
               ax.scatter(2035,0.381840741, marker='o', color='black', label='Double Bubble')
               ax.scatter(2040,0.82264895, marker='P', color='black', label='Advanced TW')
               ax.scatter(2040,0.797082164, marker='*', color='black', label='BWB')
-              ax.scatter(2050,0.814943788, marker='^', color='black', label='TW Limit')
+              ax.scatter(2050,0.618628347, marker='^', color='black', label='TW Limit')
 
               # Projection legend
               projection_handles = ax.get_legend_handles_labels()[0][8:]  # Exclude the first 8 handles (historic data)
@@ -130,8 +130,8 @@ def calculate(savefig, km, mj, folder_path):
 
        #Arrange plot size
        plt.ylim(0, 9)
-       plt.xlim(1950, 2052)
-       plt.xticks(np.arange(1950, 2051, 10))
+       plt.xlim(1950, 2024)
+       plt.xticks(np.arange(1950, 2023, 10))
 
        # Set the x and y axis labels
        xlabel = 'Aircraft Year of Introduction'
