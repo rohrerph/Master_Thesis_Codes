@@ -12,11 +12,11 @@ def calculate(savefig, km, mj, folder_path):
        fullnames = dict.fullname().get_aircraftfullnames()
 
        # Read Input Data
-       T2 = pd.read_csv(r"database_creation\rawdata\USDOT\T_SCHEDULE_T2.csv")
-       AC_types = pd.read_csv(r"database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
-       overall = pd.read_excel(r"database_creation\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 2')
-       aircraft_database = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
-       historic_slf = pd.read_excel(r"database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
+       T2 = pd.read_csv(r"database\rawdata\USDOT\T_SCHEDULE_T2.csv")
+       AC_types = pd.read_csv(r"database\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
+       overall = pd.read_excel(r"database\rawdata\aircraftproperties\Data Extraction 2.xlsx", sheet_name='Figure 2')
+       aircraft_database = pd.read_excel(r'database\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+       historic_slf = pd.read_excel(r"database\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
 
        # Prepare Data from schedule T2
        T2 = T2_preprocessing.preprocessing(T2, AC_types, airplanes)
@@ -61,7 +61,7 @@ def calculate(savefig, km, mj, folder_path):
        a380 = {'Description': 'A380', 'MJ/ASK': 0.88*boeing747}
        airplanes_release_year = airplanes_release_year.append(a380, ignore_index=True)
        airplanes_release_year.to_excel(
-              r'dashboard_creation\aircraft.xlsx')
+              r'dashboard\aircraft.xlsx')
 
        # Divide between Regional Aircraft and the Rest.
        regionalcarriers = ['Canadair CRJ 900','Canadair RJ-200ER /RJ-440', 'Canadair RJ-700','Embraer 190'
@@ -74,7 +74,7 @@ def calculate(savefig, km, mj, folder_path):
        comet1 = {'Label': 'Comet 1', 'EU (MJ/ASK)': 2.499*comet4['EU (MJ/ASK)'], 'Year': 1952}
        lee = lee.append(comet4, ignore_index=True)
        lee = lee.append(comet1, ignore_index=True)
-       lee.to_excel(r'dashboard_creation\aircraft_lee.xlsx')
+       lee.to_excel(r'dashboard\aircraft_lee.xlsx')
 
        # Plot Comet 4 Separately
        comet4 = lee.loc[lee['Label']=='Comet 4']
@@ -177,5 +177,5 @@ def calculate(savefig, km, mj, folder_path):
        fleet_avg_year['EI (MJ/RPK)'] = fleet_avg_year['EU (MJ/ASK)']/fleet_avg_year['PLF']
 
        #Save DF
-       fleet_avg_year.to_excel(r'database_creation\rawdata\annualdata.xlsx', index=False)
+       fleet_avg_year.to_excel(r'database\rawdata\annualdata.xlsx', index=False)
 

@@ -12,9 +12,9 @@ def calculate(savefig, folder_path):
     airplane_types = pd.DataFrame({'Description': list(airplane_types.keys()), 'Type': list(airplane_types.values())})
 
     #Load Data, T2 is data from the US back to 1990, Historic_Slf contains data from the ICAO worldwide back to 1950
-    T2 = pd.read_csv(r"database_creation\rawdata\USDOT\T_SCHEDULE_T2.csv")
-    AC_types = pd.read_csv(r"database_creation\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
-    historic_slf = pd.read_excel(r"database_creation\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
+    T2 = pd.read_csv(r"database\rawdata\USDOT\T_SCHEDULE_T2.csv")
+    AC_types = pd.read_csv(r"database\rawdata\USDOT\L_AIRCRAFT_TYPE (1).csv")
+    historic_slf = pd.read_excel(r"database\rawdata\USDOT\Traffic and Operations 1929-Present_Vollständige D_data.xlsx")
     historic_slf = historic_slf.dropna(subset='PLF').reset_index()
     historic_slf['PLF'] = historic_slf['PLF'].str.replace(',', '.').astype(float)
 

@@ -8,7 +8,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
 
     # Load Data
     aircraft_data = pd.read_excel(r'Databank.xlsx')
-    lift_data = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
+    lift_data = pd.read_excel(r'database\rawdata\aircraftproperties\Aicrraft Range Data Extraction.xlsx', sheet_name='2. Table')
 
     # Remove these Regional jets, it seems, that their data is not accurate, possibly because overall all values are much smaller.
     lift_data = lift_data[~lift_data['Name'].isin(['RJ-200ER /RJ-440', 'RJ-700', 'Embraer ERJ-175', 'Embraer-145', 'Embraer-135', 'Embraer 190'])]
@@ -54,7 +54,7 @@ def calculate(savefig, air_density,flight_vel, g, folder_path):
     aircraft_data['c_D0'] = aircraft_data['c_D']-aircraft_data['c_Di']
 
     # Load Data from Lee
-    lee = pd.read_excel(r'database_creation\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
+    lee = pd.read_excel(r'database\rawdata\aircraftproperties\Aircraft Databank v2.xlsx', sheet_name='New Data Entry')
     lee = lee.dropna(subset='L/Dmax')
     lee = lee.groupby(['Name','YOI'], as_index=False).agg({'L/Dmax':'mean'})
     lee['L/D estimate'] = lee['L/Dmax']

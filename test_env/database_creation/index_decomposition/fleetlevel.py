@@ -12,8 +12,8 @@ def calculate(savefig, folder_path):
         fullnames = dict.fullname().get_aircraftfullnames()
 
         # Read Data
-        T2 = pd.read_csv(r'/test_env/database_creation/rawdata/USDOT/T_SCHEDULE_T2.csv')
-        AC_types = pd.read_csv(r"/test_env/database_creation/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
+        T2 = pd.read_csv(r'/test_env/database/rawdata/USDOT/T_SCHEDULE_T2.csv')
+        AC_types = pd.read_csv(r"/test_env/database/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
 
         # Prepare Data from schedule T2
         T2 = T2_preprocessing.preprocessing(T2, AC_types, airlines, airplanes)

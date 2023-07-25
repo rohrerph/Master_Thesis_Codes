@@ -16,7 +16,7 @@ most_common_airlines = most_common_airlines.loc[most_common_airlines['AVL_SEAT_M
 airlines = dict.USAirlines().get_airlines()
 T52 = T52.loc[T52['UNIQUE_CARRIER_NAME'].isin(airlines)]
 
-aircraft_codes = pd.read_csv(r"/test_env/database_creation/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
+aircraft_codes = pd.read_csv(r"/test_env/database/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
 
 most_common_aircrafts = pd.merge(T52, aircraft_codes, left_on='AIRCRAFT_TYPE', right_on='Code')
 most_common_aircrafts = most_common_aircrafts.drop(['Code', 'AIRCRAFT_TYPE'], axis = 1)

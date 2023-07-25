@@ -28,7 +28,7 @@ datestamp = current_date.strftime("%Y-%m-%d")
 warnings.filterwarnings("ignore")
 
 # Create output folder with today's date and save graphs here
-base_folder = r'database_creation\graphs'
+base_folder = r'database\graphs'
 folder_path = os.path.join(base_folder, datestamp)
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)

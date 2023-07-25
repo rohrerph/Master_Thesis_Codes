@@ -14,9 +14,9 @@ def calculate(vel, savefig, folder_path):
 
     # Load Input Data ( US DOT Form 41 from 2022 and Airport Coordinate Data )
     AC_types = pd.read_csv(
-        r"database_creation/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
-    T100 = pd.read_csv(r"database_creation/rawdata/USDOT/T_T100_SEGMENT_ALL_CARRIER_2022.csv")
-    airport_coordinates = pd.read_csv(r"database_creation/rawdata/USDOT/airports.csv")
+        r"database/rawdata/USDOT/L_AIRCRAFT_TYPE (1).csv")
+    T100 = pd.read_csv(r"database/rawdata/USDOT/T_T100_SEGMENT_ALL_CARRIER_2022.csv")
+    airport_coordinates = pd.read_csv(r"database/rawdata/USDOT/airports.csv")
     airport_coordinates = airport_coordinates.loc[airport_coordinates['type']=='large_airport']
 
     # Filter for the 19 Largest US Airlines and the Airplanes which are in the Dictionary.
