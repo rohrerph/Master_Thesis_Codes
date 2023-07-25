@@ -68,7 +68,6 @@ def calculate(savefig, km, mj, folder_path):
                            'Embraer ERJ-175', 'Embraer-135','Embraer-145']
        regional = airplanes_release_year.loc[airplanes_release_year['Description'].isin(regionalcarriers)]
        normal = airplanes_release_year.loc[~airplanes_release_year['Description'].isin(regionalcarriers)]
-
        # Get MJ/ASK value for the Comet 4
        boeing707 = lee.loc[lee['Label']=='B707-100B/300', 'EU (MJ/ASK)'].iloc[0]
        comet4 = {'Label': 'Comet 4', 'EU (MJ/ASK)': boeing707/0.88, 'Year':1958}
